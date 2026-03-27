@@ -164,6 +164,12 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
     }, 1500);
   };
 
+  const handleClear = () => {
+    localStorage.removeItem("GEMINI_API_KEY");
+    setApiKey("");
+    window.location.reload();
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -251,21 +257,33 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
             </p>
           </div>
 
-          <button 
-            onClick={handleSave}
-            disabled={isSaved}
-            className={`w-full py-4 mono uppercase font-bold text-sm transition-all flex items-center justify-center gap-2
-              ${isSaved ? 'bg-databoard-green text-white' : 'bg-ink text-bg hover:translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(20,20,20,0.2)] active:translate-0 active:shadow-none'}
-            `}
-          >
-            {isSaved ? (
-              <>
-                <ShieldCheck className="w-4 h-4" /> Key Saved & Applied
-              </>
-            ) : (
-              'Save & Reload App'
+          <div className="flex gap-2">
+            <button 
+              onClick={handleSave}
+              disabled={isSaved}
+              className={`flex-1 py-4 mono uppercase font-bold text-sm transition-all flex items-center justify-center gap-2
+                ${isSaved ? 'bg-databoard-green text-white' : 'bg-ink text-bg hover:translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(20,20,20,0.2)] active:translate-0 active:shadow-none'}
+              `}
+            >
+              {isSaved ? (
+                <>
+                  <ShieldCheck className="w-4 h-4" /> Key Saved & Applied
+                </>
+              ) : (
+                'Save & Reload'
+              )}
+            </button>
+            
+            {localStorage.getItem("GEMINI_API_KEY") && (
+              <button 
+                onClick={handleClear}
+                className="px-4 py-4 bg-red-500/10 text-red-500 border-2 border-red-500/20 hover:bg-red-500 hover:text-white transition-all mono uppercase font-bold text-[10px]"
+                title="Clear manual key"
+              >
+                Clear
+              </button>
             )}
-          </button>
+          </div>
           
           <p className="text-[10px] mono text-center opacity-40">
             Don't have a key? Get one for free at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline hover:text-ink">Google AI Studio</a>.
@@ -378,9 +396,14 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasApiKey, setHasApiKey] = useState(!!localStorage.getItem("GEMINI_API_KEY") || !!process.env.GEMINI_API_KEY || !!process.env.API_KEY);
+  const [hasApiKey, setHasApiKey] = useState(
+    !!localStorage.getItem("GEMINI_API_KEY") || 
+    !!process.env.DATA_BOARD_API_KEY || 
+    !!process.env.GEMINI_API_KEY || 
+    !!process.env.API_KEY
+  );
   const [isPlatformKeySelected, setIsPlatformKeySelected] = useState(false);
-  const [isSystemKeyActive] = useState(!!process.env.GEMINI_API_KEY);
+  const [isSystemKeyActive] = useState(!!process.env.DATA_BOARD_API_KEY || !!process.env.GEMINI_API_KEY);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

@@ -2,7 +2,12 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { BoardMetrics, Centrality, Scenario, Tile } from "../types";
 
 const getAI = () => {
-  const apiKey = process.env.API_KEY || localStorage.getItem("GEMINI_API_KEY") || process.env.GEMINI_API_KEY || "";
+  const apiKey = 
+    process.env.API_KEY || 
+    localStorage.getItem("GEMINI_API_KEY") || 
+    process.env.DATA_BOARD_API_KEY || 
+    process.env.GEMINI_API_KEY || 
+    "";
   return new GoogleGenAI({ apiKey });
 };
 
