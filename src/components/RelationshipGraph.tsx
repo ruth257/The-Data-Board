@@ -17,14 +17,28 @@ interface RelationshipGraphProps {
   links: { source: string; target: string; label: string }[];
 }
 
-export const RelationshipGraph: React.FC<RelationshipGraphProps> = ({ tiles, links }) => {
+export const RelationshipGraph: React.FC<RelationshipGraphProps> = React.memo(({ tiles, links }) => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    if (!svgRef.current || tiles.length === 0) return;
+    if (!containerRef.current) return;
+    
+    const observer = new ResizeObserver((entries) => {
+      if (!entries[0]) return;
+      const { width, height } = entries[0].contentRect;
+      setDimensions({ width, height });
+    });
 
-    const width = svgRef.current.clientWidth;
-    const height = svgRef.current.clientHeight;
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!svgRef.current || tiles.length === 0 || dimensions.width === 0) return;
+
+    const { width, height } = dimensions;
 
     // Clear previous graph
     d3.select(svgRef.current).selectAll("*").remove();
@@ -39,8 +53,9 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = ({ tiles, lin
       centrality: t.centrality
     }));
 
+    const tileWords = new Set(tiles.map(t => t.word));
     const validLinks: Link[] = links
-      .filter(l => tiles.find(t => t.word === l.source) && tiles.find(t => t.word === l.target))
+      .filter(l => tileWords.has(l.source) && tileWords.has(l.target))
       .map(l => ({
         source: l.source,
         target: l.target,
@@ -141,10 +156,10 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = ({ tiles, lin
     return () => {
       simulation.stop();
     };
-  }, [tiles, links]);
+  }, [tiles, links, dimensions]);
 
   return (
-    <div className="w-full h-full min-h-[400px] border-2 border-ink bg-white relative overflow-hidden">
+    <div ref={containerRef} className="w-full h-full min-h-[400px] border-2 border-ink bg-white relative overflow-hidden">
       <div className="absolute top-2 left-2 flex items-center gap-2">
         <div className="w-2 h-2 rounded-full bg-ink animate-pulse" />
         <span className="text-[8px] mono uppercase tracking-widest font-bold">Semantic Relationship Map</span>
@@ -152,4 +167,4 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = ({ tiles, lin
       <svg ref={svgRef} className="w-full h-full" />
     </div>
   );
-};
+});

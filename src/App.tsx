@@ -395,6 +395,104 @@ const Walkthrough = ({ onComplete }: { onComplete: () => void; key?: React.Key }
   );
 };
 
+const TileCard = React.memo(({ 
+  tile, 
+  isSelected, 
+  onSelect 
+}: { 
+  tile: Tile, 
+  isSelected: boolean, 
+  onSelect: (tile: Tile | null) => void 
+}) => {
+  return (
+    <div className="relative perspective-1000">
+      <motion.div
+        layout
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ 
+          opacity: 1, 
+          scale: 1,
+          rotateY: isSelected ? 180 : 0
+        }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
+        onClick={() => onSelect(isSelected ? null : tile)}
+        className="w-full h-full min-h-[180px] cursor-pointer preserve-3d relative"
+      >
+        {/* Front of Card */}
+        <div className={`absolute inset-0 backface-hidden p-4 flex flex-col justify-between transition-all group border-t-4 ${
+          tile.centrality === Centrality.GREEN 
+            ? "bg-databoard-green/5 border-t-databoard-green" 
+            : tile.centrality === Centrality.YELLOW 
+              ? "bg-databoard-yellow/5 border-t-databoard-yellow" 
+              : "bg-databoard-red/5 border-t-databoard-red"
+        } hover:bg-ink hover:text-bg`}>
+          <div className="flex justify-between items-start">
+            <div className={`w-2 h-2 rounded-full ${
+              tile.centrality === Centrality.GREEN ? "bg-databoard-green" :
+              tile.centrality === Centrality.YELLOW ? "bg-databoard-yellow" :
+              "bg-databoard-red"
+            }`} />
+            {tile.isAIConfirmed && (
+              <Star className="w-3 h-3 fill-ink group-hover:fill-databoard-yellow" />
+            )}
+          </div>
+          
+          <div className="mt-8">
+            <span className="text-[9px] mono uppercase opacity-40 group-hover:opacity-60 mb-1 block">
+              {tile.category}
+            </span>
+            <h4 className="text-base font-bold uppercase leading-tight tracking-tight break-words group-hover:underline decoration-1 underline-offset-4">
+              {tile.word}
+            </h4>
+          </div>
+
+          <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <ChevronRight className="w-4 h-4" />
+          </div>
+        </div>
+
+        {/* Back of Card (Explanation) */}
+        <div 
+          className="absolute inset-0 backface-hidden p-4 flex flex-col bg-ink text-bg border-t-4 border-t-ink overflow-y-auto"
+          style={{ transform: 'rotateY(180deg)' }}
+        >
+          <div className="flex justify-between items-start mb-2">
+            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full mono text-ink ${
+              tile.centrality === Centrality.GREEN ? "bg-databoard-green" :
+              tile.centrality === Centrality.YELLOW ? "bg-databoard-yellow" :
+              "bg-databoard-red"
+            }`}>
+              {tile.centrality}
+            </span>
+            <button onClick={(e) => { e.stopPropagation(); onSelect(null); }}>
+              <X className="w-3 h-3 opacity-50 hover:opacity-100" />
+            </button>
+          </div>
+          
+          <div className="flex-grow">
+            <p className="text-[10px] serif-italic leading-tight mb-3">
+              {tile.explanation}
+            </p>
+            
+            {tile.dataInsight && (
+              <div className="mb-3 p-2 bg-white/10 border-l border-white/30">
+                <p className="text-[8px] uppercase tracking-widest font-bold opacity-50 mb-1">Insight</p>
+                <p className="text-[9px] mono leading-tight">{tile.dataInsight}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-auto pt-2 border-t border-white/10 flex justify-between items-center text-[8px] mono uppercase opacity-50">
+            <span>{tile.category}</span>
+            <span>Score: {tile.relevanceScore}%</span>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+});
+
 export default function App() {
   const [scenario, setScenario] = useState<Scenario>(SCENARIOS[0]);
   const [tiles, setTiles] = useState<Tile[]>([]);
@@ -882,10 +980,11 @@ export default function App() {
                     "The Green Shift"
                   ];
                   try {
-                    for (const term of sampleTerms) {
-                      const newTile = await evaluateWord(scenario, term, tiles.map(t => t.word));
-                      setTiles(prev => [newTile, ...prev]);
-                    }
+                    const existingWords = tiles.map(t => t.word);
+                    const newTiles = await Promise.all(
+                      sampleTerms.map(term => evaluateWord(scenario, term, existingWords))
+                    );
+                    setTiles(prev => [...newTiles, ...prev]);
                   } catch (err) {
                     setError("Failed to load sample data.");
                   } finally {
@@ -937,97 +1036,14 @@ export default function App() {
 
           <div className="data-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 min-h-[400px] bg-white/30">
             <AnimatePresence mode="popLayout">
-              {tiles.map((tile) => {
-                const isSelected = selectedTile?.id === tile.id;
-                
-                return (
-                  <div key={tile.id} className="relative perspective-1000">
-                    <motion.div
-                      layout
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ 
-                        opacity: 1, 
-                        scale: 1,
-                        rotateY: isSelected ? 180 : 0
-                      }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
-                      onClick={() => setSelectedTile(isSelected ? null : tile)}
-                      className="w-full h-full min-h-[180px] cursor-pointer preserve-3d relative"
-                    >
-                      {/* Front of Card */}
-                      <div className={`absolute inset-0 backface-hidden p-4 flex flex-col justify-between transition-all group border-t-4 ${
-                        tile.centrality === Centrality.GREEN 
-                          ? "bg-databoard-green/5 border-t-databoard-green" 
-                          : tile.centrality === Centrality.YELLOW 
-                            ? "bg-databoard-yellow/5 border-t-databoard-yellow" 
-                            : "bg-databoard-red/5 border-t-databoard-red"
-                      } hover:bg-ink hover:text-bg`}>
-                        <div className="flex justify-between items-start">
-                          <div className={`w-2 h-2 rounded-full ${
-                            tile.centrality === Centrality.GREEN ? "bg-databoard-green" :
-                            tile.centrality === Centrality.YELLOW ? "bg-databoard-yellow" :
-                            "bg-databoard-red"
-                          }`} />
-                          {tile.isAIConfirmed && (
-                            <Star className="w-3 h-3 fill-ink group-hover:fill-databoard-yellow" />
-                          )}
-                        </div>
-                        
-                        <div className="mt-8">
-                          <span className="text-[9px] mono uppercase opacity-40 group-hover:opacity-60 mb-1 block">
-                            {tile.category}
-                          </span>
-                          <h4 className="text-base font-bold uppercase leading-tight tracking-tight break-words group-hover:underline decoration-1 underline-offset-4">
-                            {tile.word}
-                          </h4>
-                        </div>
-
-                        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <ChevronRight className="w-4 h-4" />
-                        </div>
-                      </div>
-
-                      {/* Back of Card (Explanation) */}
-                      <div 
-                        className="absolute inset-0 backface-hidden p-4 flex flex-col bg-ink text-bg border-t-4 border-t-ink overflow-y-auto"
-                        style={{ transform: 'rotateY(180deg)' }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full mono text-ink ${
-                            tile.centrality === Centrality.GREEN ? "bg-databoard-green" :
-                            tile.centrality === Centrality.YELLOW ? "bg-databoard-yellow" :
-                            "bg-databoard-red"
-                          }`}>
-                            {tile.centrality}
-                          </span>
-                          <button onClick={(e) => { e.stopPropagation(); setSelectedTile(null); }}>
-                            <X className="w-3 h-3 opacity-50 hover:opacity-100" />
-                          </button>
-                        </div>
-                        
-                        <div className="flex-grow">
-                          <p className="text-[10px] serif-italic leading-tight mb-3">
-                            {tile.explanation}
-                          </p>
-                          
-                          {tile.dataInsight && (
-                            <div className="mb-3 p-2 bg-white/10 border-l border-white/30">
-                              <p className="text-[8px] uppercase tracking-widest font-bold opacity-50 mb-1">Insight</p>
-                              <p className="text-[9px] mono leading-tight">{tile.dataInsight}</p>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="mt-auto pt-2 border-t border-white/10 flex justify-between items-center text-[8px] mono uppercase opacity-50">
-                          <span>{tile.category}</span>
-                          <span>Score: {tile.relevanceScore}%</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                );
-              })}
+              {tiles.map((tile) => (
+                <TileCard 
+                  key={tile.id} 
+                  tile={tile} 
+                  isSelected={selectedTile?.id === tile.id} 
+                  onSelect={setSelectedTile} 
+                />
+              ))}
               
               {/* Empty state placeholders */}
               {Array.from({ length: Math.max(0, 12 - tiles.length) }).map((_, i) => (
