@@ -32,4 +32,10 @@ export interface BoardMetrics {
   synthesis?: string; // Original insight derived from the combination of words
   emergentPatterns?: string[]; // Non-obvious connections identified
   links?: { source: string; target: string; label: string }[]; // Semantic links between tiles
+  coverageBreakdown?: {
+    demographics: number;
+    behaviors: number;
+    drivers: number;
+  };
+  synthesisSuggestions?: { original: string[]; replacement: string; reasoning: string }[];
 }

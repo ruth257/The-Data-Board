@@ -24,11 +24,22 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
     model: "gemini-3-flash-preview",
     contents: `
       Evaluate "${word}" for scenario "${scenario.title}".
-      SPELLING: Correct typos to professional terms.
+      
+      SCIENTIFIC GROUNDING: Use your internal scientific, historical, and academic knowledge base to provide specific data and insights. Do not rely solely on the provided context.
+      
+      SPELLING/CORRECTION: 
+      - If "${word}" is a typo (e.g., "gnder"), correct it to the most likely intended term (e.g., "Gender"). 
+      - PRESERVE SIMPLICITY: Do NOT change foundational variables (like "Gender", "Seniors", "Gen Z", "Female") into complex academic terms. Keep them simple and direct.
+      - Do NOT change the word if it is already a valid term.
+      
+      RELEVANCE: If the concept is completely irrelevant to the scenario, mark it as RED with a low relevanceScore.
+      
+      INSIGHT DIRECTIVE: The board is a tool for synthesis. Your explanation and dataInsight should help the user draw "inevitable" conclusions by connecting this word to the broader scenario and existing vocabulary.
+      
       Context: ${scenario.context}
       Outcomes: ${scenario.outcomes.join(", ")}
       Existing: ${existingWords.join(", ")}
-      Categories: GREEN (Central), YELLOW (Rare), RED (Misconception).
+      Categories: GREEN (Central), YELLOW (Rare), RED (Misconception/Irrelevant).
       Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore.
     `,
     config: {
@@ -72,6 +83,15 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
     model: "gemini-3-flash-preview",
     contents: `
       Suggest 5-8 relevant vocabulary words for scenario: "${scenario.title}".
+      
+      FULL COVERAGE DIRECTIVE: Ensure the vocabulary covers multiple dimensions of the topic:
+      - DEMOGRAPHICS: Who is impacted? (e.g., "Gen Z", "Gender", "Seniors", "Socioeconomic Status").
+      - BEHAVIORS/VARIABLES: What are the specific actions or data points? (e.g., "Screen Time", "Dopamine Loops").
+      - DRIVERS/WHY: What are the underlying causes? (e.g., "Algorithmic Amplification").
+      - IMPACT: What are the specific outcomes?
+      
+      SCIENTIFIC GROUNDING: Prioritize foundational variables supported by real-world data and research. Avoid "theory-heavy" name dropping unless it is a primary data variable.
+      
       Context: ${scenario.context}
       Outcomes: ${scenario.outcomes.join(", ")}
       Existing: ${existingWords.join(", ")}
@@ -133,11 +153,25 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
       Evaluate board health for scenario: "${scenario.title}".
       Context: ${scenario.context}
       Vocabulary: ${tiles.map(t => t.word).join(", ")}
-      Metrics (0-100): Cohesion, Coverage, Entropy.
+      
+      METRICS DEFINITION (0-100):
+      - COHESION: How well do the concepts connect to form a unified narrative?
+      - COVERAGE: Does the board include a balance of DEMOGRAPHICS (who), BEHAVIORS (what), and DRIVERS (why)?
+      - ENTROPY: How much diversity and non-obvious data is present?
+      
+      COVERAGE BREAKDOWN (0-100):
+      - DEMOGRAPHICS: Presence of foundational variables like age, gender, location, or social class.
+      - BEHAVIORS: Presence of specific actions, habits, or observable phenomena.
+      - DRIVERS: Presence of underlying motivations, causes, or systemic forces.
+      
       Synthesis: 1-2 sentence non-obvious insight.
       Emergent Patterns: 2-3 short phrases.
       Links: 3-5 objects (source, target, label).
-      Return JSON: cohesion, coverage, entropy, explanation, synthesis, emergentPatterns, links.
+      
+      SYNTHESIS SUGGESTIONS: Identify if multiple existing words can be replaced by a single, higher-level abstraction (e.g., "USA, UK, Canada" -> "English Speaking Countries"). 
+      Return an array of objects: original (array of words), replacement (the abstraction), reasoning (why this clarifies the board).
+      
+      Return JSON: cohesion, coverage, entropy, explanation, synthesis, emergentPatterns, links, coverageBreakdown, synthesisSuggestions.
     `,
     config: {
       thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
@@ -166,8 +200,29 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
               required: ["source", "target", "label"],
             },
           },
+          coverageBreakdown: {
+            type: Type.OBJECT,
+            properties: {
+              demographics: { type: Type.NUMBER },
+              behaviors: { type: Type.NUMBER },
+              drivers: { type: Type.NUMBER },
+            },
+            required: ["demographics", "behaviors", "drivers"],
+          },
+          synthesisSuggestions: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                original: { type: Type.ARRAY, items: { type: Type.STRING } },
+                replacement: { type: Type.STRING },
+                reasoning: { type: Type.STRING },
+              },
+              required: ["original", "replacement", "reasoning"],
+            },
+          },
         },
-        required: ["cohesion", "coverage", "entropy", "explanation", "synthesis", "emergentPatterns", "links"],
+        required: ["cohesion", "coverage", "entropy", "explanation", "synthesis", "emergentPatterns", "links", "coverageBreakdown", "synthesisSuggestions"],
       },
     },
   });
@@ -181,5 +236,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     synthesis: result.synthesis,
     emergentPatterns: result.emergentPatterns,
     links: result.links,
+    coverageBreakdown: result.coverageBreakdown,
+    synthesisSuggestions: result.synthesisSuggestions,
   };
 }

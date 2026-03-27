@@ -196,25 +196,14 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
         <div className="space-y-6">
           {/* System Status */}
           {isSystemKeyActive && (
-            <div className="p-4 bg-databoard-green/10 border-2 border-databoard-green rounded-sm">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="p-4 bg-databoard-green/5 border-l-4 border-databoard-green">
+              <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 rounded-full bg-databoard-green animate-pulse" />
-                <span className="text-[10px] mono uppercase font-bold text-databoard-green">System Power Active</span>
+                <span className="text-[10px] mono uppercase font-bold text-databoard-green">System Key Active</span>
               </div>
-              <p className="text-[10px] mono leading-tight mb-3">
-                This board is currently powered by the host's shared key. Visitors can explore freely without setup.
+              <p className="text-[10px] mono leading-tight opacity-70">
+                This board is currently powered by a shared system key. Visitors can explore freely.
               </p>
-              <div className="p-2 bg-white/50 border border-databoard-green/20 rounded text-[9px] mono italic leading-tight">
-                <strong>Host Note:</strong> To prevent others from using your quota elsewhere, ensure this key is <strong>Domain Restricted</strong> in your Google Cloud Console.
-                <div className="mt-2 pt-2 border-t border-databoard-green/10">
-                  <span className="font-bold uppercase text-[8px] block mb-1">Allowed Domains:</span>
-                  <code className="block bg-ink/5 p-1 rounded text-[8px] break-all select-all">
-                    thedataboard.ai/*<br/>
-                    ais-dev-wjg3lmbwpvy6ws7p7ncc4s-164893380186.europe-west2.run.app/*<br/>
-                    ais-pre-wjg3lmbwpvy6ws7p7ncc4s-164893380186.europe-west2.run.app/*
-                  </code>
-                </div>
-              </div>
             </div>
           )}
 
@@ -262,12 +251,6 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
             />
           </div>
           
-          <div className="p-4 bg-red-500/5 border-l-4 border-red-500">
-            <p className="text-[10px] mono leading-tight">
-              <strong className="text-red-600 uppercase">Critical Security:</strong> Since this key powers a public website, you <strong>must</strong> restrict it to your domain in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" className="underline font-bold">Google Cloud Console</a>. This prevents unauthorized use of your quota.
-            </p>
-          </div>
-
           <div className="flex gap-2">
             <button 
               onClick={handleSave}
@@ -597,6 +580,25 @@ export default function App() {
     }
   };
 
+  const handleApplySynthesis = async (original: string[], replacement: string) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Remove original words
+      const filteredTiles = tiles.filter(t => !original.includes(t.word));
+      // Add replacement word
+      const existingWords = filteredTiles.map(t => t.word);
+      const newTile = await evaluateWord(scenario, replacement, existingWords);
+      setTiles([newTile, ...filteredTiles]);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to apply synthesis suggestion.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleGeminiSuggest = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -913,17 +915,36 @@ export default function App() {
                   {metrics.explanation}
                 </div>
 
-                <button
-                  onClick={() => {
-                    const text = `Check out my Data Board for "${scenario.title}"! Cohesion: ${metrics.cohesion}%, Coverage: ${metrics.coverage}%, Entropy: ${metrics.entropy}%. Explore at thedataboard.ai`;
-                    navigator.clipboard.writeText(text);
-                    alert("Board summary copied to clipboard! Share it on LinkedIn or Twitter.");
-                  }}
-                  className="w-full py-3 border-2 border-ink hover:bg-ink hover:text-bg transition-all flex items-center justify-center gap-2 mono text-[10px] uppercase tracking-widest font-bold"
-                >
-                  <Download className="w-3 h-3" />
-                  Share Board Results
-                </button>
+                {metrics.coverageBreakdown && (
+                  <div className="space-y-3 py-4 border-y border-ink/10">
+                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Coverage Breakdown</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-[9px] mono uppercase">
+                        <span>Demographics (Who)</span>
+                        <span>{metrics.coverageBreakdown.demographics}%</span>
+                      </div>
+                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                        <div className="h-full bg-databoard-green transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown.demographics}%` }} />
+                      </div>
+                      
+                      <div className="flex justify-between items-center text-[9px] mono uppercase">
+                        <span>Behaviors (What)</span>
+                        <span>{metrics.coverageBreakdown.behaviors}%</span>
+                      </div>
+                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                        <div className="h-full bg-databoard-yellow transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown.behaviors}%` }} />
+                      </div>
+
+                      <div className="flex justify-between items-center text-[9px] mono uppercase">
+                        <span>Drivers (Why)</span>
+                        <span>{metrics.coverageBreakdown.drivers}%</span>
+                      </div>
+                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                        <div className="h-full bg-databoard-red transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown.drivers}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {metrics.synthesis && (
                   <div className="p-4 border-2 border-ink bg-databoard-yellow/10">
@@ -945,6 +966,43 @@ export default function App() {
                         <span key={i} className="px-2 py-1 bg-ink/5 border border-ink/10 text-[9px] mono uppercase">
                           {pattern}
                         </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {metrics.synthesisSuggestions && metrics.synthesisSuggestions.length > 0 && (
+                  <div className="space-y-3 pt-4 border-t border-ink/10">
+                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-50 flex items-center gap-2">
+                      <Scale className="w-3 h-3" />
+                      Synthesis Opportunities
+                    </p>
+                    <div className="space-y-3">
+                      {metrics.synthesisSuggestions.map((suggestion, i) => (
+                        <div key={i} className="p-3 bg-databoard-yellow/5 border border-ink/10 flex flex-col gap-2">
+                          <div className="flex flex-wrap gap-1">
+                            {suggestion.original.map((word, j) => (
+                              <span key={j} className="px-1.5 py-0.5 bg-ink/5 text-[8px] mono line-through opacity-50">
+                                {word}
+                              </span>
+                            ))}
+                            <ChevronRight className="w-3 h-3 opacity-30" />
+                            <span className="px-1.5 py-0.5 bg-databoard-yellow text-ink text-[8px] mono font-bold">
+                              {suggestion.replacement}
+                            </span>
+                          </div>
+                          <p className="text-[9px] mono leading-tight opacity-70 italic">
+                            {suggestion.reasoning}
+                          </p>
+                          <button
+                            onClick={() => handleApplySynthesis(suggestion.original, suggestion.replacement)}
+                            disabled={isLoading}
+                            className="text-[8px] mono uppercase font-bold text-ink hover:underline text-left flex items-center gap-1 disabled:opacity-30"
+                          >
+                            <Zap className="w-2 h-2" />
+                            Apply Synthesis
+                          </button>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -996,6 +1054,40 @@ export default function App() {
               >
                 <Zap className="w-3 h-3" />
                 Load Research Sample Data
+              </button>
+            )}
+
+            {scenario.id === 'google-analytics' && tiles.length === 0 && (
+              <button
+                onClick={async () => {
+                  setIsLoading(true);
+                  const sampleTerms = [
+                    "Organic Search",
+                    "Direct Traffic",
+                    "Mobile Users",
+                    "United States",
+                    "Add to Cart",
+                    "Checkout Started",
+                    "Page Views",
+                    "Referral Path"
+                  ];
+                  try {
+                    const existingWords = tiles.map(t => t.word);
+                    const newTiles = await Promise.all(
+                      sampleTerms.map(term => evaluateWord(scenario, term, existingWords))
+                    );
+                    setTiles(prev => [...newTiles, ...prev]);
+                  } catch (err) {
+                    setError("Failed to load sample data.");
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                disabled={isLoading}
+                className="mt-6 w-full py-2 border-2 border-dashed border-ink/30 hover:border-ink hover:bg-ink/5 transition-all mono text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                <Zap className="w-3 h-3" />
+                Load GA4 Audit Sample Data
               </button>
             )}
           </section>
