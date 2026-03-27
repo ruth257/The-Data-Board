@@ -1,10 +1,20 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BoardMetrics, Centrality, Scenario, Tile } from "../types";
 
-const apiKey = process.env.GEMINI_API_KEY || "";
-const ai = new GoogleGenAI({ apiKey });
+const getAI = () => {
+  const apiKey = process.env.API_KEY || localStorage.getItem("GEMINI_API_KEY") || process.env.GEMINI_API_KEY || "";
+  return new GoogleGenAI({ apiKey });
+};
+
+const generateId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+};
 
 export async function evaluateWord(scenario: Scenario, word: string, existingWords: string[] = []): Promise<Tile> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `
@@ -58,7 +68,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
   const result = JSON.parse(response.text || "{}");
   
   return {
-    id: Math.random().toString(36).substr(2, 9),
+    id: generateId(),
     word: result.correctedWord || word,
     centrality: result.centrality as Centrality,
     explanation: result.explanation,
@@ -71,6 +81,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
 }
 
 export async function generateBestVocabulary(scenario: Scenario, existingWords: string[] = []): Promise<Tile[]> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `
@@ -120,7 +131,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
   const results = JSON.parse(response.text || "[]");
   
   return results.map((result: any) => ({
-    id: Math.random().toString(36).substr(2, 9),
+    id: generateId(),
     word: result.word,
     centrality: result.centrality as Centrality,
     explanation: result.explanation,
@@ -142,6 +153,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     };
   }
 
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `

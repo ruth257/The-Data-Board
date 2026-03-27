@@ -6,7 +6,16 @@ import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
 import { evaluateWord, generateBestVocabulary, calculateBoardMetrics } from "./services/geminiService";
 import { RelationshipGraph } from "./components/RelationshipGraph";
 
-const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+declare global {
+  interface Window {
+    aistudio?: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
+  }
+}
+
+const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void; key?: React.Key }) => {
   if (!isOpen) return null;
 
   return (
@@ -132,7 +141,142 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
   );
 };
 
-const Walkthrough = ({ onComplete }: { onComplete: () => void }) => {
+const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySelected, isSystemKeyActive }: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  onSelectPlatformKey: () => void;
+  isPlatformKeySelected: boolean;
+  isSystemKeyActive: boolean;
+  key?: React.Key 
+}) => {
+  const [apiKey, setApiKey] = useState(localStorage.getItem("GEMINI_API_KEY") || "");
+  const [isSaved, setIsSaved] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSave = () => {
+    localStorage.setItem("GEMINI_API_KEY", apiKey);
+    setIsSaved(true);
+    setTimeout(() => {
+      setIsSaved(false);
+      onClose();
+      window.location.reload();
+    }, 1500);
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/90 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        className="bg-bg w-full max-w-md border-2 border-ink p-8 shadow-[16px_16px_0px_0px_rgba(20,20,20,1)]"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-2">
+            <ShieldCheck className="w-6 h-6" /> Secure AI Setup
+          </h2>
+          <button onClick={onClose} className="p-1 hover:bg-ink hover:text-bg transition-colors">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          {/* System Status */}
+          {isSystemKeyActive && (
+            <div className="p-4 bg-databoard-green/5 border border-databoard-green/20 rounded-sm">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-2 h-2 rounded-full bg-databoard-green animate-pulse" />
+                <span className="text-[10px] mono uppercase font-bold text-databoard-green">System Key Active</span>
+              </div>
+              <p className="text-[9px] mono opacity-60 leading-tight">
+                This board is currently powered by the host's API key. You don't need to provide your own unless you want to use your own quota.
+              </p>
+            </div>
+          )}
+
+          {/* Platform Key Selection (Preferred) */}
+          <div className="p-4 bg-databoard-green/10 border-2 border-databoard-green/30">
+            <h3 className="text-xs mono uppercase font-bold mb-2 flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${isPlatformKeySelected ? 'bg-databoard-green' : 'bg-gray-300'}`} />
+              Platform Key Selection (Recommended)
+            </h3>
+            <p className="text-[10px] mono opacity-70 mb-4 leading-tight">
+              Use the built-in AI Studio key selector. This is the most secure way to connect your account.
+            </p>
+            <button 
+              onClick={onSelectPlatformKey}
+              className="w-full py-2 bg-databoard-green text-white mono uppercase font-bold text-[10px] hover:opacity-90 transition-opacity"
+            >
+              {isPlatformKeySelected ? "Key Selected" : "Select Platform Key"}
+            </button>
+            <p className="text-[9px] mono mt-2 opacity-50 italic">
+              * Required for Gemini 3 series models. See <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noreferrer" className="underline">billing docs</a>.
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-ink/10"></div>
+            </div>
+            <div className="relative flex justify-center text-[10px] mono uppercase">
+              <span className="bg-bg px-2 text-ink/40">Or manual entry</span>
+            </div>
+          </div>
+
+          {/* Manual Key Entry */}
+          <div>
+            <p className="text-[10px] mono uppercase opacity-60 mb-4 leading-relaxed">
+              To protect your privacy, we don't store API keys on our servers. Your key is saved locally in your browser.
+            </p>
+            <label className="block text-[10px] mono uppercase font-bold mb-1">Gemini API Key</label>
+            <input 
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="AIzaSy..."
+              className="w-full bg-white border-2 border-ink p-3 mono text-sm focus:outline-none focus:ring-2 focus:ring-databoard-yellow"
+            />
+          </div>
+          
+          <div className="p-4 bg-databoard-yellow/10 border-l-4 border-databoard-yellow">
+            <p className="text-[10px] mono leading-tight">
+              <strong>Security Tip:</strong> In your Google Cloud Console, restrict this key to only work on <strong>thedataboard.ai</strong>.
+            </p>
+          </div>
+
+          <button 
+            onClick={handleSave}
+            disabled={isSaved}
+            className={`w-full py-4 mono uppercase font-bold text-sm transition-all flex items-center justify-center gap-2
+              ${isSaved ? 'bg-databoard-green text-white' : 'bg-ink text-bg hover:translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(20,20,20,0.2)] active:translate-0 active:shadow-none'}
+            `}
+          >
+            {isSaved ? (
+              <>
+                <ShieldCheck className="w-4 h-4" /> Key Saved & Applied
+              </>
+            ) : (
+              'Save & Reload App'
+            )}
+          </button>
+          
+          <p className="text-[10px] mono text-center opacity-40">
+            Don't have a key? Get one for free at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline hover:text-ink">Google AI Studio</a>.
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const Walkthrough = ({ onComplete }: { onComplete: () => void; key?: React.Key }) => {
   const [step, setStep] = useState(0);
   
   const steps = [
@@ -231,9 +375,32 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTile, setSelectedTile] = useState<Tile | null>(null);
   const [showMethodology, setShowMethodology] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasApiKey, setHasApiKey] = useState(!!localStorage.getItem("GEMINI_API_KEY") || !!process.env.GEMINI_API_KEY || !!process.env.API_KEY);
+  const [isPlatformKeySelected, setIsPlatformKeySelected] = useState(false);
+  const [isSystemKeyActive] = useState(!!process.env.GEMINI_API_KEY);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const checkPlatformKey = async () => {
+      if (window.aistudio?.hasSelectedApiKey) {
+        const selected = await window.aistudio.hasSelectedApiKey();
+        setIsPlatformKeySelected(selected);
+        if (selected) setHasApiKey(true);
+      }
+    };
+    checkPlatformKey();
+  }, []);
+
+  const handleOpenSelectKey = async () => {
+    if (window.aistudio?.openSelectKey) {
+      await window.aistudio.openSelectKey();
+      setIsPlatformKeySelected(true);
+      setHasApiKey(true);
+    }
+  };
 
   useEffect(() => {
     const hasSeen = localStorage.getItem("hasSeenDataBoardWalkthrough");
@@ -279,9 +446,13 @@ export default function App() {
       const existingWords = tiles.map(t => t.word);
       const newTile = await evaluateWord(scenario, inputValue.trim(), existingWords);
       setTiles((prev) => {
-        // Prevent duplicates
+        // Prevent duplicates by word
         if (prev.some(t => t.word.toLowerCase() === newTile.word.toLowerCase())) {
           return prev;
+        }
+        // Ensure ID is unique (though generateId should handle it)
+        if (prev.some(t => t.id === newTile.id)) {
+          newTile.id = newTile.id + "-alt";
         }
         return [newTile, ...prev];
       });
@@ -304,8 +475,27 @@ export default function App() {
       const suggestions = await generateBestVocabulary(scenario, existingWords);
       setTiles((prev) => {
         const currentWords = new Set(prev.map(t => t.word.toLowerCase()));
-        const newSuggestions = suggestions.filter(s => !currentWords.has(s.word.toLowerCase()));
-        return [...newSuggestions, ...prev];
+        const currentIds = new Set(prev.map(t => t.id));
+        
+        const newSuggestions = suggestions.filter(s => {
+          const isNewWord = !currentWords.has(s.word.toLowerCase());
+          if (isNewWord && currentIds.has(s.id)) {
+            s.id = s.id + "-alt-" + Math.random().toString(36).substr(2, 5);
+          }
+          return isNewWord;
+        });
+
+        // Also filter out duplicates within suggestions itself
+        const uniqueNewSuggestions: Tile[] = [];
+        const seenWords = new Set();
+        for (const s of newSuggestions) {
+          if (!seenWords.has(s.word.toLowerCase())) {
+            seenWords.add(s.word.toLowerCase());
+            uniqueNewSuggestions.push(s);
+          }
+        }
+
+        return [...uniqueNewSuggestions, ...prev];
       });
     } catch (err) {
       console.error(err);
@@ -335,11 +525,22 @@ export default function App() {
       try {
         const importedTiles = JSON.parse(event.target?.result as string);
         if (Array.isArray(importedTiles)) {
-          // Basic validation: check if first item has required properties
+          // Basic validation
           if (importedTiles.length > 0 && (!importedTiles[0].word || !importedTiles[0].centrality)) {
             throw new Error("Invalid file format");
           }
-          setTiles(importedTiles);
+          
+          // Ensure unique IDs for imported tiles
+          const seenIds = new Set();
+          const uniqueImportedTiles = importedTiles.map(t => {
+            if (!t.id || seenIds.has(t.id)) {
+              t.id = (t.id || "imported") + "-" + Math.random().toString(36).substr(2, 9);
+            }
+            seenIds.add(t.id);
+            return t;
+          });
+
+          setTiles(uniqueImportedTiles);
           setSelectedTile(null);
         }
       } catch (err) {
@@ -363,8 +564,24 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col p-4 md:p-8 max-w-7xl mx-auto">
       <AnimatePresence>
-        {showWalkthrough && <Walkthrough onComplete={completeWalkthrough} />}
-        <MethodologyModal isOpen={showMethodology} onClose={() => setShowMethodology(false)} />
+        {showWalkthrough && <Walkthrough key="walkthrough" onComplete={completeWalkthrough} />}
+        {showMethodology && (
+          <MethodologyModal 
+            key="methodology-modal" 
+            isOpen={showMethodology} 
+            onClose={() => setShowMethodology(false)} 
+          />
+        )}
+        {isSettingsOpen && (
+          <SettingsModal 
+            key="settings-modal" 
+            isOpen={isSettingsOpen} 
+            onClose={() => setIsSettingsOpen(false)} 
+            onSelectPlatformKey={handleOpenSelectKey}
+            isPlatformKeySelected={isPlatformKeySelected}
+            isSystemKeyActive={isSystemKeyActive}
+          />
+        )}
       </AnimatePresence>
 
       {/* Header */}
@@ -383,6 +600,15 @@ export default function App() {
         </div>
         <div className="flex flex-col items-end gap-4">
           <div className="flex gap-2">
+            <button 
+              onClick={() => setIsSettingsOpen(true)}
+              className={`flex items-center gap-2 px-4 py-2 border-2 border-ink font-bold uppercase text-xs tracking-widest transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
+                ${!hasApiKey ? 'bg-databoard-yellow animate-pulse' : 'bg-bg hover:bg-ink hover:text-bg'}
+              `}
+            >
+              <ShieldCheck className="w-4 h-4" />
+              {!hasApiKey ? 'Setup AI Key' : 'AI Secure'}
+            </button>
             <button 
               onClick={() => setShowWalkthrough(true)}
               className="flex items-center gap-2 px-4 py-2 border-2 border-ink font-bold uppercase text-xs tracking-widest hover:bg-ink hover:text-bg transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
@@ -761,7 +987,7 @@ export default function App() {
               
               {/* Empty state placeholders */}
               {Array.from({ length: Math.max(0, 12 - tiles.length) }).map((_, i) => (
-                <div key={`empty-${i}`} className="data-cell opacity-5 pointer-events-none" />
+                <div key={`placeholder-${i}`} className="data-cell opacity-5 pointer-events-none" />
               ))}
             </AnimatePresence>
           </div>
