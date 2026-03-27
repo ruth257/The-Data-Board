@@ -196,14 +196,25 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
         <div className="space-y-6">
           {/* System Status */}
           {isSystemKeyActive && (
-            <div className="p-4 bg-databoard-green/5 border border-databoard-green/20 rounded-sm">
-              <div className="flex items-center gap-2 mb-1">
+            <div className="p-4 bg-databoard-green/10 border-2 border-databoard-green rounded-sm">
+              <div className="flex items-center gap-2 mb-2">
                 <div className="w-2 h-2 rounded-full bg-databoard-green animate-pulse" />
-                <span className="text-[10px] mono uppercase font-bold text-databoard-green">System Key Active</span>
+                <span className="text-[10px] mono uppercase font-bold text-databoard-green">System Power Active</span>
               </div>
-              <p className="text-[9px] mono opacity-60 leading-tight">
-                This board is currently powered by the host's API key. You don't need to provide your own unless you want to use your own quota.
+              <p className="text-[10px] mono leading-tight mb-3">
+                This board is currently powered by the host's shared key. Visitors can explore freely without setup.
               </p>
+              <div className="p-2 bg-white/50 border border-databoard-green/20 rounded text-[9px] mono italic leading-tight">
+                <strong>Host Note:</strong> To prevent others from using your quota elsewhere, ensure this key is <strong>Domain Restricted</strong> in your Google Cloud Console.
+                <div className="mt-2 pt-2 border-t border-databoard-green/10">
+                  <span className="font-bold uppercase text-[8px] block mb-1">Allowed Domains:</span>
+                  <code className="block bg-ink/5 p-1 rounded text-[8px] break-all select-all">
+                    thedataboard.ai/*<br/>
+                    ais-dev-wjg3lmbwpvy6ws7p7ncc4s-164893380186.europe-west2.run.app/*<br/>
+                    ais-pre-wjg3lmbwpvy6ws7p7ncc4s-164893380186.europe-west2.run.app/*
+                  </code>
+                </div>
+              </div>
             </div>
           )}
 
@@ -251,9 +262,9 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
             />
           </div>
           
-          <div className="p-4 bg-databoard-yellow/10 border-l-4 border-databoard-yellow">
+          <div className="p-4 bg-red-500/5 border-l-4 border-red-500">
             <p className="text-[10px] mono leading-tight">
-              <strong>Security Tip:</strong> In your Google Cloud Console, restrict this key to only work on <strong>thedataboard.ai</strong>.
+              <strong className="text-red-600 uppercase">Critical Security:</strong> Since this key powers a public website, you <strong>must</strong> restrict it to your domain in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" className="underline font-bold">Google Cloud Console</a>. This prevents unauthorized use of your quota.
             </p>
           </div>
 
@@ -396,14 +407,13 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSystemKeyActive] = useState(!!process.env.DATA_BOARD_KEY || !!process.env.GEMINI_API_KEY);
   const [hasApiKey, setHasApiKey] = useState(
     !!localStorage.getItem("GEMINI_API_KEY") || 
-    !!process.env.DATA_BOARD_API_KEY || 
-    !!process.env.GEMINI_API_KEY || 
+    isSystemKeyActive ||
     !!process.env.API_KEY
   );
   const [isPlatformKeySelected, setIsPlatformKeySelected] = useState(false);
-  const [isSystemKeyActive] = useState(!!process.env.DATA_BOARD_API_KEY || !!process.env.GEMINI_API_KEY);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -623,15 +633,26 @@ export default function App() {
         </div>
         <div className="flex flex-col items-end gap-4">
           <div className="flex gap-2">
-            <button 
-              onClick={() => setIsSettingsOpen(true)}
-              className={`flex items-center gap-2 px-4 py-2 border-2 border-ink font-bold uppercase text-xs tracking-widest transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
-                ${!hasApiKey ? 'bg-databoard-yellow animate-pulse' : 'bg-bg hover:bg-ink hover:text-bg'}
-              `}
-            >
-              <ShieldCheck className="w-4 h-4" />
-              {!hasApiKey ? 'Setup AI Key' : 'AI Secure'}
-            </button>
+            {!isSystemKeyActive && (
+              <button 
+                onClick={() => setIsSettingsOpen(true)}
+                className={`flex items-center gap-2 px-4 py-2 border-2 border-ink font-bold uppercase text-xs tracking-widest transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
+                  ${!hasApiKey ? 'bg-databoard-yellow animate-pulse' : 'bg-bg hover:bg-ink hover:text-bg'}
+                `}
+              >
+                <ShieldCheck className="w-4 h-4" />
+                {!hasApiKey ? 'Setup AI Key' : 'AI Secure'}
+              </button>
+            )}
+            {isSystemKeyActive && (
+              <button 
+                onClick={() => setIsSettingsOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 border-2 border-ink bg-databoard-green/10 font-bold uppercase text-xs tracking-widest hover:bg-ink hover:text-bg transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+              >
+                <ShieldCheck className="w-4 h-4 text-databoard-green" />
+                AI Powered
+              </button>
+            )}
             <button 
               onClick={() => setShowWalkthrough(true)}
               className="flex items-center gap-2 px-4 py-2 border-2 border-ink font-bold uppercase text-xs tracking-widest hover:bg-ink hover:text-bg transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
