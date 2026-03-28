@@ -1,19 +1,20 @@
-export enum Centrality {
-  GREEN = "GREEN", // Dominant/Central
-  YELLOW = "YELLOW", // Present but rare/not decisive
-  RED = "RED", // Edge case/Not grounded
+export enum EvidenceImpact {
+  DRIVER = "DRIVER", // Positive force/Growth driver
+  FRICTION = "FRICTION", // Negative force/Barrier
+  CONTEXT = "CONTEXT", // Neutral/Background information
 }
 
 export interface Tile {
   id: string;
-  word: string;
-  centrality: Centrality;
-  explanation: string;
+  word: string; // The "Handle" (1-3 words max)
+  impact: EvidenceImpact;
+  explanation: string; // The "Sharp Evidence" or "Grounding Observation"
   dataInsight?: string; // Specific data distribution or pattern
   source?: string; // Historical or scientific source
   category?: string;
   isAIConfirmed?: boolean; // The ★ mark
   relevanceScore?: number; // 0-100
+  specificityScore: number; // 0-100
 }
 
 export interface Scenario {
@@ -27,11 +28,12 @@ export interface Scenario {
 export interface BoardMetrics {
   cohesion: number; // 0-100
   coverage: number; // 0-100
-  entropy: number; // 0-100 (diversity of concepts)
+  entropy: number; // 0-100
+  sharpness: number; // 0-100 (Average specificity of findings)
   explanation: string;
-  synthesis?: string; // Original insight derived from the combination of words
-  emergentPatterns?: string[]; // Non-obvious connections identified
-  links?: { source: string; target: string; label: string }[]; // Semantic links between tiles
+  synthesis?: string; // The "Headline Insight" / Eureka Moment
+  emergentPatterns?: string[];
+  links?: { source: string; target: string; label: string }[];
   coverageBreakdown?: {
     demographics: number;
     behaviors: number;

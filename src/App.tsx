@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe } from "lucide-react";
 import { SCENARIOS } from "./constants";
-import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
+import { BoardMetrics, EvidenceImpact, Scenario, Tile } from "./types";
 import { evaluateWord, generateBestVocabulary, calculateBoardMetrics } from "./services/geminiService";
 import { RelationshipGraph } from "./components/RelationshipGraph";
 
@@ -155,19 +155,26 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
   if (!isOpen) return null;
 
   const handleSave = () => {
-    localStorage.setItem("GEMINI_API_KEY", apiKey);
+    if (!apiKey.trim()) {
+      localStorage.removeItem("GEMINI_API_KEY");
+    } else {
+      localStorage.setItem("GEMINI_API_KEY", apiKey.trim());
+    }
     setIsSaved(true);
     setTimeout(() => {
       setIsSaved(false);
       onClose();
+      // Use a slightly longer delay before reload to ensure user sees the success state
       window.location.reload();
-    }, 1500);
+    }, 1000);
   };
 
   const handleClear = () => {
-    localStorage.removeItem("GEMINI_API_KEY");
-    setApiKey("");
-    window.location.reload();
+    if (confirm("Clear manual API key?")) {
+      localStorage.removeItem("GEMINI_API_KEY");
+      setApiKey("");
+      window.location.reload();
+    }
   };
 
   return (
@@ -195,14 +202,24 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
 
         <div className="space-y-6">
           {/* System Status */}
-          {isSystemKeyActive && (
+          {isSystemKeyActive ? (
             <div className="p-4 bg-databoard-green/5 border-l-4 border-databoard-green">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 rounded-full bg-databoard-green animate-pulse" />
-                <span className="text-[10px] mono uppercase font-bold text-databoard-green">System Key Active</span>
+                <span className="text-[10px] mono uppercase font-bold text-databoard-green">Shared AI Active</span>
               </div>
               <p className="text-[10px] mono leading-tight opacity-70">
-                This board is currently powered by a shared system key. Visitors can explore freely.
+                This board is currently powered by a shared key. All users can explore freely without entering their own key.
+              </p>
+            </div>
+          ) : (
+            <div className="p-4 bg-databoard-red/5 border-l-4 border-databoard-red">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-2 h-2 rounded-full bg-databoard-red" />
+                <span className="text-[10px] mono uppercase font-bold text-databoard-red">Shared AI Inactive</span>
+              </div>
+              <p className="text-[10px] mono leading-tight opacity-70">
+                No shared key is configured. To enable AI for all users, add your key to the <strong>AI Studio Platform Settings</strong> as <code className="bg-ink/5 px-1">DATA_BOARD_KEY</code>.
               </p>
             </div>
           )}
@@ -387,6 +404,24 @@ const TileCard = React.memo(({
   isSelected: boolean, 
   onSelect: (tile: Tile | null) => void 
 }) => {
+  const getImpactColor = (impact: EvidenceImpact) => {
+    switch (impact) {
+      case EvidenceImpact.DRIVER: return "bg-databoard-green text-white";
+      case EvidenceImpact.FRICTION: return "bg-databoard-red text-white";
+      case EvidenceImpact.CONTEXT: return "bg-ink/10 text-ink";
+      default: return "bg-ink/10 text-ink";
+    }
+  };
+
+  const getImpactLabel = (impact: EvidenceImpact) => {
+    switch (impact) {
+      case EvidenceImpact.DRIVER: return "Driver";
+      case EvidenceImpact.FRICTION: return "Friction";
+      case EvidenceImpact.CONTEXT: return "Context";
+      default: return "Finding";
+    }
+  };
+
   return (
     <div className="relative perspective-1000">
       <motion.div
@@ -404,21 +439,24 @@ const TileCard = React.memo(({
       >
         {/* Front of Card */}
         <div className={`absolute inset-0 backface-hidden p-4 flex flex-col justify-between transition-all group border-t-4 ${
-          tile.centrality === Centrality.GREEN 
+          tile.impact === EvidenceImpact.DRIVER 
             ? "bg-databoard-green/5 border-t-databoard-green" 
-            : tile.centrality === Centrality.YELLOW 
-              ? "bg-databoard-yellow/5 border-t-databoard-yellow" 
-              : "bg-databoard-red/5 border-t-databoard-red"
+            : tile.impact === EvidenceImpact.FRICTION 
+              ? "bg-databoard-red/5 border-t-databoard-red" 
+              : "bg-ink/5 border-t-ink/20"
         } hover:bg-ink hover:text-bg`}>
           <div className="flex justify-between items-start">
-            <div className={`w-2 h-2 rounded-full ${
-              tile.centrality === Centrality.GREEN ? "bg-databoard-green" :
-              tile.centrality === Centrality.YELLOW ? "bg-databoard-yellow" :
-              "bg-databoard-red"
-            }`} />
-            {tile.isAIConfirmed && (
-              <Star className="w-3 h-3 fill-ink group-hover:fill-databoard-yellow" />
-            )}
+            <div className={`px-1.5 py-0.5 text-[8px] mono uppercase font-bold tracking-tighter ${getImpactColor(tile.impact)}`}>
+              {getImpactLabel(tile.impact)}
+            </div>
+            <div className="flex items-center gap-1">
+              {tile.specificityScore > 70 && (
+                <Zap className="w-3 h-3 text-databoard-green fill-databoard-green" />
+              )}
+              {tile.isAIConfirmed && (
+                <Star className="w-3 h-3 fill-ink group-hover:fill-databoard-yellow" />
+              )}
+            </div>
           </div>
           
           <div className="mt-8">
@@ -430,8 +468,16 @@ const TileCard = React.memo(({
             </h4>
           </div>
 
-          <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <ChevronRight className="w-4 h-4" />
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center gap-1">
+              <div className="w-8 h-1 bg-ink/10 rounded-full overflow-hidden">
+                <div className="h-full bg-ink/40" style={{ width: `${tile.specificityScore}%` }} />
+              </div>
+              <span className="text-[7px] mono opacity-30 uppercase">Sharpness</span>
+            </div>
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <ChevronRight className="w-4 h-4" />
+            </div>
           </div>
         </div>
 
@@ -442,15 +488,18 @@ const TileCard = React.memo(({
         >
           <div className="flex justify-between items-start mb-2">
             <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full mono text-ink ${
-              tile.centrality === Centrality.GREEN ? "bg-databoard-green" :
-              tile.centrality === Centrality.YELLOW ? "bg-databoard-yellow" :
-              "bg-databoard-red"
+              tile.impact === EvidenceImpact.DRIVER ? "bg-databoard-green" :
+              tile.impact === EvidenceImpact.FRICTION ? "bg-databoard-red" :
+              "bg-bg"
             }`}>
-              {tile.centrality}
+              {getImpactLabel(tile.impact)}
             </span>
-            <button onClick={(e) => { e.stopPropagation(); onSelect(null); }}>
-              <X className="w-3 h-3 opacity-50 hover:opacity-100" />
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] mono opacity-50">REL: {tile.relevanceScore}%</span>
+              <button onClick={(e) => { e.stopPropagation(); onSelect(null); }}>
+                <X className="w-3 h-3 opacity-50 hover:opacity-100" />
+              </button>
+            </div>
           </div>
           
           <div className="flex-grow">
@@ -477,8 +526,18 @@ const TileCard = React.memo(({
 });
 
 export default function App() {
-  const [scenario, setScenario] = useState<Scenario>(SCENARIOS[0]);
-  const [tiles, setTiles] = useState<Tile[]>([]);
+  const [scenario, setScenario] = useState<Scenario>(() => {
+    const saved = localStorage.getItem("databoard-scenario");
+    if (saved) {
+      const found = SCENARIOS.find(s => s.id === saved);
+      if (found) return found;
+    }
+    return SCENARIOS[0];
+  });
+  const [tiles, setTiles] = useState<Tile[]>(() => {
+    const saved = localStorage.getItem("databoard-tiles");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [metrics, setMetrics] = useState<BoardMetrics | null>(null);
   const [isMetricsLoading, setIsMetricsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -488,12 +547,29 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isSystemKeyActive] = useState(!!process.env.DATA_BOARD_KEY || !!process.env.GEMINI_API_KEY);
-  const [hasApiKey, setHasApiKey] = useState(
-    !!localStorage.getItem("GEMINI_API_KEY") || 
-    isSystemKeyActive ||
-    !!process.env.API_KEY
-  );
+  const [isSystemKeyActive, setIsSystemKeyActive] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
+
+  // Check for API key status on mount
+  useEffect(() => {
+    const checkKeyStatus = async () => {
+      const localKey = localStorage.getItem("GEMINI_API_KEY");
+      
+      try {
+        const response = await fetch("/api/ai/status");
+        const data = await response.json();
+        
+        // If we have a local key, it's active.
+        // If not, we check if the server has a shared key.
+        setHasApiKey(!!localKey || data.isReady); 
+        setIsSystemKeyActive(data.isReady && !localKey);
+      } catch (e) {
+        setHasApiKey(!!localKey);
+        setIsSystemKeyActive(false);
+      }
+    };
+    checkKeyStatus();
+  }, []);
   const [isPlatformKeySelected, setIsPlatformKeySelected] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -528,6 +604,15 @@ export default function App() {
     setShowWalkthrough(false);
   };
 
+  // Persist tiles and scenario
+  useEffect(() => {
+    localStorage.setItem("databoard-tiles", JSON.stringify(tiles));
+  }, [tiles]);
+
+  useEffect(() => {
+    localStorage.setItem("databoard-scenario", scenario.id);
+  }, [scenario]);
+
   // Update metrics when tiles change
   useEffect(() => {
     const updateMetrics = async () => {
@@ -539,8 +624,9 @@ export default function App() {
       try {
         const newMetrics = await calculateBoardMetrics(scenario, tiles);
         setMetrics(newMetrics);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Failed to update metrics", err);
+        setError(err.message || "Failed to update board metrics.");
       } finally {
         setIsMetricsLoading(false);
       }
@@ -564,17 +650,13 @@ export default function App() {
         if (prev.some(t => t.word.toLowerCase() === newTile.word.toLowerCase())) {
           return prev;
         }
-        // Ensure ID is unique (though generateId should handle it)
-        if (prev.some(t => t.id === newTile.id)) {
-          newTile.id = newTile.id + "-alt";
-        }
         return [newTile, ...prev];
       });
       setInputValue("");
       inputRef.current?.focus();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Failed to evaluate word. Please try again.");
+      setError(err.message || "Failed to evaluate word. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -591,9 +673,9 @@ export default function App() {
       const existingWords = filteredTiles.map(t => t.word);
       const newTile = await evaluateWord(scenario, replacement, existingWords);
       setTiles([newTile, ...filteredTiles]);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Failed to apply synthesis suggestion.");
+      setError(err.message || "Failed to apply synthesis suggestion.");
     } finally {
       setIsLoading(false);
     }
@@ -630,9 +712,9 @@ export default function App() {
 
         return [...uniqueNewSuggestions, ...prev];
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Failed to generate suggestions.");
+      setError(err.message || "Failed to generate suggestions.");
     } finally {
       setIsLoading(false);
     }
@@ -691,6 +773,7 @@ export default function App() {
       setTiles([]);
       setSelectedTile(null);
       setMetrics(null);
+      localStorage.removeItem("databoard-tiles");
     }
   };
 
@@ -875,38 +958,42 @@ export default function App() {
 
             {metrics ? (
               <div className="space-y-6">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center group relative cursor-help">
+                {metrics.synthesis && (
+                  <div className="p-5 border-2 border-ink bg-databoard-yellow/10 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-1 bg-ink text-white text-[8px] mono uppercase font-bold">
+                      Headline Insight
+                    </div>
+                    <p className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2 opacity-50">
+                      <Zap className="w-3 h-3" />
+                      The Eureka Moment
+                    </p>
+                    <p className="serif-italic text-xl leading-tight font-medium">
+                      "{metrics.synthesis}"
+                    </p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center group relative cursor-help border border-ink/10 p-3">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <p className="text-[8px] mono uppercase opacity-50">Cohesion</p>
                       <Info className="w-2 h-2 opacity-30" />
                     </div>
                     <p className="text-2xl font-black">{metrics.cohesion}%</p>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                      <p className="font-bold mb-1 uppercase text-databoard-yellow">Semantic Cohesion</p>
-                      Calculated using cosine similarity between vector embeddings. Measures the semantic density and focus of the vocabulary set.
+                      <p className="font-bold mb-1 uppercase text-databoard-yellow">Narrative Cohesion</p>
+                      Measures how well the specific findings connect to form a unified argument.
                     </div>
                   </div>
-                  <div className="text-center border-x border-ink/10 group relative cursor-help">
+                  <div className="text-center group relative cursor-help border border-ink/10 p-3">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <p className="text-[8px] mono uppercase opacity-50">Coverage</p>
-                      <Info className="w-2 h-2 opacity-30" />
+                      <p className="text-[8px] mono uppercase opacity-50">Sharpness</p>
+                      <Zap className="w-2 h-2 opacity-30" />
                     </div>
-                    <p className="text-2xl font-black">{metrics.coverage}%</p>
+                    <p className="text-2xl font-black">{metrics.sharpness}%</p>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                      <p className="font-bold mb-1 uppercase text-databoard-yellow">Thematic Coverage</p>
-                      A Bayesian estimate of thematic saturation. Measures how much of the scenario's defined semantic territory is represented.
-                    </div>
-                  </div>
-                  <div className="text-center group relative cursor-help">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <p className="text-[8px] mono uppercase opacity-50">Entropy</p>
-                      <Info className="w-2 h-2 opacity-30" />
-                    </div>
-                    <p className="text-2xl font-black">{metrics.entropy}%</p>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                      <p className="font-bold mb-1 uppercase text-databoard-yellow">Narrative Entropy</p>
-                      A modified Shannon Entropy calculation measuring conceptual diversity. High entropy prevents narrative echo chambers.
+                      <p className="font-bold mb-1 uppercase text-databoard-green">Finding Sharpness</p>
+                      Measures the specificity of your findings. High sharpness means data-backed observations.
                     </div>
                   </div>
                 </div>
@@ -915,48 +1002,34 @@ export default function App() {
                   {metrics.explanation}
                 </div>
 
-                {metrics.coverageBreakdown && (
-                  <div className="space-y-3 py-4 border-y border-ink/10">
-                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Coverage Breakdown</p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center text-[9px] mono uppercase">
-                        <span>Demographics (Who)</span>
-                        <span>{metrics.coverageBreakdown.demographics}%</span>
-                      </div>
-                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-databoard-green transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown.demographics}%` }} />
-                      </div>
-                      
-                      <div className="flex justify-between items-center text-[9px] mono uppercase">
-                        <span>Behaviors (What)</span>
-                        <span>{metrics.coverageBreakdown.behaviors}%</span>
-                      </div>
-                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-databoard-yellow transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown.behaviors}%` }} />
-                      </div>
+                <div className="space-y-3 py-4 border-y border-ink/10">
+                  <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Evidence Mix</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-[9px] mono uppercase">
+                      <span>Drivers (Growth)</span>
+                      <span>{metrics.coverageBreakdown?.drivers || 0}%</span>
+                    </div>
+                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                      <div className="h-full bg-databoard-green transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.drivers || 0}%` }} />
+                    </div>
+                    
+                    <div className="flex justify-between items-center text-[9px] mono uppercase">
+                      <span>Frictions (Barriers)</span>
+                      <span>{metrics.coverageBreakdown?.behaviors || 0}%</span>
+                    </div>
+                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                      <div className="h-full bg-databoard-red transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.behaviors || 0}%` }} />
+                    </div>
 
-                      <div className="flex justify-between items-center text-[9px] mono uppercase">
-                        <span>Drivers (Why)</span>
-                        <span>{metrics.coverageBreakdown.drivers}%</span>
-                      </div>
-                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-databoard-red transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown.drivers}%` }} />
-                      </div>
+                    <div className="flex justify-between items-center text-[9px] mono uppercase">
+                      <span>Context (Background)</span>
+                      <span>{metrics.coverageBreakdown?.demographics || 0}%</span>
+                    </div>
+                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                      <div className="h-full bg-ink/40 transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.demographics || 0}%` }} />
                     </div>
                   </div>
-                )}
-
-                {metrics.synthesis && (
-                  <div className="p-4 border-2 border-ink bg-databoard-yellow/10">
-                    <p className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                      <Zap className="w-3 h-3" />
-                      Original Synthesis
-                    </p>
-                    <p className="serif-italic text-sm leading-snug">
-                      "{metrics.synthesis}"
-                    </p>
-                  </div>
-                )}
+                </div>
 
                 {metrics.emergentPatterns && metrics.emergentPatterns.length > 0 && (
                   <div className="space-y-2">
@@ -1057,19 +1130,17 @@ export default function App() {
               </button>
             )}
 
-            {scenario.id === 'google-analytics' && tiles.length === 0 && (
+            {scenario.id === 'google-search-console' && tiles.length === 0 && (
               <button
                 onClick={async () => {
                   setIsLoading(true);
                   const sampleTerms = [
-                    "Organic Search",
-                    "Direct Traffic",
-                    "Mobile Users",
-                    "United States",
-                    "Add to Cart",
-                    "Checkout Started",
-                    "Page Views",
-                    "Referral Path"
+                    "CRM CTR Spike",
+                    "Core Update Drop",
+                    "Mobile CTR Gap",
+                    "Zero-Click Search",
+                    "Branded Loyalty",
+                    "Page Depth Friction"
                   ];
                   try {
                     const existingWords = tiles.map(t => t.word);
@@ -1077,8 +1148,8 @@ export default function App() {
                       sampleTerms.map(term => evaluateWord(scenario, term, existingWords))
                     );
                     setTiles(prev => [...newTiles, ...prev]);
-                  } catch (err) {
-                    setError("Failed to load sample data.");
+                  } catch (err: any) {
+                    setError(err.message || "Failed to load sample data.");
                   } finally {
                     setIsLoading(false);
                   }
@@ -1087,7 +1158,39 @@ export default function App() {
                 className="mt-6 w-full py-2 border-2 border-dashed border-ink/30 hover:border-ink hover:bg-ink/5 transition-all mono text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
               >
                 <Zap className="w-3 h-3" />
-                Load GA4 Audit Sample Data
+                Load GSC Audit Findings
+              </button>
+            )}
+
+            {scenario.id === 'spotify-trends' && tiles.length === 0 && (
+              <button
+                onClick={async () => {
+                  setIsLoading(true);
+                  const sampleTerms = [
+                    "Intro Friction",
+                    "Discover Retention",
+                    "TikTok Virality",
+                    "Morning Commute Skip",
+                    "Editorial Retention",
+                    "Global Threshold"
+                  ];
+                  try {
+                    const existingWords = tiles.map(t => t.word);
+                    const newTiles = await Promise.all(
+                      sampleTerms.map(term => evaluateWord(scenario, term, existingWords))
+                    );
+                    setTiles(prev => [...newTiles, ...prev]);
+                  } catch (err: any) {
+                    setError(err.message || "Failed to load sample data.");
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                disabled={isLoading}
+                className="mt-6 w-full py-2 border-2 border-dashed border-ink/30 hover:border-ink hover:bg-ink/5 transition-all mono text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                <Zap className="w-3 h-3" />
+                Load Spotify Trends Findings
               </button>
             )}
           </section>

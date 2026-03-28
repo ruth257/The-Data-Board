@@ -51,10 +51,17 @@ export const SCENARIOS: Scenario[] = [
     outcomes: ["Carbon Neutrality", "Environmental Crisis"],
   },
   {
-    id: "google-analytics",
-    title: "Google Analytics Audit",
-    description: "What drives conversion in the Google Merchandise Store?",
-    context: "Analyzing GA4 e-commerce data for the Google Merchandise Store. Focuses on the conversion funnel, attribution models, and user behavior. Include foundational variables like Demographics (Device Category, Country, Language), Behaviors (Session Duration, Add to Cart, Page Views), and Drivers (Marketing Source, Campaign Medium, Referral Path).",
-    outcomes: ["Conversion", "Churn"],
+    id: "google-search-console",
+    title: "Google Search Console Audit",
+    description: "What drives search visibility and click-through rates?",
+    context: "Analyzing organic search performance data. Focuses on the relationship between Impressions, Clicks, CTR, and Average Position. Include foundational variables like Demographics (Country, Device, Search Appearance), Behaviors (Query Intent, Page Depth), and Drivers (Algorithm Updates, Content Quality, Backlink Profile).",
+    outcomes: ["High Visibility", "Search Penalty"],
+  },
+  {
+    id: "spotify-trends",
+    title: "Spotify Streaming Trends",
+    description: "What makes a song go viral in the streaming era?",
+    context: "Analyzing Spotify's public streaming data and algorithmic playlists. Focuses on 'Discover Weekly' mechanics, skip rates, and genre shifts. Include foundational variables like Demographics (Gen Z Listeners, Global Markets), Behaviors (Skip Rate, Save-to-Collection, Repeat Plays), and Drivers (TikTok Virality, Editorial Playlisting, Mood-Based Search).",
+    outcomes: ["Chart-Topper", "One-Hit Wonder"],
   },
 ];
