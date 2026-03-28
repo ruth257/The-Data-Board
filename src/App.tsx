@@ -556,7 +556,20 @@ export default function App() {
       const localKey = localStorage.getItem("GEMINI_API_KEY");
       
       try {
-        const response = await fetch("/api/ai/status");
+        // First check server health
+        const healthUrl = `${window.location.origin}/api/health`;
+        console.log("Checking health at:", healthUrl);
+        const healthCheck = await fetch(healthUrl);
+        if (!healthCheck.ok) {
+          console.error("Server health check failed:", healthCheck.status);
+          setHasApiKey(!!localKey);
+          setIsSystemKeyActive(false);
+          return;
+        }
+
+        const statusUrl = `${window.location.origin}/api/ai/status`;
+        console.log("Checking status at:", statusUrl);
+        const response = await fetch(statusUrl);
         const contentType = response.headers.get("content-type");
         
         if (response.ok && contentType && contentType.includes("application/json")) {
@@ -566,11 +579,12 @@ export default function App() {
           setHasApiKey(!!localKey || data.isReady); 
           setIsSystemKeyActive(data.isReady);
         } else {
-          console.error("Status check failed:", response.status);
+          console.error("Status check failed:", response.status, contentType);
           setHasApiKey(!!localKey);
           setIsSystemKeyActive(false);
         }
       } catch (e) {
+        console.error("Connectivity error:", e);
         setHasApiKey(!!localKey);
         setIsSystemKeyActive(false);
       }
