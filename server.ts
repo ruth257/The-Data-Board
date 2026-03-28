@@ -43,7 +43,14 @@ async function startServer() {
       res.json(response);
     } catch (error: any) {
       console.error("AI Proxy Error:", error);
-      res.status(500).json({ error: error.message || "Internal Server Error" });
+      
+      // Handle specific Google API errors
+      let message = error.message || "Internal Server Error";
+      if (message.includes("SERVICE_DISABLED") || message.includes("has not been used in project")) {
+        message = "The 'Generative Language API' is disabled in your Google Cloud project. Please enable it in the Google Cloud Console to use the shared key.";
+      }
+      
+      res.status(500).json({ error: message });
     }
   });
 
