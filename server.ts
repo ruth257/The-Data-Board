@@ -48,6 +48,8 @@ async function startServer() {
       let message = error.message || "Internal Server Error";
       if (message.includes("SERVICE_DISABLED") || message.includes("has not been used in project")) {
         message = "The 'Generative Language API' is disabled in your Google Cloud project. Please enable it in the Google Cloud Console to use the shared key.";
+      } else if (message.includes("API_KEY_HTTP_REFERRER_BLOCKED")) {
+        message = "Your API key has 'Website restrictions' enabled, which blocks server-side requests. Please go to Google Cloud Console and set 'Application restrictions' to 'None' for this key.";
       }
       
       res.status(500).json({ error: message });
