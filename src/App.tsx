@@ -557,12 +557,19 @@ export default function App() {
       
       try {
         const response = await fetch("/api/ai/status");
-        const data = await response.json();
+        const contentType = response.headers.get("content-type");
         
-        // If we have a local key, it's active.
-        // If not, we check if the server has a shared key.
-        setHasApiKey(!!localKey || data.isReady); 
-        setIsSystemKeyActive(data.isReady && !localKey);
+        if (response.ok && contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          // If the server has a shared key, we consider the system key active.
+          // The service will still prioritize the local key if it exists.
+          setHasApiKey(!!localKey || data.isReady); 
+          setIsSystemKeyActive(data.isReady);
+        } else {
+          console.error("Status check failed:", response.status);
+          setHasApiKey(!!localKey);
+          setIsSystemKeyActive(false);
+        }
       } catch (e) {
         setHasApiKey(!!localKey);
         setIsSystemKeyActive(false);

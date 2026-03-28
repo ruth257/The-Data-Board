@@ -18,8 +18,22 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "AI request failed");
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const error = await response.json();
+      throw new Error(error.error || "AI request failed");
+    } else {
+      const text = await response.text();
+      console.error("Server returned non-JSON error:", text);
+      throw new Error(`Server error (${response.status}). Please check server logs.`);
+    }
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (!contentType || !contentType.includes("application/json")) {
+    const text = await response.text();
+    console.error("Server returned non-JSON response:", text);
+    throw new Error("Invalid response from server. Expected JSON.");
   }
 
   return await response.json();

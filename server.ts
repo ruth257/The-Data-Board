@@ -14,6 +14,7 @@ async function startServer() {
 
   // AI Status Endpoint
   app.get("/api/ai/status", (req, res) => {
+    console.log("[Data Board] GET /api/ai/status");
     const apiKey = process.env.DATA_BOARD_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY;
     res.json({ 
       isReady: !!apiKey,
@@ -23,6 +24,7 @@ async function startServer() {
 
   // Gemini Proxy Endpoint
   app.post("/api/ai/generate", async (req, res) => {
+    console.log("[Data Board] POST /api/ai/generate");
     try {
       const { model, contents, config } = req.body;
       
