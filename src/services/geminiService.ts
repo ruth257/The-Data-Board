@@ -1,42 +1,87 @@
 import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
 import { BoardMetrics, Centrality, Scenario, Tile } from "../types";
 
-const callAIProxy = async (model: string, contents: any, config: any) => {
-  const localKey = localStorage.getItem("GEMINI_API_KEY");
-  
-  // If user has a private key in localStorage, use it directly (client-side)
-  if (localKey) {
-    const ai = new GoogleGenAI({ apiKey: localKey });
-    return await ai.models.generateContent({ model, contents, config });
-  }
+const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 3, initialDelay = 1000): Promise<T> => {
+  let lastError: any;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      lastError = error;
+      const message = error.message?.toLowerCase() || "";
+      const is503 = message.includes("503") || message.includes("unavailable") || message.includes("high demand");
+      const is429 = message.includes("429") || message.includes("quota") || message.includes("rate limit") || message.includes("resource_exhausted");
+      
+      // Retry on 503 (busy) but NOT on 429 (quota) unless we want to wait a long time
+      // Actually, 429 usually means wait until next day or next minute. 
+      // If it's a "per minute" limit, retry might work. If it's "per day", it won't.
+      if (is503 && i < maxRetries - 1) {
+        const delay = initialDelay * Math.pow(2, i);
+        console.warn(`AI Service busy (503). Retrying in ${delay}ms... (Attempt ${i + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
 
-  // Otherwise, use the shared server-side proxy
-  const response = await fetch("/api/ai/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model, contents, config }),
-  });
+      // For 429, we don't retry automatically in this loop because it's usually a longer wait,
+      // but we throw a specific error that the UI can catch.
+      if (is429) {
+        throw new Error("QUOTA_EXHAUSTED: You have reached the free tier limit for the AI service. Please try again later or provide your own API key in Settings.");
+      }
 
-  if (!response.ok) {
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      const error = await response.json();
-      throw new Error(error.error || "AI request failed");
-    } else {
-      const text = await response.text();
-      console.error("Server returned non-JSON error:", text);
-      throw new Error(`Server error (${response.status}). Please check server logs.`);
+      throw error;
     }
   }
+  throw lastError;
+};
 
-  const contentType = response.headers.get("content-type");
-  if (!contentType || !contentType.includes("application/json")) {
-    const text = await response.text();
-    console.error("Server returned non-JSON response:", text);
-    throw new Error("Invalid response from server. Expected JSON.");
-  }
+const callAIProxy = async (model: string, contents: any, config: any) => {
+  return await withRetry(async () => {
+    const localKey = localStorage.getItem("GEMINI_API_KEY");
+    
+    // If user has a private key in localStorage, use it directly (client-side)
+    if (localKey) {
+      const ai = new GoogleGenAI({ apiKey: localKey });
+      return await ai.models.generateContent({ model, contents, config });
+    }
 
-  return await response.json();
+    // Otherwise, use the shared server-side proxy
+    const response = await fetch("/api/ai/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model, contents, config }),
+    });
+
+    if (!response.ok) {
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const error = await response.json();
+        // If error.error is an object, try to get the message or stringify it
+        let errorMessage = "AI request failed";
+        if (error.error) {
+          if (typeof error.error === 'object') {
+            errorMessage = error.error.message || JSON.stringify(error.error);
+          } else {
+            errorMessage = String(error.error);
+          }
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        throw new Error(errorMessage);
+      } else {
+        const text = await response.text();
+        console.error("Server returned non-JSON error:", text);
+        throw new Error(`Server error (${response.status}). ${text.includes("503") ? "The AI service is currently overloaded. Please try again in a few seconds." : "Please check server logs."}`);
+      }
+    }
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await response.text();
+      console.error("Server returned non-JSON response:", text);
+      throw new Error("Invalid response from server. Expected JSON.");
+    }
+
+    return await response.json();
+  });
 };
 
 const cleanJsonResponse = (text: string) => {
@@ -83,7 +128,6 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       Return JSON: correctedWord (The Handle), centrality (DOMINANT/PRESENT/EDGE_CASE), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
     `,
     {
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
@@ -144,9 +188,10 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       Existing: ${existingWords.join(", ")}
       
       Return JSON array: word (The Handle), centrality (DOMINANT/PRESENT/EDGE_CASE), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+      
+      CRITICAL: You MUST return at least 5 unique handles. If the 'Existing' list is long, find even more specific or nuanced handles that haven't been mentioned yet.
     `,
     {
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.ARRAY,
@@ -169,7 +214,16 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
     }
   );
 
-  const results = JSON.parse(cleanJsonResponse(response.text || "[]"));
+  const resultsRaw = response.text || "[]";
+  console.log("Raw AI Response for Vocabulary:", resultsRaw);
+  
+  let results;
+  try {
+    results = JSON.parse(cleanJsonResponse(resultsRaw));
+  } catch (e) {
+    console.error("Failed to parse AI response:", e);
+    results = [];
+  }
   
   return (Array.isArray(results) ? results : []).map((result: any) => ({
     id: generateId(),
@@ -215,7 +269,6 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
       Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, coverageBreakdown (dominant, present, edgeCase), synthesisSuggestions.
     `,
     {
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,

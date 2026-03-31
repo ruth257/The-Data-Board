@@ -634,28 +634,30 @@ export default function App() {
     localStorage.setItem("databoard-scenario", scenario.id);
   }, [scenario]);
 
-  // Update metrics when tiles change
-  useEffect(() => {
-    const updateMetrics = async () => {
-      if (tiles.length === 0) {
-        setMetrics(null);
-        return;
-      }
-      setIsMetricsLoading(true);
-      try {
-        const newMetrics = await calculateBoardMetrics(scenario, tiles);
-        setMetrics(newMetrics);
-      } catch (err: any) {
-        console.error("Failed to update metrics", err);
-        setError(err.message || "Failed to update board metrics.");
-      } finally {
-        setIsMetricsLoading(false);
-      }
-    };
+  const updateMetrics = async () => {
+    if (tiles.length === 0) {
+      setMetrics(null);
+      return;
+    }
+    setIsMetricsLoading(true);
+    setError(null);
+    try {
+      const newMetrics = await calculateBoardMetrics(scenario, tiles);
+      setMetrics(newMetrics);
+    } catch (err: any) {
+      console.error("Failed to update metrics", err);
+      setError(err.message || "Failed to update board metrics.");
+    } finally {
+      setIsMetricsLoading(false);
+    }
+  };
 
-    const timer = setTimeout(updateMetrics, 1000); // Debounce
-    return () => clearTimeout(timer);
-  }, [tiles, scenario]);
+  // Initial metrics update when tiles are loaded from storage
+  useEffect(() => {
+    if (tiles.length > 0 && !metrics) {
+      updateMetrics();
+    }
+  }, []);
 
   const handleAddWord = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -710,10 +712,10 @@ export default function App() {
     try {
       const existingWords = tiles.map(t => t.word);
       const suggestions = await generateBestVocabulary(scenario, existingWords);
-      console.log("Received suggestions:", suggestions);
+      console.log("Received suggestions from AI:", suggestions);
       
       if (!suggestions || suggestions.length === 0) {
-        setError("No new vocabulary suggestions found for this context.");
+        setError("The AI didn't return any new vocabulary for this context. Try adding a manual concept first.");
         return;
       }
 
@@ -729,17 +731,12 @@ export default function App() {
           return isNewWord;
         });
 
-        // Also filter out duplicates within suggestions itself
-        const uniqueNewSuggestions: Tile[] = [];
-        const seenWords = new Set();
-        for (const s of newSuggestions) {
-          if (!seenWords.has(s.word.toLowerCase())) {
-            seenWords.add(s.word.toLowerCase());
-            uniqueNewSuggestions.push(s);
-          }
+        if (newSuggestions.length === 0) {
+          setError("All suggested vocabulary already exists on the board.");
+          return prev;
         }
 
-        return [...uniqueNewSuggestions, ...prev];
+        return [...newSuggestions, ...prev];
       });
     } catch (err: any) {
       console.error(err);
@@ -966,9 +963,36 @@ export default function App() {
               {isLoading ? "Analyzing Subject..." : "Gemini: Suggest Vocabulary"}
             </button>
             {error && (
-              <div className="flex items-center gap-2 text-red-600 text-xs mono">
-                <AlertCircle className="w-3 h-3" />
-                {error}
+              <div className="flex flex-col gap-2 p-4 bg-red-500/10 border-l-4 border-red-500">
+                <div className="flex items-center gap-2 text-red-600 text-xs mono font-bold">
+                  <AlertCircle className="w-4 h-4" />
+                  {error.includes("QUOTA_EXHAUSTED") ? "AI Quota Exceeded" : "AI Error"}
+                </div>
+                <p className="text-[10px] mono text-red-600/80 leading-tight">
+                  {error.replace("QUOTA_EXHAUSTED: ", "")}
+                </p>
+                <div className="flex gap-2 mt-2">
+                  {error.includes("QUOTA_EXHAUSTED") && (
+                    <button 
+                      onClick={() => setIsSettingsOpen(true)}
+                      className="px-3 py-1.5 bg-red-600 text-white text-[10px] mono uppercase font-bold hover:bg-red-700 transition-colors"
+                    >
+                      Setup Private API Key
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => {
+                      setError(null);
+                      // If it was a vocabulary suggestion, retry it
+                      if (tiles.length === 0 && !inputValue) {
+                        handleGeminiSuggest();
+                      }
+                    }}
+                    className="px-3 py-1.5 border border-red-600 text-red-600 text-[10px] mono uppercase font-bold hover:bg-red-600 hover:text-white transition-colors"
+                  >
+                    Dismiss & Retry
+                  </button>
+                </div>
               </div>
             )}
           </section>
@@ -982,7 +1006,19 @@ export default function App() {
                   <HelpCircle className="w-3 h-3 opacity-30 hover:opacity-100 transition-opacity" />
                 </button>
               </div>
-              <Activity className={`w-4 h-4 ${isMetricsLoading ? "animate-pulse text-databoard-yellow" : "opacity-20"}`} />
+              <div className="flex items-center gap-3">
+                {tiles.length > 0 && (
+                  <button 
+                    onClick={updateMetrics}
+                    disabled={isMetricsLoading}
+                    className={`flex items-center gap-1 text-[9px] mono uppercase font-bold px-2 py-1 border border-ink/20 hover:bg-ink hover:text-bg transition-all ${isMetricsLoading ? 'animate-pulse' : ''}`}
+                  >
+                    <Zap className={`w-3 h-3 ${isMetricsLoading ? 'animate-spin' : ''}`} />
+                    {isMetricsLoading ? "Synthesizing..." : "Synthesize Board"}
+                  </button>
+                )}
+                <Activity className={`w-4 h-4 ${isMetricsLoading ? "animate-pulse text-databoard-yellow" : "opacity-20"}`} />
+              </div>
             </div>
 
             {metrics ? (
