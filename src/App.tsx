@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe } from "lucide-react";
 import { SCENARIOS } from "./constants";
-import { BoardMetrics, EvidenceImpact, Scenario, Tile } from "./types";
+import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
 import { evaluateWord, generateBestVocabulary, calculateBoardMetrics } from "./services/geminiService";
 import { RelationshipGraph } from "./components/RelationshipGraph";
 
@@ -34,9 +34,9 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       >
         <div className="flex justify-between items-start mb-8 border-b-2 border-ink pb-4">
           <div>
-            <h2 className="text-4xl font-black uppercase tracking-tighter">The Data Board Method</h2>
+            <h2 className="text-4xl font-black uppercase tracking-tighter">The Data Analysis Board</h2>
             <div className="flex items-center gap-3 mt-2">
-              <p className="mono text-xs uppercase tracking-widest opacity-50">Open Source Framework v1.0</p>
+              <p className="mono text-xs uppercase tracking-widest opacity-50">Analytical Framework v2.0</p>
               <div className="w-1 h-1 bg-ink/20 rounded-full" />
               <p className="mono text-xs uppercase tracking-widest font-bold">Created by Ruth Aharon</p>
               <div className="w-1 h-1 bg-ink/20 rounded-full" />
@@ -54,10 +54,10 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
               <Globe className="w-5 h-5" /> 1. The Open Source Method
             </h3>
             <p className="serif-italic text-lg leading-relaxed mb-4">
-              "Data is not just numbers; it is a narrative waiting to be structured."
+              "Data is not just numbers; it is a narrative that requires precise analytical vocabulary."
             </p>
             <p className="text-sm opacity-80 leading-relaxed">
-              The Data Board Method is a collaborative protocol for representing complex subjects. Instead of linear reports, we use a <strong>Vocabulary Grid</strong> to map the semantic territory of a problem. It allows teams to negotiate meaning, identify gaps, and validate insights through a shared language.
+              The Data Board Method is a collaborative protocol for analyzing complex subjects. Instead of abstract theories, we use a <strong>Semantic Vocabulary Grid</strong> to map the dominant segments, secondary factors, and edge cases revealed by data. It allows teams to negotiate meaning, bridge facts with deduction, and validate insights through a shared analytical language.
             </p>
             <div className="mt-6 p-4 bg-ink/5 border-l-4 border-ink">
               <p className="text-xs font-bold uppercase mb-2 flex items-center gap-2">
@@ -311,32 +311,32 @@ const Walkthrough = ({ onComplete }: { onComplete: () => void; key?: React.Key }
   const steps = [
     {
       title: "Welcome to Data Board",
-      description: "A collaborative framework for mapping complex subjects through structured vocabulary.",
+      description: "A collaborative framework for analyzing complex data sets through structured analytical vocabulary.",
       target: null
     },
     {
       title: "1. Select a Scenario",
-      description: "Choose a topic to audit. Each scenario provides a unique semantic context for the AI to evaluate your concepts.",
+      description: "Choose a data set or audit scenario. Each scenario provides a specific context for the AI to evaluate your analytical concepts.",
       target: "#scenario-selector"
     },
     {
-      title: "2. Propose Vocabulary",
-      description: "Type concepts you believe are central to the topic. The AI will audit them based on data and literature.",
+      title: "2. Propose Analytical Handles",
+      description: "Type metrics or patterns you believe are central to the data. The AI will audit them based on statistical grounding.",
       target: "#vocab-input"
     },
     {
       title: "3. AI Suggestions",
-      description: "Stuck? Let Gemini suggest high-impact vocabulary words that offer nuanced perspectives on the scenario.",
+      description: "Stuck? Let Gemini suggest high-impact analytical vocabulary that offers precise lenses for data analysis.",
       target: "#ai-suggestions"
     },
     {
       title: "4. Board Strength",
-      description: "Monitor the health of your board. Cohesion measures focus, Coverage measures depth, and Entropy measures diversity.",
+      description: "Monitor the health of your analysis. Cohesion measures focus, Coverage measures depth, and Sharpness measures data-grounding.",
       target: "#board-metrics"
     },
     {
-      title: "5. The Vocabulary Board",
-      description: "Explore your tiles. Green is central, Yellow is rare, and Red is an edge case or unsupported assumption.",
+      title: "5. The Semantic Board",
+      description: "Explore your tiles. Green is Dominant, Yellow is Present, and Red is an Edge Case or Assumption.",
       target: "#vocab-board"
     },
     {
@@ -404,20 +404,20 @@ const TileCard = React.memo(({
   isSelected: boolean, 
   onSelect: (tile: Tile | null) => void 
 }) => {
-  const getImpactColor = (impact: EvidenceImpact) => {
-    switch (impact) {
-      case EvidenceImpact.DRIVER: return "bg-databoard-green text-white";
-      case EvidenceImpact.FRICTION: return "bg-databoard-red text-white";
-      case EvidenceImpact.CONTEXT: return "bg-ink/10 text-ink";
+  const getCentralityColor = (centrality: Centrality) => {
+    switch (centrality) {
+      case Centrality.DOMINANT: return "bg-databoard-green text-white";
+      case Centrality.PRESENT: return "bg-databoard-yellow text-ink";
+      case Centrality.EDGE_CASE: return "bg-databoard-red text-white";
       default: return "bg-ink/10 text-ink";
     }
   };
 
-  const getImpactLabel = (impact: EvidenceImpact) => {
-    switch (impact) {
-      case EvidenceImpact.DRIVER: return "Driver";
-      case EvidenceImpact.FRICTION: return "Friction";
-      case EvidenceImpact.CONTEXT: return "Context";
+  const getCentralityLabel = (centrality: Centrality) => {
+    switch (centrality) {
+      case Centrality.DOMINANT: return "Dominant";
+      case Centrality.PRESENT: return "Present";
+      case Centrality.EDGE_CASE: return "Edge Case";
       default: return "Finding";
     }
   };
@@ -439,15 +439,15 @@ const TileCard = React.memo(({
       >
         {/* Front of Card */}
         <div className={`absolute inset-0 backface-hidden p-4 flex flex-col justify-between transition-all group border-t-4 ${
-          tile.impact === EvidenceImpact.DRIVER 
+          tile.centrality === Centrality.DOMINANT 
             ? "bg-databoard-green/5 border-t-databoard-green" 
-            : tile.impact === EvidenceImpact.FRICTION 
-              ? "bg-databoard-red/5 border-t-databoard-red" 
-              : "bg-ink/5 border-t-ink/20"
+            : tile.centrality === Centrality.PRESENT 
+              ? "bg-databoard-yellow/5 border-t-databoard-yellow" 
+              : "bg-databoard-red/5 border-t-databoard-red"
         } hover:bg-ink hover:text-bg`}>
           <div className="flex justify-between items-start">
-            <div className={`px-1.5 py-0.5 text-[8px] mono uppercase font-bold tracking-tighter ${getImpactColor(tile.impact)}`}>
-              {getImpactLabel(tile.impact)}
+            <div className={`px-1.5 py-0.5 text-[8px] mono uppercase font-bold tracking-tighter ${getCentralityColor(tile.centrality)}`}>
+              {getCentralityLabel(tile.centrality)}
             </div>
             <div className="flex items-center gap-1">
               {tile.specificityScore > 70 && (
@@ -488,11 +488,11 @@ const TileCard = React.memo(({
         >
           <div className="flex justify-between items-start mb-2">
             <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full mono text-ink ${
-              tile.impact === EvidenceImpact.DRIVER ? "bg-databoard-green" :
-              tile.impact === EvidenceImpact.FRICTION ? "bg-databoard-red" :
-              "bg-bg"
+              tile.centrality === Centrality.DOMINANT ? "bg-databoard-green" :
+              tile.centrality === Centrality.PRESENT ? "bg-databoard-yellow" :
+              "bg-databoard-red"
             }`}>
-              {getImpactLabel(tile.impact)}
+              {getCentralityLabel(tile.centrality)}
             </span>
             <div className="flex items-center gap-2">
               <span className="text-[8px] mono opacity-50">REL: {tile.relevanceScore}%</span>
@@ -706,9 +706,17 @@ export default function App() {
     if (isLoading) return;
     setIsLoading(true);
     setError(null);
+    console.log("Suggesting vocabulary for scenario:", scenario.title);
     try {
       const existingWords = tiles.map(t => t.word);
       const suggestions = await generateBestVocabulary(scenario, existingWords);
+      console.log("Received suggestions:", suggestions);
+      
+      if (!suggestions || suggestions.length === 0) {
+        setError("No new vocabulary suggestions found for this context.");
+        return;
+      }
+
       setTiles((prev) => {
         const currentWords = new Set(prev.map(t => t.word.toLowerCase()));
         const currentIds = new Set(prev.map(t => t.id));
@@ -832,7 +840,7 @@ export default function App() {
             The Data Board
           </h1>
           <p className="text-lg serif-italic mt-2 opacity-70">
-            Mapping Data Sets & Complex Subjects through structured vocabulary.
+            Analyzing Data Sets & Complex Subjects through structured analytical vocabulary.
           </p>
         </div>
         <div className="flex flex-col items-end gap-4">
@@ -924,7 +932,7 @@ export default function App() {
           {/* Propose Vocabulary */}
           <section className="flex flex-col gap-4">
             <h2 className="text-xs uppercase tracking-widest font-bold opacity-50">
-              Propose Vocabulary
+              Propose a Handle
             </h2>
             <form id="vocab-input" onSubmit={handleAddWord} className="relative">
               <input
@@ -932,7 +940,7 @@ export default function App() {
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Type a concept..."
+                placeholder="Type a segment, driver, or adjective..."
                 disabled={isLoading}
                 className="w-full bg-transparent border-b-2 border-ink py-4 px-2 text-2xl focus:outline-none placeholder:opacity-20 mono"
               />
@@ -955,7 +963,7 @@ export default function App() {
               className="flex items-center justify-center gap-2 w-full py-3 border border-ink/20 hover:border-ink hover:bg-ink hover:text-bg transition-all mono text-xs uppercase tracking-widest disabled:opacity-50"
             >
               <Star className={`w-4 h-4 ${isLoading ? 'animate-pulse' : ''}`} />
-              {isLoading ? "Analyzing Data..." : "Gemini: Suggest Vocabulary"}
+              {isLoading ? "Analyzing Subject..." : "Gemini: Suggest Vocabulary"}
             </button>
             {error && (
               <div className="flex items-center gap-2 text-red-600 text-xs mono">
@@ -1024,30 +1032,30 @@ export default function App() {
                 </div>
 
                 <div className="space-y-3 py-4 border-y border-ink/10">
-                  <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Evidence Mix</p>
+                  <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Centrality Mix</p>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-[9px] mono uppercase">
-                      <span>Drivers (Growth)</span>
-                      <span>{metrics.coverageBreakdown?.drivers || 0}%</span>
+                      <span>Dominant (Major)</span>
+                      <span>{metrics.coverageBreakdown?.dominant || 0}%</span>
                     </div>
                     <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-databoard-green transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.drivers || 0}%` }} />
+                      <div className="h-full bg-databoard-green transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.dominant || 0}%` }} />
                     </div>
                     
                     <div className="flex justify-between items-center text-[9px] mono uppercase">
-                      <span>Frictions (Barriers)</span>
-                      <span>{metrics.coverageBreakdown?.behaviors || 0}%</span>
+                      <span>Present (Secondary)</span>
+                      <span>{metrics.coverageBreakdown?.present || 0}%</span>
                     </div>
                     <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-databoard-red transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.behaviors || 0}%` }} />
+                      <div className="h-full bg-databoard-yellow transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.present || 0}%` }} />
                     </div>
-
+ 
                     <div className="flex justify-between items-center text-[9px] mono uppercase">
-                      <span>Context (Background)</span>
-                      <span>{metrics.coverageBreakdown?.demographics || 0}%</span>
+                      <span>Edge Case (Assumption)</span>
+                      <span>{metrics.coverageBreakdown?.edgeCase || 0}%</span>
                     </div>
                     <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-ink/40 transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.demographics || 0}%` }} />
+                      <div className="h-full bg-databoard-red transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.edgeCase || 0}%` }} />
                     </div>
                   </div>
                 </div>
@@ -1272,15 +1280,15 @@ export default function App() {
           <div className="flex flex-wrap gap-6 mt-4 p-4 border border-ink/10 bg-white/20 rounded">
             <div className="flex items-center gap-2 text-[10px] mono uppercase">
               <div className="w-2 h-2 rounded-full bg-databoard-green" />
-              <span>Dominant / Central</span>
+              <span>Dominant (Major Segment)</span>
             </div>
             <div className="flex items-center gap-2 text-[10px] mono uppercase">
               <div className="w-2 h-2 rounded-full bg-databoard-yellow" />
-              <span>Present / Rare</span>
+              <span>Present (Secondary Factor)</span>
             </div>
             <div className="flex items-center gap-2 text-[10px] mono uppercase">
               <div className="w-2 h-2 rounded-full bg-databoard-red" />
-              <span>Edge Case / Assumption</span>
+              <span>Edge Case (Outlier / Assumption)</span>
             </div>
             <div className="flex items-center gap-2 text-[10px] mono uppercase">
               <Star className="w-2 h-2 fill-databoard-yellow" />

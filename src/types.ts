@@ -1,13 +1,13 @@
-export enum EvidenceImpact {
-  DRIVER = "DRIVER", // Positive force/Growth driver
-  FRICTION = "FRICTION", // Negative force/Barrier
-  CONTEXT = "CONTEXT", // Neutral/Background information
+export enum Centrality {
+  DOMINANT = "DOMINANT", // Green: Central/Major driver
+  PRESENT = "PRESENT",   // Yellow: Present/Secondary
+  EDGE_CASE = "EDGE_CASE", // Red: Outlier/Assumption
 }
 
 export interface Tile {
   id: string;
-  word: string; // The "Handle" (1-3 words max)
-  impact: EvidenceImpact;
+  word: string; // The "Handle" (Descriptive finding, segment, or adjective)
+  centrality: Centrality;
   explanation: string; // The "Sharp Evidence" or "Grounding Observation"
   dataInsight?: string; // Specific data distribution or pattern
   source?: string; // Historical or scientific source
@@ -35,9 +35,9 @@ export interface BoardMetrics {
   emergentPatterns?: string[];
   links?: { source: string; target: string; label: string }[];
   coverageBreakdown?: {
-    demographics: number;
-    behaviors: number;
-    drivers: number;
+    dominant: number;
+    present: number;
+    edgeCase: number;
   };
   synthesisSuggestions?: { original: string[]; replacement: string; reasoning: string }[];
 }

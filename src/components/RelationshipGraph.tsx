@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import { Tile } from "../types";
+import { Tile, Centrality } from "../types";
 
 interface Node extends d3.SimulationNodeDatum {
   id: string;
   word: string;
-  centrality: string;
+  centrality: Centrality;
 }
 
 interface Link extends d3.SimulationLinkDatum<Node> {
@@ -105,9 +105,12 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = React.memo(({
       .attr("x", d => -(d.word.length * 8 + 20) / 2)
       .attr("y", -12)
       .attr("fill", d => {
-        if (d.centrality === "GREEN") return "#00FF00";
-        if (d.centrality === "YELLOW") return "#FFFF00";
-        return "#FF0000";
+        switch (d.centrality) {
+          case Centrality.DOMINANT: return "#00FF00"; // Green
+          case Centrality.PRESENT: return "#FFD700";  // Yellow
+          case Centrality.EDGE_CASE: return "#FF4444"; // Red
+          default: return "#E4E3E0";
+        }
       })
       .attr("stroke", "#141414")
       .attr("stroke-width", 2);

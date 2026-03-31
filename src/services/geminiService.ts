@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
-import { BoardMetrics, EvidenceImpact, Scenario, Tile } from "../types";
+import { BoardMetrics, Centrality, Scenario, Tile } from "../types";
 
 const callAIProxy = async (model: string, contents: any, config: any) => {
   const localKey = localStorage.getItem("GEMINI_API_KEY");
@@ -58,27 +58,29 @@ const generateId = () => {
 export async function evaluateWord(scenario: Scenario, word: string, existingWords: string[] = []): Promise<Tile> {
   const response = await callAIProxy("gemini-3-flash-preview", 
     `
-      Evaluate the vocabulary word "${word}" for scenario "${scenario.title}".
+      Evaluate the descriptive handle "${word}" for the subject: "${scenario.title}".
       
-      THE HANDLE DIRECTIVE:
-      - The 'correctedWord' MUST be a punchy "Handle" (1-3 words max). 
-      - Example: If user types "Skip Rate", keep it as "Skip Rate" or "High Skip Rate".
+      THE BRIDGE DIRECTIVE:
+      - Bridge raw facts with a sharp semantic deduction.
+      - The 'correctedWord' MUST be a punchy "Descriptive Handle" (1-3 words max). 
+      - Prioritize segments, adjectives, or drivers (e.g., "Female", "Weekends", "Impulsive", "Mobile-First").
+      - Include high-level concepts or theories (e.g., "Global South", "Paradox of Choice") ONLY if they are semantically cohesive and essential for a complete analysis of the subject.
+      - AVOID technical metric names (like "CTR") unless they are the primary finding.
       
       THE EVIDENCE DIRECTIVE (The "Sharp Finding"):
-      - The 'explanation' MUST be a specific, data-backed observation that grounds this word in the dataset.
-      - Use "Pseudo-Antonyms" internally to find the sharpest contrast.
-      - Example: For "Skip Rate", the evidence might be "40% spike in skips during 30s+ intros for Gen Z."
+      - The 'explanation' MUST be a specific, data-grounded observation.
+      - Ground the handle in actual data distributions or behavioral patterns.
       
-      IMPACT CATEGORIES:
-      - DRIVER: A force pushing towards a positive outcome.
-      - FRICTION: A barrier or negative force.
-      - CONTEXT: Background data that provides necessary framing.
+      CENTRALITY CATEGORIES:
+      - DOMINANT: A major driver or the bulk of the data (Green).
+      - PRESENT: A secondary but real factor (Yellow).
+      - EDGE_CASE: An outlier, a rare segment, or a common assumption that is actually false (Red).
       
       Context: ${scenario.context}
       Outcomes: ${scenario.outcomes.join(", ")}
-      Existing Findings: ${existingWords.join(", ")}
+      Existing Board: ${existingWords.join(", ")}
       
-      Return JSON: correctedWord (The Handle), impact (DRIVER/FRICTION/CONTEXT), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+      Return JSON: correctedWord (The Handle), centrality (DOMINANT/PRESENT/EDGE_CASE), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
     `,
     {
       thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
@@ -87,7 +89,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
         type: Type.OBJECT,
         properties: {
           correctedWord: { type: Type.STRING },
-          impact: { type: Type.STRING, enum: ["DRIVER", "FRICTION", "CONTEXT"] },
+          centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
           explanation: { type: Type.STRING },
           dataInsight: { type: Type.STRING },
           source: { type: Type.STRING },
@@ -96,7 +98,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
           relevanceScore: { type: Type.NUMBER },
           specificityScore: { type: Type.NUMBER },
         },
-        required: ["correctedWord", "impact", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
+        required: ["correctedWord", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
       },
     }
   );
@@ -106,7 +108,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
   return {
     id: generateId(),
     word: result.correctedWord || word,
-    impact: result.impact as EvidenceImpact,
+    centrality: result.centrality as Centrality,
     explanation: result.explanation || "No explanation provided.",
     dataInsight: result.dataInsight || "No specific data insight available.",
     source: result.source || "General Knowledge",
@@ -120,23 +122,28 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
 export async function generateBestVocabulary(scenario: Scenario, existingWords: string[] = []): Promise<Tile[]> {
   const response = await callAIProxy("gemini-3-flash-preview",
     `
-      Suggest 5-8 "Handles" (Vocabulary Words) for scenario: "${scenario.title}".
+      Suggest 5-8 "Analytical Handles" (Vocabulary) for the subject: "${scenario.title}".
       
-      THE EXPERT METHOD (Pseudo-Antonyms):
-      - Brainstorm categories that create order in the problem space.
-      - Use "Pseudo-Antonyms" (contextual opposites) to define boundaries.
-      - Example: If you suggest "Jazz", also suggest "Non-English" if they represent a behavioral split.
-      - Example: "Traveler" vs "Mom" as customer personas.
+      THE ANALYSIS METHOD:
+      - Identify the most descriptive segments, adjectives, or drivers revealed by the data.
+      - Use "Pseudo-Antonyms" to define semantic boundaries (e.g., "Mobile-First" vs "Desktop-Legacy").
+      - Focus on vocabulary that is useful for *discussing* and *analyzing* the reality of the subject.
+      - Prioritize descriptive findings, but include high-level concepts or theories (e.g., "Global South", "Paradox of Choice") if they are semantically cohesive and required for the board to be complete.
       
       THE HANDLE DIRECTIVE:
-      - The 'word' MUST be a punchy handle (1-3 words max).
-      - The 'explanation' MUST be the "Sharp Evidence" supporting that handle.
+      - The 'word' MUST be a punchy descriptive handle (1-3 words max).
+      - The 'explanation' MUST be the "Sharp Evidence" or "Data Grounding" for that handle.
+      
+      CENTRALITY CATEGORIES:
+      - DOMINANT: A major driver or the bulk of the data (Green).
+      - PRESENT: A secondary but real factor (Yellow).
+      - EDGE_CASE: An outlier, a rare segment, or a common assumption that is actually false (Red).
       
       Context: ${scenario.context}
       Outcomes: ${scenario.outcomes.join(", ")}
       Existing: ${existingWords.join(", ")}
       
-      Return JSON array: word (The Handle), impact (DRIVER/FRICTION/CONTEXT), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+      Return JSON array: word (The Handle), centrality (DOMINANT/PRESENT/EDGE_CASE), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
     `,
     {
       thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
@@ -147,7 +154,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
           type: Type.OBJECT,
           properties: {
             word: { type: Type.STRING },
-            impact: { type: Type.STRING, enum: ["DRIVER", "FRICTION", "CONTEXT"] },
+            centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
             explanation: { type: Type.STRING },
             dataInsight: { type: Type.STRING },
             source: { type: Type.STRING },
@@ -156,7 +163,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
             relevanceScore: { type: Type.NUMBER },
             specificityScore: { type: Type.NUMBER },
           },
-          required: ["word", "impact", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
+          required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
         },
       },
     }
@@ -167,7 +174,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
   return (Array.isArray(results) ? results : []).map((result: any) => ({
     id: generateId(),
     word: result.word || "Unknown",
-    impact: (result.impact as EvidenceImpact) || EvidenceImpact.CONTEXT,
+    centrality: (result.centrality as Centrality) || Centrality.PRESENT,
     explanation: result.explanation || "No explanation provided.",
     dataInsight: result.dataInsight || "No specific data insight available.",
     source: result.source || "General Knowledge",
@@ -198,14 +205,14 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
       
       METRICS DEFINITION (0-100):
       - COHESION: How well do these specific handles connect to form a unified argument?
-      - COVERAGE: Do we have a balance of DRIVERS, FRICTIONS, and CONTEXT?
+      - COVERAGE: Do we have a balance of DOMINANT, PRESENT, and EDGE_CASE handles?
       - SHARPNESS: Average specificity of the evidence backing these handles.
       
       SYNTHESIS (The Eureka Moment): 
       - Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion.
       - The insight should feel like it was "found" by looking at the handles above.
       
-      Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, coverageBreakdown, synthesisSuggestions.
+      Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, coverageBreakdown (dominant, present, edgeCase), synthesisSuggestions.
     `,
     {
       thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
@@ -235,11 +242,11 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
           coverageBreakdown: {
             type: Type.OBJECT,
             properties: {
-              demographics: { type: Type.NUMBER },
-              behaviors: { type: Type.NUMBER },
-              drivers: { type: Type.NUMBER },
+              dominant: { type: Type.NUMBER },
+              present: { type: Type.NUMBER },
+              edgeCase: { type: Type.NUMBER },
             },
-            required: ["demographics", "behaviors", "drivers"],
+            required: ["dominant", "present", "edgeCase"],
           },
           synthesisSuggestions: {
             type: Type.ARRAY,
@@ -269,7 +276,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     synthesis: result.synthesis,
     emergentPatterns: result.emergentPatterns || [],
     links: result.links || [],
-    coverageBreakdown: result.coverageBreakdown || { demographics: 0, behaviors: 0, drivers: 0 },
+    coverageBreakdown: result.coverageBreakdown || { dominant: 0, present: 0, edgeCase: 0 },
     synthesisSuggestions: Array.isArray(result.synthesisSuggestions) ? result.synthesisSuggestions : [],
   };
 }
