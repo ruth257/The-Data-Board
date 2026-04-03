@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe } from "lucide-react";
+import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText } from "lucide-react";
+import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
 import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
-import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, auditCausalTension } from "./services/geminiService";
+import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, auditCausalTension, analyzeCSVData } from "./services/geminiService";
 import { RelationshipGraph } from "./components/RelationshipGraph";
 
 declare global {
@@ -51,32 +52,44 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
         <div className="grid md:grid-cols-2 gap-12">
           <section>
             <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <ShieldCheck className="w-5 h-5" /> The Problem
+              <ShieldCheck className="w-5 h-5" /> The Premise
             </h3>
             <p className="text-sm opacity-80 leading-relaxed mb-4">
-              Data analysis produces correlational anecdotes that cannot be elevated to consistent narratives because the variable sets are collections, not vocabularies. Each finding is locally defensible but globally incoherent.
+              Data analysis is a combination of <strong>qualitative</strong> and <strong>quantitative</strong> reasoning. Standard tools often force a choice between "gut feel" and "raw numbers," leading to local findings that are globally incoherent.
             </p>
             <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <Zap className="w-5 h-5" /> Why it happens
+              <Zap className="w-5 h-5" /> The Bridge
             </h3>
             <p className="text-sm opacity-80 leading-relaxed">
-              Variables are selected for measurability and statistical relevance — not for narrative coherence or conceptual coverage. The result is a set of findings that point in different directions from different starting points.
+              The Databoard uses AI to bridge these two worlds. It merges conceptual "handles" with quantitative evidence into a single, solid process. This creates the <strong>Deducible Space</strong>—a conceptual foundation where narrative follows logic.
             </p>
           </section>
 
           <section>
             <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <Activity className="w-5 h-5" /> What the Databoard does
+              <Activity className="w-5 h-5" /> The Methodology
             </h3>
-            <p className="text-sm opacity-80 leading-relaxed mb-4">
-              It constructs the <strong>Deducible Space</strong>. Human domain knowledge proposes the concepts. AI evaluates their grounding and coherence. Pseudo-antonym pairs introduce the structural tension that makes deduction inevitable. The result is not a set of findings — it is a space from which consistent narrative follows.
-            </p>
-            <div className="p-4 bg-ink text-bg border-2 border-ink">
-              <h3 className="text-xs font-bold uppercase mb-2 flex items-center gap-2">
-                <Scale className="w-4 h-4" /> Theoretical Contribution
-              </h3>
+            <div className="space-y-4">
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-ink text-bg flex items-center justify-center text-[10px] font-bold shrink-0">1</div>
+                <p className="text-sm opacity-80"><strong>Conceptualization:</strong> Propose the core concepts (either via human insight or autonomous AI generation from raw data).</p>
+              </div>
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-ink text-bg flex items-center justify-center text-[10px] font-bold shrink-0">2</div>
+                <p className="text-sm opacity-80"><strong>Quantitative Grounding:</strong> AI validates these concepts against the data to ensure they are factually anchored.</p>
+              </div>
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-ink text-bg flex items-center justify-center text-[10px] font-bold shrink-0">3</div>
+                <p className="text-sm opacity-80"><strong>Structural Tension:</strong> We use <strong>Pseudo-Antonyms©</strong> to define the boundaries of the problem and make deduction inevitable.</p>
+              </div>
+            </div>
+            <div className="mt-6 p-4 bg-ink text-bg border-2 border-ink">
               <p className="text-[10px] mono leading-tight opacity-80">
-                The formalisation of the deducible space as a prerequisite for narrative causal reasoning — sitting upstream of Pearl's causal graphs and providing the conceptual foundation they assume.
+                The Databoard sits upstream of causal graphs, providing the conceptual foundation that standard analysis usually assumes but rarely defines.
+                <br /><br />
+                * The term "Pseudo-Antonyms" is a proprietary conceptual framework created by Ruth Aharon.
+                <br /><br />
+                * <strong>License:</strong> MIT License with a Profit-Sharing Clause. Commercial use of this framework requires a profit-sharing agreement with the creator. For non-commercial use, the framework is open-source under CC BY-SA 4.0.
               </p>
             </div>
           </section>
@@ -527,13 +540,18 @@ const TileCard = React.memo(({
 });
 
 export default function App() {
+  const [scenarios, setScenarios] = useState<Scenario[]>(() => {
+    const saved = localStorage.getItem("databoard-custom-scenarios");
+    const custom = saved ? JSON.parse(saved) : [];
+    return [...SCENARIOS, ...custom];
+  });
   const [scenario, setScenario] = useState<Scenario>(() => {
     const saved = localStorage.getItem("databoard-scenario");
     if (saved) {
-      const found = SCENARIOS.find(s => s.id === saved);
+      const found = scenarios.find(s => s.id === saved);
       if (found) return found;
     }
-    return SCENARIOS[0];
+    return scenarios[0];
   });
   const [tiles, setTiles] = useState<Tile[]>(() => {
     const saved = localStorage.getItem("databoard-tiles");
@@ -615,6 +633,29 @@ export default function App() {
     };
     checkKeyStatus();
   }, []);
+  // Re-check key status when settings modal opens
+  useEffect(() => {
+    if (isSettingsOpen) {
+      const checkKeyStatus = async () => {
+        try {
+          const localKey = localStorage.getItem("GEMINI_API_KEY");
+          const statusUrl = `${window.location.origin}/api/ai/status`;
+          const response = await fetch(statusUrl);
+          const contentType = response.headers.get("content-type");
+          
+          if (response.ok && contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            setHasApiKey(!!localKey || data.isReady); 
+            setIsSystemKeyActive(data.isReady);
+            setSystemStatus({ source: data.source, maskedKey: data.maskedKey });
+          }
+        } catch (e) {
+          console.error("Status re-check failed:", e);
+        }
+      };
+      checkKeyStatus();
+    }
+  }, [isSettingsOpen]);
   const [isPlatformKeySelected, setIsPlatformKeySelected] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -795,36 +836,68 @@ export default function App() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const importedTiles = JSON.parse(event.target?.result as string);
-        if (Array.isArray(importedTiles)) {
-          // Basic validation
-          if (importedTiles.length > 0 && (!importedTiles[0].word || !importedTiles[0].centrality)) {
-            throw new Error("Invalid file format");
-          }
-          
-          // Ensure unique IDs for imported tiles
-          const seenIds = new Set();
-          const uniqueImportedTiles = importedTiles.map(t => {
-            if (!t.id || seenIds.has(t.id)) {
-              t.id = (t.id || "imported") + "-" + Math.random().toString(36).substr(2, 9);
-            }
-            seenIds.add(t.id);
-            return t;
-          });
+    setIsLoading(true);
+    setError(null);
 
-          setTiles(uniqueImportedTiles);
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const content = event.target?.result as string;
+        
+        if (file.name.endsWith('.json')) {
+          const importedTiles = JSON.parse(content);
+          if (Array.isArray(importedTiles)) {
+            if (importedTiles.length > 0 && (!importedTiles[0].word || !importedTiles[0].centrality)) {
+              throw new Error("Invalid Databoard JSON format");
+            }
+            
+            const seenIds = new Set();
+            const uniqueImportedTiles = importedTiles.map(t => {
+              if (!t.id || seenIds.has(t.id)) {
+                t.id = (t.id || "imported") + "-" + Math.random().toString(36).substr(2, 9);
+              }
+              seenIds.add(t.id);
+              return t;
+            });
+
+            setTiles(uniqueImportedTiles);
+            setSelectedTile(null);
+          }
+        } else if (file.name.endsWith('.csv')) {
+          // Parse CSV
+          const results = Papa.parse(content, { header: true, skipEmptyLines: true });
+          if (results.errors.length > 0) {
+            throw new Error("Failed to parse CSV file.");
+          }
+
+          // Take a sample of the data for AI analysis (first 20 rows)
+          const sample = results.data.slice(0, 20);
+          const sampleStr = JSON.stringify(sample);
+
+          // Call AI to analyze and generate scenario + tiles
+          const { scenario: newScenario, tiles: newTiles } = await analyzeCSVData(sampleStr);
+          
+          setScenarios(prev => {
+            const updated = [...prev, newScenario];
+            localStorage.setItem("databoard-custom-scenarios", JSON.stringify(updated.filter(s => s.id.startsWith('custom-'))));
+            return updated;
+          });
+          setScenario(newScenario);
+          setTiles(newTiles);
           setSelectedTile(null);
+          
+          // Add to scenarios list if it's not there (though SCENARIOS is a constant, 
+          // we'll just handle it via state for the current session)
+          console.log("New scenario generated:", newScenario);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
-        setError("Failed to import file. Please ensure it's a valid Databoard JSON.");
+        setError(`Import failed: ${err.message || "Invalid file format"}`);
+      } finally {
+        setIsLoading(false);
       }
     };
     reader.readAsText(file);
-    // Reset input value so same file can be imported again if needed
     e.target.value = "";
   };
 
@@ -940,7 +1013,7 @@ export default function App() {
               <select
                 value={scenario.id}
                 onChange={(e) => {
-                  const s = SCENARIOS.find((s) => s.id === e.target.value);
+                  const s = scenarios.find((s) => s.id === e.target.value);
                   if (s) {
                     setScenario(s);
                     setTiles([]);
@@ -949,7 +1022,7 @@ export default function App() {
                 }}
                 className="bg-transparent border-b-2 border-ink py-2 pr-8 focus:outline-none mono text-sm cursor-pointer"
               >
-                {SCENARIOS.map((s) => (
+                {scenarios.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.title}
                   </option>
@@ -1329,10 +1402,10 @@ export default function App() {
               <div className="flex gap-4">
                 <label className="flex items-center gap-1 text-[10px] mono uppercase opacity-30 hover:opacity-100 transition-opacity cursor-pointer">
                   <Upload className="w-3 h-3" />
-                  Import JSON
+                  Import CSV/JSON
                   <input 
                     type="file" 
-                    accept=".json" 
+                    accept=".csv,.json" 
                     onChange={handleImport} 
                     className="hidden" 
                   />
@@ -1394,6 +1467,12 @@ export default function App() {
           </div>
           {metrics?.links && metrics.links.length > 0 && (
             <div className="mt-8">
+              <div className="mb-4 p-3 border border-ink/10 bg-ink/5 flex items-start gap-3">
+                <Info className="w-4 h-4 mt-0.5 opacity-40 shrink-0" />
+                <p className="text-[10px] mono uppercase leading-tight opacity-60">
+                  Clusters indicate narrative themes. Detached nodes represent conceptual gaps—bridge them with new handles to find the global story.
+                </p>
+              </div>
               <RelationshipGraph tiles={tiles} links={metrics.links} />
             </div>
           )}
@@ -1406,7 +1485,10 @@ export default function App() {
           <p className="text-xs mono uppercase mb-2 font-bold">The Open Source Method — Created by Ruth Aharon</p>
           <p className="text-sm serif-italic leading-tight">
             "A rejected word is not a failure. It reveals an assumption the group was making without knowing it."
-            The Data Board framework is licensed under CC BY-SA 4.0.
+            <br /><br />
+            The Data Board framework and the Pseudo-Antonyms© methodology are proprietary conceptual frameworks created by Ruth Aharon.
+            <br /><br />
+            <strong>License:</strong> MIT License with a Profit-Sharing Clause. Commercial use of this framework requires a profit-sharing agreement with the creator. For non-commercial use, the framework is open-source under CC BY-SA 4.0.
           </p>
           <div className="flex gap-4 mt-4">
             <p className="text-[10px] mono uppercase">

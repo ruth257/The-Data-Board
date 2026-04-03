@@ -139,8 +139,10 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       
       THE HUMAN DOMAIN DIRECTIVE:
       - Use "Human Domain Vocabulary": descriptive segments, demographics, and clear factual categories.
-      - Examples: "Female", "Global South", "High-Income", "Mobile Users", "Weekends", "First Class".
+      - PSEUDO-ANTONYMS©: Identify the "Deducible Space" by finding opposing categories or variables that define the boundaries of the problem.
+      - These handles should be the "Building Blocks" that ground the initial reasoning.
       - FORBIDDEN: Do NOT use abstract analytical handles (e.g., "Logistical Scarcity", "Socio-Economic Stratification", "Friction-Gravity").
+      - The 'correctedWord' should be a simple, recognizable term that a human observer would use to describe a segment of data.
       - The 'correctedWord' should be a simple, recognizable term that a human observer would use to describe a segment of data.
       - If the input word is already a simple human term, do NOT change it.
       
@@ -203,8 +205,10 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       THE HUMAN DOMAIN METHOD:
       - Create a set of 5-8 handles that a human observer or data analyst would first identify as "Facts" or "Segments".
       - Use descriptive segments, demographics, and clear factual categories.
-      - Examples: "Female", "Global South", "English-speaking countries", "Mobile Users", "Weekends", "First Class".
+      - PSEUDO-ANTONYMS©: Identify the "Deducible Space" by finding opposing categories or variables that define the boundaries of the problem.
+      - These handles should be the "Building Blocks" that ground the initial reasoning.
       - FORBIDDEN: Do NOT use "Smartass" analytical handles (e.g., "Logistical Scarcity", "Production-Velocity", "Inertia").
+      - Focus on "What" and "Who" before "Why".
       - These should be the "Building Blocks" that ground the initial reasoning.
       - Focus on "What" and "Who" before "Why".
       
@@ -279,7 +283,7 @@ export async function auditCausalTension(scenario: Scenario, tile: Tile): Promis
       Perform a "Causal Audit" on the handle "${tile.word}" for the subject: "${scenario.title}".
       
       THE SURGICAL TENSION DIRECTIVE:
-      - Identify the "Shadow" or "Pseudo-Antonym" of this concept that defines its causal boundary.
+      - Identify the "Shadow" or "Pseudo-Antonym©" of this concept that defines its causal boundary.
       - If "${tile.word}" is a driver, what is the counter-driver or the hidden cost?
       - The goal is to create a "Tension Pair" that supercharges human deduction.
       - Keep the "Shadow Handle" grounded and recognizable. Avoid overly abstract jargon.
@@ -340,14 +344,16 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     `
       Evaluate the "Eureka Potential" of this board for scenario: "${scenario.title}".
       
-      THE BOARD (Human Domain Vocabulary):
+      THE BOARD (Vocabulary):
       ${tiles.map(t => `- [${t.word}]: ${t.explanation}`).join("\n")}
       
-      THE DEDUCIBLE SPACE FORMALIZATION (AI Synthesis):
-      - This is where you elevate the "Human" terms into "Analytical Handles".
-      - For the 'synthesisSuggestions', identify groups of human terms and suggest a single "Deducible Space" handle to replace them.
-      - These handles should be punchy, analytical, and tension-bearing (e.g., "Production-Velocity", "Friction-Gravity", "Inertia").
-      - Use "Pseudo-Antonyms" to introduce structural tension.
+      DEDUCTION & SYNTHESIS:
+      - Use the EXACT vocabulary from the board above as much as possible.
+      - Bridge these terms using human-like logical deduction.
+      - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" between the board's terms. How does one term potentially conflict with or constrain another?
+      - Use these tensions to find non-obvious, innovative deductions that go beyond simple summaries.
+      - For 'synthesisSuggestions', identify groups of terms that naturally combine into a more powerful concept.
+      - The 'explanation' should be a grounded, logical narrative of how these factors interact.
       
       THE SEMANTIC MAP (Links):
       - Identify 3-6 "Causal Links" between the tiles CURRENTLY ON THE BOARD.
@@ -355,13 +361,13 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
       - If you use a word that is not in the list, the link will be broken.
       
       METRICS DEFINITION (0-100):
-      - COHESION: How well do these specific handles connect to form a unified argument?
-      - COVERAGE: Do we have a balance of DOMINANT, PRESENT, and EDGE_CASE handles?
-      - SHARPNESS: Average specificity of the evidence backing these handles.
+      - COHESION: How well do these terms connect to form a unified, logical argument?
+      - COVERAGE: How well does the board cover the breadth of the scenario?
+      - SHARPNESS: How specific and grounded is the evidence for these connections?
       
       SYNTHESIS (The Eureka Moment): 
-      - Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the elevated analytical vocabulary.
-      - The insight should feel like it was "found" by looking at the handles above.
+      - Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the board's vocabulary.
+      - It should feel like a grounded, human-like deduction.
       
       Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, coverageBreakdown (dominant, present, edgeCase), synthesisSuggestions.
     `,
@@ -430,3 +436,79 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     synthesisSuggestions: Array.isArray(result.synthesisSuggestions) ? result.synthesisSuggestions : [],
   };
 }
+
+/**
+ * Analyzes CSV data to generate a new scenario and initial vocabulary.
+ */
+export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Scenario, tiles: Tile[] }> => {
+  const response = await callAIProxy("gemini-3-flash-preview",
+    `
+      Analyze this CSV data sample and generate a "Databoard Scenario" and an initial "Vocabulary Board".
+      
+      CSV DATA SAMPLE:
+      ${csvSample}
+      
+      INSTRUCTIONS:
+      1. Guess the context/scenario of the data. 
+      2. Create a Scenario: title, description, and context.
+      3. Generate 8-12 initial "Vocabulary Tiles" (handles).
+      4. CRITICAL: The tiles should NOT be trivial (don't just use column names).
+      5. PSEUDO-ANTONYMS© & STRUCTURAL TENSIONS: Identify the "Deducible Space" by finding opposing categories or variables that define the boundaries of the problem.
+      6. Look for variables that create a "map" of the problem. If a variable exists, what is its counter-force or its opposite segment?
+      7. These "Pseudo-Antonyms©" should be the basis for your vocabulary. They create the "Deducible Space" for analysis.
+      8. For each tile, provide a word, centrality (DOMINANT, PRESENT, EDGE_CASE), and a brief explanation/dataInsight.
+      
+      Return JSON: 
+      {
+        "scenario": { "title": "...", "description": "...", "context": "..." },
+        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "category": "..." } ]
+      }
+    `,
+    {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          scenario: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              description: { type: Type.STRING },
+              context: { type: Type.STRING }
+            },
+            required: ["title", "description", "context"]
+          },
+          tiles: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                word: { type: Type.STRING },
+                centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
+                explanation: { type: Type.STRING },
+                dataInsight: { type: Type.STRING },
+                category: { type: Type.STRING }
+              },
+              required: ["word", "centrality", "explanation", "dataInsight", "category"]
+            }
+          }
+        },
+        required: ["scenario", "tiles"]
+      }
+    }
+  );
+
+  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
+  
+  const scenario: Scenario = {
+    id: `custom-${Date.now()}`,
+    ...result.scenario
+  };
+
+  const tiles: Tile[] = (result.tiles || []).map((t: any, i: number) => ({
+    id: `tile-${Date.now()}-${i}`,
+    ...t
+  }));
+
+  return { scenario, tiles };
+};
