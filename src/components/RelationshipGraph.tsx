@@ -162,7 +162,7 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = React.memo(({
   }, [tiles, links, dimensions]);
 
   return (
-    <div ref={containerRef} className="w-full h-full min-h-[400px] border-2 border-ink bg-white relative overflow-hidden">
+    <div ref={containerRef} className="w-full h-[600px] border-2 border-ink bg-white relative overflow-hidden">
       <div className="absolute top-2 left-2 flex items-center gap-2">
         <div className="w-2 h-2 rounded-full bg-ink animate-pulse" />
         <span className="text-[8px] mono uppercase tracking-widest font-bold">Semantic Relationship Map</span>
