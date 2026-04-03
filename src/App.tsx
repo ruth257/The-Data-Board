@@ -271,7 +271,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
             />
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2">
             <button 
               onClick={handleSave}
               disabled={isSaved}
@@ -288,15 +288,24 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
               )}
             </button>
             
-            {localStorage.getItem("GEMINI_API_KEY") && (
+            <div className="flex gap-2">
               <button 
-                onClick={handleClear}
-                className="px-4 py-4 bg-red-500/10 text-red-500 border-2 border-red-500/20 hover:bg-red-500 hover:text-white transition-all mono uppercase font-bold text-[10px]"
-                title="Clear manual key"
+                onClick={() => window.location.reload()}
+                className="flex-1 py-2 bg-ink/5 text-ink/60 border border-ink/10 hover:bg-ink/10 transition-all mono uppercase font-bold text-[10px] flex items-center justify-center gap-2"
               >
-                Clear
+                <RefreshCw className="w-3 h-3" /> Force Re-check
               </button>
-            )}
+              
+              {localStorage.getItem("GEMINI_API_KEY") && (
+                <button 
+                  onClick={handleClear}
+                  className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all mono uppercase font-bold text-[10px]"
+                  title="Clear manual key"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
           
           <p className="text-[10px] mono text-center opacity-40">
@@ -1521,6 +1530,12 @@ export default function App() {
           <p className="text-[10px] mono uppercase">
             Licensed under CC BY-SA 4.0
           </p>
+          <div className="flex items-center justify-end gap-2 text-[10px] mono uppercase">
+            <div className={`w-1.5 h-1.5 rounded-full ${isSystemKeyActive ? 'bg-databoard-green animate-pulse' : 'bg-databoard-red'}`} />
+            <span className={isSystemKeyActive ? 'text-databoard-green' : 'text-databoard-red'}>
+              Shared AI: {isSystemKeyActive ? 'Active' : 'Inactive'}
+            </span>
+          </div>
           <p className="text-[10px] mono uppercase">
             Built with Google Gemini
           </p>
