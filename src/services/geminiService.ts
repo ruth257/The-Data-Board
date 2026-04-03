@@ -91,7 +91,7 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
         throw new Error(errorMessage);
       } else {
         const text = await response.text();
-        console.error("Server returned non-JSON error:", text);
+        console.error(`[Data Board] Server error (${response.status}):`, text);
         throw new Error(`Server error (${response.status}). ${text.includes("503") ? "The AI service is currently overloaded. Please try again in a few seconds." : "Please check server logs."}`);
       }
     }
