@@ -124,26 +124,17 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
   );
 };
 
-const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySelected, isSystemKeyActive }: { 
+const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySelected, isSystemKeyActive, systemStatus }: { 
   isOpen: boolean; 
   onClose: () => void; 
   onSelectPlatformKey: () => void;
   isPlatformKeySelected: boolean;
   isSystemKeyActive: boolean;
+  systemStatus: { source: string, maskedKey: string | null } | null;
   key?: React.Key 
 }) => {
   const [apiKey, setApiKey] = useState(localStorage.getItem("GEMINI_API_KEY") || "");
   const [isSaved, setIsSaved] = useState(false);
-  const [systemStatus, setSystemStatus] = useState<{ source: string, maskedKey: string | null } | null>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      fetch("/api/ai/status")
-        .then(res => res.json())
-        .then(data => setSystemStatus(data))
-        .catch(err => console.error("Failed to fetch system status", err));
-    }
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -218,7 +209,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
                 <span className="text-[10px] mono uppercase font-bold text-databoard-red">Shared AI Inactive</span>
               </div>
               <p className="text-[10px] mono leading-tight opacity-70">
-                No shared key is configured. To enable AI for all users, add your key to the <strong>AI Studio Platform Settings</strong> as <code className="bg-ink/5 px-1">WEBSITE_API_KEY</code> (or <code className="bg-ink/5 px-1">DATA_BOARD_KEY</code>).
+                No shared key is configured. To enable AI for all users, add your key to the <strong>AI Studio Platform Settings</strong> as <code className="bg-ink/5 px-1 font-bold">WEBSITE_API_KEY</code>.
               </p>
             </div>
           )}
@@ -558,6 +549,27 @@ export default function App() {
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSystemKeyActive, setIsSystemKeyActive] = useState(false);
+  const [systemStatus, setSystemStatus] = useState<{ source: string, maskedKey: string | null } | null>(null);
+  const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
+
+  // Handle retry countdown
+  useEffect(() => {
+    if (error?.includes("RETRY_AFTER:")) {
+      const match = error.match(/RETRY_AFTER:(\d+)/);
+      if (match) {
+        setRetryCountdown(parseInt(match[1]));
+      }
+    } else {
+      setRetryCountdown(null);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (retryCountdown !== null && retryCountdown > 0) {
+      const timer = setTimeout(() => setRetryCountdown(retryCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [retryCountdown]);
   const [hasApiKey, setHasApiKey] = useState(false);
   const [auditingTileId, setAuditingTileId] = useState<string | null>(null);
 
@@ -589,6 +601,7 @@ export default function App() {
           // The service will still prioritize the local key if it exists.
           setHasApiKey(!!localKey || data.isReady); 
           setIsSystemKeyActive(data.isReady);
+          setSystemStatus({ source: data.source, maskedKey: data.maskedKey });
         } else {
           console.error("Status check failed:", response.status, contentType);
           setHasApiKey(!!localKey);
@@ -843,6 +856,7 @@ export default function App() {
             onSelectPlatformKey={handleOpenSelectKey}
             isPlatformKeySelected={isPlatformKeySelected}
             isSystemKeyActive={isSystemKeyActive}
+            systemStatus={systemStatus}
           />
         )}
       </AnimatePresence>
@@ -1003,8 +1017,15 @@ export default function App() {
                 <p className="text-[10px] mono text-red-600/80 leading-tight">
                   {error.includes("SERVER_WARMUP") 
                     ? "The server is still starting up after a code update. This usually takes 5-10 seconds. Please wait a moment and try again." 
-                    : error.replace("QUOTA_EXHAUSTED: ", "")}
+                    : error.includes("RETRY_AFTER:")
+                      ? error.split("(RETRY_AFTER:")[0].replace("QUOTA_EXHAUSTED: ", "")
+                      : error.replace("QUOTA_EXHAUSTED: ", "")}
                 </p>
+                {retryCountdown !== null && (
+                  <div className="mt-1 text-[10px] mono font-bold text-red-600">
+                    {retryCountdown > 0 ? `Retry available in ${retryCountdown}s...` : "Ready to retry!"}
+                  </div>
+                )}
                 <div className="flex gap-2 mt-2">
                   {error.includes("QUOTA_EXHAUSTED") && (
                     <button 
@@ -1019,15 +1040,16 @@ export default function App() {
                       const prevError = error;
                       setError(null);
                       // Context-aware retry
-                      if (prevError.includes("metrics") || prevError.includes("Synthesize") || prevError.includes("SERVER_WARMUP")) {
+                      if (prevError.includes("metrics") || prevError.includes("Synthesize") || prevError.includes("SERVER_WARMUP") || prevError.includes("QUOTA_EXHAUSTED")) {
                         updateMetrics();
                       } else if (tiles.length === 0 || prevError.includes("vocabulary")) {
                         handleGeminiSuggest();
                       }
                     }}
-                    className="px-3 py-1.5 border border-red-600 text-red-600 text-[10px] mono uppercase font-bold hover:bg-red-600 hover:text-white transition-colors"
+                    disabled={retryCountdown !== null && retryCountdown > 0}
+                    className="px-3 py-1.5 border border-red-600 text-red-600 text-[10px] mono uppercase font-bold hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {error.includes("SERVER_WARMUP") ? "Wait & Retry" : "Dismiss & Retry"}
+                    {error.includes("SERVER_WARMUP") || (retryCountdown !== null && retryCountdown > 0) ? "Wait & Retry" : "Dismiss & Retry"}
                   </button>
                 </div>
               </div>

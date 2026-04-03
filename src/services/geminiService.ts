@@ -80,6 +80,11 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
         } else if (error.message) {
           errorMessage = error.message;
         }
+
+        // Add retry info if available
+        if (error.retryAfter) {
+          errorMessage = `${errorMessage} (RETRY_AFTER:${error.retryAfter})`;
+        }
         
         // If the error message is still a JSON string (sometimes happens with ApiError), try to parse it
         if (errorMessage.includes('{"error":')) {

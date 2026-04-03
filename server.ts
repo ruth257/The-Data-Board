@@ -102,14 +102,30 @@ async function startServer() {
 
       console.error("[Data Board] AI Proxy Error after retries:", lastError);
       let message = lastError.message || "Internal Server Error";
+      let retryAfter = 0;
+
+      // Extract retry delay from Gemini error details if available
+      if (lastError.status === 429 || lastError.message?.includes("429")) {
+        const retryMatch = lastError.message?.match(/retry in ([\d.]+)s/);
+        if (retryMatch) {
+          retryAfter = Math.ceil(parseFloat(retryMatch[1]));
+        }
+      }
+
       if (message.includes("SERVICE_DISABLED")) {
         message = "The 'Generative Language API' is disabled in your Google Cloud project.";
       } else if (message.includes("API_KEY_INVALID")) {
         message = "The API key provided is invalid. Please check your Secrets.";
       } else if (message.includes("503") || message.includes("UNAVAILABLE")) {
         message = "The AI service is currently overloaded. Please try again in a few seconds.";
+      } else if (message.includes("429") || message.includes("RESOURCE_EXHAUSTED")) {
+        message = "QUOTA_EXHAUSTED: You have reached the AI service limit. This usually means your API key is on the 'Free Tier' (20 requests/day).";
       }
-      res.status(lastError.status || 500).json({ error: message });
+      
+      res.status(lastError.status || 500).json({ 
+        error: message,
+        retryAfter: retryAfter
+      });
     });
 
     // Catch-all for /api to diagnose 404
