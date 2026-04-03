@@ -12,9 +12,7 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 3, initialDelay =
       const is503 = message.includes("503") || message.includes("unavailable") || message.includes("high demand");
       const is429 = message.includes("429") || message.includes("quota") || message.includes("rate limit") || message.includes("resource_exhausted");
       
-      // Retry on 503 (busy) but NOT on 429 (quota) unless we want to wait a long time
-      // Actually, 429 usually means wait until next day or next minute. 
-      // If it's a "per minute" limit, retry might work. If it's "per day", it won't.
+      // Retry on 503 (busy)
       if (is503 && i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
         console.warn(`AI Service busy (503). Retrying in ${delay}ms... (Attempt ${i + 1}/${maxRetries})`);
@@ -22,10 +20,21 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 3, initialDelay =
         continue;
       }
 
-      // For 429, we don't retry automatically in this loop because it's usually a longer wait,
-      // but we throw a specific error that the UI can catch.
+      // Handle 429 (Quota)
       if (is429) {
-        throw new Error("QUOTA_EXHAUSTED: You have reached the free tier limit for the AI service. Please try again later or provide your own API key in Settings.");
+        // Try to extract retry delay from the error message (e.g., "Please retry in 34s")
+        const retryMatch = message.match(/retry in ([\d.]+)s/);
+        if (retryMatch && i < maxRetries - 1) {
+          const waitTime = (parseFloat(retryMatch[1]) * 1000) + 1000; // Add 1s buffer
+          if (waitTime < 65000) { // Only auto-retry if wait is reasonable (< 65s)
+            console.warn(`Quota reached (429). Waiting ${waitTime}ms before retry... (Attempt ${i + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+            continue;
+          }
+        }
+        
+        // If we can't retry or it's a long wait, throw a clean error
+        throw new Error("QUOTA_EXHAUSTED: You have reached the AI service limit. Please wait a moment, or provide your own API key in Settings to bypass shared limits.");
       }
 
       throw error;
@@ -40,11 +49,14 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
     
     // If user has a private key in localStorage, use it directly (client-side)
     if (localKey) {
+      console.log("[Data Board] Using local API key from Settings.");
       const ai = new GoogleGenAI({ apiKey: localKey });
-      return await ai.models.generateContent({ model, contents, config });
+      const result = await ai.models.generateContent({ model, contents, config });
+      return { text: result.text || "" };
     }
 
     // Otherwise, use the shared server-side proxy
+    console.log("[Data Board] Using server-side AI proxy.");
     const response = await fetch("/api/ai/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,8 +67,9 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         const error = await response.json();
-        // If error.error is an object, try to get the message or stringify it
         let errorMessage = "AI request failed";
+        
+        // Extract the most relevant error message
         if (error.error) {
           if (typeof error.error === 'object') {
             errorMessage = error.error.message || JSON.stringify(error.error);
@@ -66,6 +79,15 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
         } else if (error.message) {
           errorMessage = error.message;
         }
+        
+        // If the error message is still a JSON string (sometimes happens with ApiError), try to parse it
+        if (errorMessage.includes('{"error":')) {
+          try {
+            const nested = JSON.parse(errorMessage);
+            if (nested.error?.message) errorMessage = nested.error.message;
+          } catch (e) { /* ignore */ }
+        }
+
         throw new Error(errorMessage);
       } else {
         const text = await response.text();
@@ -80,7 +102,8 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
       throw new Error("Invalid response from server. Expected JSON.");
     }
 
-    return await response.json();
+    const data = await response.json();
+    return { text: data.text || "" };
   });
 };
 
@@ -103,29 +126,29 @@ const generateId = () => {
 export async function evaluateWord(scenario: Scenario, word: string, existingWords: string[] = []): Promise<Tile> {
   const response = await callAIProxy("gemini-3-flash-preview", 
     `
-      Evaluate the descriptive handle "${word}" for the subject: "${scenario.title}".
+      Evaluate the handle "${word}" for the subject: "${scenario.title}".
       
-      THE BRIDGE DIRECTIVE:
-      - Bridge raw facts with a sharp semantic deduction.
-      - The 'correctedWord' MUST be a punchy "Descriptive Handle" (1-3 words max). 
-      - Prioritize segments, adjectives, or drivers (e.g., "Female", "Weekends", "Impulsive", "Mobile-First").
-      - Include high-level concepts or theories (e.g., "Global South", "Paradox of Choice") ONLY if they are semantically cohesive and essential for a complete analysis of the subject.
-      - AVOID technical metric names (like "CTR") unless they are the primary finding.
+      THE HUMAN DOMAIN DIRECTIVE:
+      - Use "Human Domain Vocabulary": descriptive segments, demographics, and clear factual categories.
+      - Examples: "Female", "Global South", "High-Income", "Mobile Users", "Weekends", "First Class".
+      - FORBIDDEN: Do NOT use abstract analytical handles (e.g., "Logistical Scarcity", "Socio-Economic Stratification", "Friction-Gravity").
+      - The 'correctedWord' should be a simple, recognizable term that a human observer would use to describe a segment of data.
+      - If the input word is already a simple human term, do NOT change it.
       
-      THE EVIDENCE DIRECTIVE (The "Sharp Finding"):
-      - The 'explanation' MUST be a specific, data-grounded observation.
-      - Ground the handle in actual data distributions or behavioral patterns.
+      THE EVIDENCE COHERENCE DIRECTIVE:
+      - The 'explanation' MUST be a specific, data-grounded observation that provides "Sharp Evidence".
+      - Ensure the handle is globally coherent within the reasoning space of the scenario.
       
       CENTRALITY CATEGORIES:
-      - DOMINANT: A major driver or the bulk of the data (Green).
-      - PRESENT: A secondary but real factor (Yellow).
-      - EDGE_CASE: An outlier, a rare segment, or a common assumption that is actually false (Red).
+      - DOMINANT: A major causal driver (Green).
+      - PRESENT: A secondary factor (Yellow).
+      - EDGE_CASE: A structural tension point or a false assumption (Red).
       
       Context: ${scenario.context}
       Outcomes: ${scenario.outcomes.join(", ")}
       Existing Board: ${existingWords.join(", ")}
       
-      Return JSON: correctedWord (The Handle), centrality (DOMINANT/PRESENT/EDGE_CASE), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+      Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
     `,
     {
       responseMimeType: "application/json",
@@ -166,30 +189,32 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
 export async function generateBestVocabulary(scenario: Scenario, existingWords: string[] = []): Promise<Tile[]> {
   const response = await callAIProxy("gemini-3-flash-preview",
     `
-      Suggest 5-8 "Analytical Handles" (Vocabulary) for the subject: "${scenario.title}".
+      Suggest "Human Domain Vocabulary" for the subject: "${scenario.title}".
       
-      THE ANALYSIS METHOD:
-      - Identify the most descriptive segments, adjectives, or drivers revealed by the data.
-      - Use "Pseudo-Antonyms" to define semantic boundaries (e.g., "Mobile-First" vs "Desktop-Legacy").
-      - Focus on vocabulary that is useful for *discussing* and *analyzing* the reality of the subject.
-      - Prioritize descriptive findings, but include high-level concepts or theories (e.g., "Global South", "Paradox of Choice") if they are semantically cohesive and required for the board to be complete.
+      THE HUMAN DOMAIN METHOD:
+      - Create a set of 5-8 handles that a human observer or data analyst would first identify as "Facts" or "Segments".
+      - Use descriptive segments, demographics, and clear factual categories.
+      - Examples: "Female", "Global South", "English-speaking countries", "Mobile Users", "Weekends", "First Class".
+      - FORBIDDEN: Do NOT use "Smartass" analytical handles (e.g., "Logistical Scarcity", "Production-Velocity", "Inertia").
+      - These should be the "Building Blocks" that ground the initial reasoning.
+      - Focus on "What" and "Who" before "Why".
       
       THE HANDLE DIRECTIVE:
-      - The 'word' MUST be a punchy descriptive handle (1-3 words max).
-      - The 'explanation' MUST be the "Sharp Evidence" or "Data Grounding" for that handle.
+      - The 'word' MUST be a simple, recognizable handle (1-2 words max).
+      - The 'explanation' MUST be the "Sharp Evidence" that grounds this concept in the data.
       
       CENTRALITY CATEGORIES:
-      - DOMINANT: A major driver or the bulk of the data (Green).
-      - PRESENT: A secondary but real factor (Yellow).
-      - EDGE_CASE: An outlier, a rare segment, or a common assumption that is actually false (Red).
+      - DOMINANT: A major causal driver (Green).
+      - PRESENT: A secondary factor (Yellow).
+      - EDGE_CASE: A structural tension point or an outlier (Red).
       
       Context: ${scenario.context}
       Outcomes: ${scenario.outcomes.join(", ")}
       Existing: ${existingWords.join(", ")}
       
-      Return JSON array: word (The Handle), centrality (DOMINANT/PRESENT/EDGE_CASE), explanation (The Sharp Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+      Return JSON array: word, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
       
-      CRITICAL: You MUST return at least 5 unique handles. If the 'Existing' list is long, find even more specific or nuanced handles that haven't been mentioned yet.
+      CRITICAL: You MUST return at least 5 unique human-readable handles.
     `,
     {
       responseMimeType: "application/json",
@@ -239,8 +264,60 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
   }));
 }
 
+export async function auditCausalTension(scenario: Scenario, tile: Tile): Promise<Tile> {
+  const response = await callAIProxy("gemini-3-flash-preview",
+    `
+      Perform a "Causal Audit" on the handle "${tile.word}" for the subject: "${scenario.title}".
+      
+      THE SURGICAL TENSION DIRECTIVE:
+      - Identify the "Shadow" or "Pseudo-Antonym" of this concept that defines its causal boundary.
+      - If "${tile.word}" is a driver, what is the counter-driver or the hidden cost?
+      - The goal is to create a "Tension Pair" that supercharges human deduction.
+      - Keep the "Shadow Handle" grounded and recognizable. Avoid overly abstract jargon.
+      - Example: If the tile is "First Class", the Shadow might be "Lifeboat Access" or "Proximity to Deck".
+      
+      Context: ${scenario.context}
+      Current Tile Explanation: ${tile.explanation}
+      
+      Return JSON: word (The Shadow Handle), centrality (Usually EDGE_CASE or PRESENT), explanation (The Causal Tension Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+    `,
+    {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          word: { type: Type.STRING },
+          centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
+          explanation: { type: Type.STRING },
+          dataInsight: { type: Type.STRING },
+          source: { type: Type.STRING },
+          category: { type: Type.STRING },
+          isAIConfirmed: { type: Type.BOOLEAN },
+          relevanceScore: { type: Type.NUMBER },
+          specificityScore: { type: Type.NUMBER },
+        },
+        required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
+      },
+    }
+  );
+
+  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
+  return {
+    id: generateId(),
+    word: result.word,
+    centrality: result.centrality as Centrality,
+    explanation: result.explanation,
+    dataInsight: result.dataInsight,
+    source: result.source,
+    category: result.category,
+    isAIConfirmed: result.isAIConfirmed ?? true,
+    relevanceScore: result.relevanceScore || 50,
+    specificityScore: result.specificityScore || 50,
+  };
+}
+
 export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): Promise<BoardMetrics> {
-  if (tiles.length === 0) {
+  if (!Array.isArray(tiles) || tiles.length === 0) {
     return {
       cohesion: 0,
       coverage: 0,
@@ -254,8 +331,19 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     `
       Evaluate the "Eureka Potential" of this board for scenario: "${scenario.title}".
       
-      THE BOARD:
+      THE BOARD (Human Domain Vocabulary):
       ${tiles.map(t => `- [${t.word}]: ${t.explanation}`).join("\n")}
+      
+      THE DEDUCIBLE SPACE FORMALIZATION (AI Synthesis):
+      - This is where you elevate the "Human" terms into "Analytical Handles".
+      - For the 'synthesisSuggestions', identify groups of human terms and suggest a single "Deducible Space" handle to replace them.
+      - These handles should be punchy, analytical, and tension-bearing (e.g., "Production-Velocity", "Friction-Gravity", "Inertia").
+      - Use "Pseudo-Antonyms" to introduce structural tension.
+      
+      THE SEMANTIC MAP (Links):
+      - Identify 3-6 "Causal Links" between the tiles CURRENTLY ON THE BOARD.
+      - CRITICAL: The 'source' and 'target' MUST EXACTLY MATCH the [word] from the list above.
+      - If you use a word that is not in the list, the link will be broken.
       
       METRICS DEFINITION (0-100):
       - COHESION: How well do these specific handles connect to form a unified argument?
@@ -263,7 +351,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
       - SHARPNESS: Average specificity of the evidence backing these handles.
       
       SYNTHESIS (The Eureka Moment): 
-      - Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion.
+      - Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the elevated analytical vocabulary.
       - The insight should feel like it was "found" by looking at the handles above.
       
       Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, coverageBreakdown (dominant, present, edgeCase), synthesisSuggestions.

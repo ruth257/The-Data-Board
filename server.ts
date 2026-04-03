@@ -25,9 +25,12 @@ async function startServer() {
     apiRouter.get("/ai/status", (req, res) => {
       console.log(`[Data Board] [${new Date().toISOString()}] GET /api/ai/status`);
       const apiKey = process.env.DATA_BOARD_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY;
+      const maskedKey = apiKey ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : null;
+      
       res.json({ 
         isReady: !!apiKey,
-        source: process.env.DATA_BOARD_KEY ? "Shared (Bypass)" : process.env.GEMINI_API_KEY ? "System" : process.env.API_KEY ? "Platform" : "None"
+        source: process.env.DATA_BOARD_KEY ? "DATA_BOARD_KEY (Secret)" : process.env.GEMINI_API_KEY ? "GEMINI_API_KEY (System)" : process.env.API_KEY ? "API_KEY (Platform)" : "None",
+        maskedKey: maskedKey
       });
     });
 
@@ -39,8 +42,12 @@ async function startServer() {
         const apiKey = process.env.DATA_BOARD_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY;
         
         if (!apiKey) {
+          console.error("[Data Board] No API key found in environment.");
           return res.status(401).json({ error: "No API key configured on server." });
         }
+
+        const maskedKey = `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`;
+        console.log(`[Data Board] Using API key: ${maskedKey} (Source: ${process.env.DATA_BOARD_KEY ? "DATA_BOARD_KEY" : process.env.GEMINI_API_KEY ? "GEMINI_API_KEY" : "API_KEY"})`);
 
         const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
@@ -49,7 +56,7 @@ async function startServer() {
           config
         });
 
-        res.json(response);
+        res.json({ text: response.text || "" });
       } catch (error: any) {
         console.error("AI Proxy Error:", error);
         let message = error.message || "Internal Server Error";

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe } from "lucide-react";
 import { SCENARIOS } from "./constants";
 import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
-import { evaluateWord, generateBestVocabulary, calculateBoardMetrics } from "./services/geminiService";
+import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, auditCausalTension } from "./services/geminiService";
 import { RelationshipGraph } from "./components/RelationshipGraph";
 
 declare global {
@@ -34,9 +34,9 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       >
         <div className="flex justify-between items-start mb-8 border-b-2 border-ink pb-4">
           <div>
-            <h2 className="text-4xl font-black uppercase tracking-tighter">The Data Analysis Board</h2>
+            <h2 className="text-4xl font-black uppercase tracking-tighter">The Deducible Space</h2>
             <div className="flex items-center gap-3 mt-2">
-              <p className="mono text-xs uppercase tracking-widest opacity-50">Analytical Framework v2.0</p>
+              <p className="mono text-xs uppercase tracking-widest opacity-50">Analytical Framework v3.0</p>
               <div className="w-1 h-1 bg-ink/20 rounded-full" />
               <p className="mono text-xs uppercase tracking-widest font-bold">Created by Ruth Aharon</p>
               <div className="w-1 h-1 bg-ink/20 rounded-full" />
@@ -50,80 +50,63 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
 
         <div className="grid md:grid-cols-2 gap-12">
           <section>
-            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5" /> 1. The Open Source Method
+            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
+              <ShieldCheck className="w-5 h-5" /> The Problem
             </h3>
-            <p className="serif-italic text-lg leading-relaxed mb-4">
-              "Data is not just numbers; it is a narrative that requires precise analytical vocabulary."
+            <p className="text-sm opacity-80 leading-relaxed mb-4">
+              Data analysis produces correlational anecdotes that cannot be elevated to consistent narratives because the variable sets are collections, not vocabularies. Each finding is locally defensible but globally incoherent.
             </p>
+            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
+              <Zap className="w-5 h-5" /> Why it happens
+            </h3>
             <p className="text-sm opacity-80 leading-relaxed">
-              The Data Board Method is a collaborative protocol for analyzing complex subjects. Instead of abstract theories, we use a <strong>Semantic Vocabulary Grid</strong> to map the dominant segments, secondary factors, and edge cases revealed by data. It allows teams to negotiate meaning, bridge facts with deduction, and validate insights through a shared analytical language.
+              Variables are selected for measurability and statistical relevance — not for narrative coherence or conceptual coverage. The result is a set of findings that point in different directions from different starting points.
             </p>
-            <div className="mt-6 p-4 bg-ink/5 border-l-4 border-ink">
-              <p className="text-xs font-bold uppercase mb-2 flex items-center gap-2">
-                <Scale className="w-4 h-4" /> Open License
-              </p>
-              <p className="text-[10px] mono leading-tight opacity-60">
-                This methodology is licensed under <strong>Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</strong>. You are free to share, adapt, and build upon this method for any purpose, even commercially, as long as you attribute <strong>Ruth Aharon (thedataboard.ai)</strong> and share your improvements under the same license.
-              </p>
-            </div>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <Zap className="w-5 h-5" /> 2. The Interactive Tool
+            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
+              <Activity className="w-5 h-5" /> What the Databoard does
             </h3>
             <p className="text-sm opacity-80 leading-relaxed mb-4">
-              This application serves as a reference implementation of the method. It uses Large Language Models (LLMs) not as "answers," but as <strong>Semantic Auditors</strong>.
+              It constructs the <strong>Deducible Space</strong>. Human domain knowledge proposes the concepts. AI evaluates their grounding and coherence. Pseudo-antonym pairs introduce the structural tension that makes deduction inevitable. The result is not a set of findings — it is a space from which consistent narrative follows.
             </p>
-            <ul className="space-y-3 text-xs mono">
-              <li className="flex gap-2">
-                <span className="font-bold text-ink">●</span>
-                <span><strong>Input:</strong> Users propose concepts (tiles) they believe are central to the subject.</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-bold text-ink">●</span>
-                <span><strong>Audit:</strong> The AI evaluates each tile based on its relevance, evidence, and uniqueness.</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-bold text-ink">●</span>
-                <span><strong>Synthesis:</strong> The system identifies emergent patterns and semantic links between concepts.</span>
-              </li>
-            </ul>
+            <div className="p-4 bg-ink text-bg border-2 border-ink">
+              <h3 className="text-xs font-bold uppercase mb-2 flex items-center gap-2">
+                <Scale className="w-4 h-4" /> Theoretical Contribution
+              </h3>
+              <p className="text-[10px] mono leading-tight opacity-80">
+                The formalisation of the deducible space as a prerequisite for narrative causal reasoning — sitting upstream of Pearl's causal graphs and providing the conceptual foundation they assume.
+              </p>
+            </div>
           </section>
 
           <section className="md:col-span-2 border-t-2 border-ink pt-8">
             <h3 className="text-xl font-bold uppercase mb-6 flex items-center gap-2">
-              <Activity className="w-5 h-5" /> 3. The Methodology (The Science)
+              <Activity className="w-5 h-5" /> The Centrality Scale
             </h3>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="p-4 border border-ink/10 bg-white/50">
-                <h4 className="font-bold text-xs uppercase mb-2">Semantic Cohesion</h4>
-                <p className="text-[10px] opacity-70 leading-relaxed">
-                  Calculated using cosine similarity between the vector embeddings of all active tiles. High cohesion indicates a focused narrative; low cohesion suggests a fragmented or overly broad subject.
-                </p>
+                <h4 className="text-xs font-black uppercase mb-2 text-databoard-green">Dominant</h4>
+                <p className="text-[10px] mono leading-tight opacity-70">Major causal drivers that form the backbone of the deducible space.</p>
               </div>
               <div className="p-4 border border-ink/10 bg-white/50">
-                <h4 className="font-bold text-xs uppercase mb-2">Narrative Entropy</h4>
-                <p className="text-[10px] opacity-70 leading-relaxed">
-                  A measure of conceptual diversity. We use a modified Shannon Entropy formula to ensure the board isn't just repeating the same idea. High entropy is essential for "Edge Case" discovery.
-                </p>
+                <h4 className="text-xs font-black uppercase mb-2 text-databoard-yellow">Present</h4>
+                <p className="text-[10px] mono leading-tight opacity-70">Secondary factors that provide nuance and depth to the narrative.</p>
               </div>
               <div className="p-4 border border-ink/10 bg-white/50">
-                <h4 className="font-bold text-xs uppercase mb-2">Bayesian Relevance</h4>
-                <p className="text-[10px] opacity-70 leading-relaxed">
-                  Each tile's score is a probability estimate. We update the "Relevance" of a concept based on its alignment with the Scenario Corpus and its semantic distance from existing tiles.
-                </p>
+                <h4 className="text-xs font-black uppercase mb-2 text-databoard-red">Edge Case</h4>
+                <p className="text-[10px] mono leading-tight opacity-70">Structural tension points or outliers that challenge the narrative boundaries.</p>
               </div>
             </div>
           </section>
 
           <section className="md:col-span-2 border-t-2 border-ink pt-8">
             <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <BookOpen className="w-5 h-5" /> 4. Case Study: Sustainability in AI
+              <Globe className="w-5 h-5" /> Empirical Demonstration
             </h3>
             <p className="text-sm opacity-80 leading-relaxed">
-              A practical application of the Data Board was used to track how "accessible" complex data stories are. By mapping the vocabulary of research papers onto a Data Board, we can mathematically identify where the narrative "breaks" or becomes too dense for public consumption. This helps in refining the narrative for better impact and clarity.
+              Two cases — <strong>Titanic survival</strong>, <strong>global plastic leakage</strong> — where correlational anecdotes produced by standard analysis are elevated to consistent narratives by constructing the deducible space first.
             </p>
           </section>
         </div>
@@ -151,6 +134,16 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
 }) => {
   const [apiKey, setApiKey] = useState(localStorage.getItem("GEMINI_API_KEY") || "");
   const [isSaved, setIsSaved] = useState(false);
+  const [systemStatus, setSystemStatus] = useState<{ source: string, maskedKey: string | null } | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetch("/api/ai/status")
+        .then(res => res.json())
+        .then(data => setSystemStatus(data))
+        .catch(err => console.error("Failed to fetch system status", err));
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -209,8 +202,14 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
                 <span className="text-[10px] mono uppercase font-bold text-databoard-green">Shared AI Active</span>
               </div>
               <p className="text-[10px] mono leading-tight opacity-70">
-                This board is currently powered by a shared key. All users can explore freely without entering their own key.
+                This board is currently powered by a shared key.
               </p>
+              {systemStatus && (
+                <div className="mt-2 pt-2 border-t border-databoard-green/10 text-[9px] mono opacity-50">
+                  <div>Source: {systemStatus.source}</div>
+                  <div>Key: {systemStatus.maskedKey}</div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="p-4 bg-databoard-red/5 border-l-4 border-databoard-red">
@@ -398,11 +397,15 @@ const Walkthrough = ({ onComplete }: { onComplete: () => void; key?: React.Key }
 const TileCard = React.memo(({ 
   tile, 
   isSelected, 
-  onSelect 
+  onSelect,
+  onCausalAudit,
+  isAuditing
 }: { 
   tile: Tile, 
   isSelected: boolean, 
-  onSelect: (tile: Tile | null) => void 
+  onSelect: (tile: Tile | null) => void,
+  onCausalAudit: (tile: Tile) => void,
+  isAuditing: boolean
 }) => {
   const getCentralityColor = (centrality: Centrality) => {
     switch (centrality) {
@@ -516,7 +519,14 @@ const TileCard = React.memo(({
           </div>
 
           <div className="mt-auto pt-2 border-t border-white/10 flex justify-between items-center text-[8px] mono uppercase opacity-50">
-            <span>{tile.category}</span>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onCausalAudit(tile); }}
+              disabled={isAuditing}
+              className="flex items-center gap-1 hover:text-databoard-yellow transition-colors disabled:opacity-30"
+            >
+              <Zap className={`w-3 h-3 ${isAuditing ? 'animate-pulse' : ''}`} />
+              {isAuditing ? 'Auditing...' : 'Causal Audit'}
+            </button>
             <span>Score: {tile.relevanceScore}%</span>
           </div>
         </div>
@@ -549,6 +559,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [isSystemKeyActive, setIsSystemKeyActive] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [auditingTileId, setAuditingTileId] = useState<string | null>(null);
 
   // Check for API key status on mount
   useEffect(() => {
@@ -634,15 +645,16 @@ export default function App() {
     localStorage.setItem("databoard-scenario", scenario.id);
   }, [scenario]);
 
-  const updateMetrics = async () => {
-    if (tiles.length === 0) {
+  const updateMetrics = async (currentTiles?: Tile[]) => {
+    const activeTiles = currentTiles || tiles;
+    if (activeTiles.length === 0) {
       setMetrics(null);
       return;
     }
     setIsMetricsLoading(true);
     setError(null);
     try {
-      const newMetrics = await calculateBoardMetrics(scenario, tiles);
+      const newMetrics = await calculateBoardMetrics(scenario, activeTiles);
       setMetrics(newMetrics);
     } catch (err: any) {
       console.error("Failed to update metrics", err);
@@ -708,41 +720,50 @@ export default function App() {
     if (isLoading) return;
     setIsLoading(true);
     setError(null);
-    console.log("Suggesting vocabulary for scenario:", scenario.title);
+    console.log("Generating initial board for scenario:", scenario.title);
     try {
       const existingWords = tiles.map(t => t.word);
       const suggestions = await generateBestVocabulary(scenario, existingWords);
-      console.log("Received suggestions from AI:", suggestions);
       
       if (!suggestions || suggestions.length === 0) {
-        setError("The AI didn't return any new vocabulary for this context. Try adding a manual concept first.");
+        setError("The AI didn't return any new vocabulary. Try a different scenario.");
         return;
       }
 
       setTiles((prev) => {
-        const currentWords = new Set(prev.map(t => t.word.toLowerCase()));
-        const currentIds = new Set(prev.map(t => t.id));
-        
-        const newSuggestions = suggestions.filter(s => {
-          const isNewWord = !currentWords.has(s.word.toLowerCase());
-          if (isNewWord && currentIds.has(s.id)) {
-            s.id = s.id + "-alt-" + Math.random().toString(36).substr(2, 5);
-          }
-          return isNewWord;
-        });
-
-        if (newSuggestions.length === 0) {
-          setError("All suggested vocabulary already exists on the board.");
-          return prev;
+        const newTiles = [...suggestions, ...prev];
+        // Only trigger metrics automatically if it's the first board generation
+        // to save AI quota for the user.
+        if (prev.length === 0) {
+          setTimeout(() => updateMetrics(newTiles), 100);
         }
-
-        return [...newSuggestions, ...prev];
+        return newTiles;
       });
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to generate suggestions.");
+      setError(err.message || "Failed to generate initial board.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCausalAudit = async (tile: Tile) => {
+    if (isLoading || auditingTileId) return;
+    setAuditingTileId(tile.id);
+    setError(null);
+    try {
+      const shadowTile = await auditCausalTension(scenario, tile);
+      setTiles(prev => {
+        if (prev.some(t => t.word.toLowerCase() === shadowTile.word.toLowerCase())) {
+          return prev;
+        }
+        return [shadowTile, ...prev];
+      });
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Causal audit failed.");
+    } finally {
+      setAuditingTileId(null);
     }
   };
 
@@ -837,7 +858,7 @@ export default function App() {
             The Data Board
           </h1>
           <p className="text-lg serif-italic mt-2 opacity-70">
-            Analyzing Data Sets & Complex Subjects through structured analytical vocabulary.
+            Constructing the Deducible Space: Formalizing the conceptual foundation for narrative causal reasoning.
           </p>
         </div>
         <div className="flex flex-col items-end gap-4">
@@ -953,15 +974,26 @@ export default function App() {
                 )}
               </button>
             </form>
-            <button
-              id="ai-suggestions"
-              onClick={handleGeminiSuggest}
-              disabled={isLoading}
-              className="flex items-center justify-center gap-2 w-full py-3 border border-ink/20 hover:border-ink hover:bg-ink hover:text-bg transition-all mono text-xs uppercase tracking-widest disabled:opacity-50"
-            >
-              <Star className={`w-4 h-4 ${isLoading ? 'animate-pulse' : ''}`} />
-              {isLoading ? "Analyzing Subject..." : "Gemini: Suggest Vocabulary"}
-            </button>
+                <div className="flex gap-2">
+                  <button 
+                    id="ai-suggestions"
+                    onClick={handleGeminiSuggest}
+                    disabled={isLoading}
+                    className="flex-1 py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <Zap className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                    {tiles.length === 0 ? "The Data Board" : "Expand Deducible Space"}
+                  </button>
+                  
+                  <button 
+                    onClick={() => updateMetrics()}
+                    disabled={isMetricsLoading || tiles.length === 0}
+                    className="px-6 py-4 bg-ink text-bg font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <Activity className={`w-4 h-4 ${isMetricsLoading ? 'animate-pulse' : ''}`} />
+                    Proposed Reasoning
+                  </button>
+                </div>
             {error && (
               <div className="flex flex-col gap-2 p-4 bg-red-500/10 border-l-4 border-red-500">
                 <div className="flex items-center gap-2 text-red-600 text-xs mono font-bold">
@@ -982,9 +1014,12 @@ export default function App() {
                   )}
                   <button 
                     onClick={() => {
+                      const prevError = error;
                       setError(null);
-                      // If it was a vocabulary suggestion, retry it
-                      if (tiles.length === 0 && !inputValue) {
+                      // Context-aware retry
+                      if (prevError.includes("metrics") || prevError.includes("Synthesize")) {
+                        updateMetrics();
+                      } else if (tiles.length === 0 || prevError.includes("vocabulary")) {
                         handleGeminiSuggest();
                       }
                     }}
@@ -1009,12 +1044,12 @@ export default function App() {
               <div className="flex items-center gap-3">
                 {tiles.length > 0 && (
                   <button 
-                    onClick={updateMetrics}
+                    onClick={() => updateMetrics()}
                     disabled={isMetricsLoading}
                     className={`flex items-center gap-1 text-[9px] mono uppercase font-bold px-2 py-1 border border-ink/20 hover:bg-ink hover:text-bg transition-all ${isMetricsLoading ? 'animate-pulse' : ''}`}
                   >
                     <Zap className={`w-3 h-3 ${isMetricsLoading ? 'animate-spin' : ''}`} />
-                    {isMetricsLoading ? "Synthesizing..." : "Synthesize Board"}
+                    {isMetricsLoading ? "Reasoning..." : "Propose Reasoning"}
                   </button>
                 )}
                 <Activity className={`w-4 h-4 ${isMetricsLoading ? "animate-pulse text-databoard-yellow" : "opacity-20"}`} />
@@ -1302,6 +1337,8 @@ export default function App() {
                   tile={tile} 
                   isSelected={selectedTile?.id === tile.id} 
                   onSelect={setSelectedTile} 
+                  onCausalAudit={handleCausalAudit}
+                  isAuditing={auditingTileId === tile.id}
                 />
               ))}
               
