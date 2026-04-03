@@ -218,7 +218,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
                 <span className="text-[10px] mono uppercase font-bold text-databoard-red">Shared AI Inactive</span>
               </div>
               <p className="text-[10px] mono leading-tight opacity-70">
-                No shared key is configured. To enable AI for all users, add your key to the <strong>AI Studio Platform Settings</strong> as <code className="bg-ink/5 px-1">DATA_BOARD_KEY</code>.
+                No shared key is configured. To enable AI for all users, add your key to the <strong>AI Studio Platform Settings</strong> as <code className="bg-ink/5 px-1">WEBSITE_API_KEY</code> (or <code className="bg-ink/5 px-1">DATA_BOARD_KEY</code>).
               </p>
             </div>
           )}
@@ -998,10 +998,12 @@ export default function App() {
               <div className="flex flex-col gap-2 p-4 bg-red-500/10 border-l-4 border-red-500">
                 <div className="flex items-center gap-2 text-red-600 text-xs mono font-bold">
                   <AlertCircle className="w-4 h-4" />
-                  {error.includes("QUOTA_EXHAUSTED") ? "AI Quota Exceeded" : "AI Error"}
+                  {error.includes("QUOTA_EXHAUSTED") ? "AI Quota Exceeded" : error.includes("SERVER_WARMUP") ? "Server Warming Up" : "AI Error"}
                 </div>
                 <p className="text-[10px] mono text-red-600/80 leading-tight">
-                  {error.replace("QUOTA_EXHAUSTED: ", "")}
+                  {error.includes("SERVER_WARMUP") 
+                    ? "The server is still starting up after a code update. This usually takes 5-10 seconds. Please wait a moment and try again." 
+                    : error.replace("QUOTA_EXHAUSTED: ", "")}
                 </p>
                 <div className="flex gap-2 mt-2">
                   {error.includes("QUOTA_EXHAUSTED") && (
@@ -1017,7 +1019,7 @@ export default function App() {
                       const prevError = error;
                       setError(null);
                       // Context-aware retry
-                      if (prevError.includes("metrics") || prevError.includes("Synthesize")) {
+                      if (prevError.includes("metrics") || prevError.includes("Synthesize") || prevError.includes("SERVER_WARMUP")) {
                         updateMetrics();
                       } else if (tiles.length === 0 || prevError.includes("vocabulary")) {
                         handleGeminiSuggest();
@@ -1025,7 +1027,7 @@ export default function App() {
                     }}
                     className="px-3 py-1.5 border border-red-600 text-red-600 text-[10px] mono uppercase font-bold hover:bg-red-600 hover:text-white transition-colors"
                   >
-                    Dismiss & Retry
+                    {error.includes("SERVER_WARMUP") ? "Wait & Retry" : "Dismiss & Retry"}
                   </button>
                 </div>
               </div>

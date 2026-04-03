@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
 import { BoardMetrics, Centrality, Scenario, Tile } from "../types";
 
-const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 3, initialDelay = 1000): Promise<T> => {
+const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay = 1000): Promise<T> => {
   let lastError: any;
   for (let i = 0; i < maxRetries; i++) {
     try {
@@ -9,13 +9,14 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 3, initialDelay =
     } catch (error: any) {
       lastError = error;
       const message = error.message?.toLowerCase() || "";
-      const is503 = message.includes("503") || message.includes("unavailable") || message.includes("high demand");
+      const is503 = message.includes("503") || message.includes("unavailable") || message.includes("high demand") || message.includes("overloaded");
       const is429 = message.includes("429") || message.includes("quota") || message.includes("rate limit") || message.includes("resource_exhausted");
+      const isWarmup = message.includes("SERVER_WARMUP");
       
-      // Retry on 503 (busy)
-      if (is503 && i < maxRetries - 1) {
+      // Retry on 503 (busy) or Warmup
+      if ((is503 || isWarmup) && i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
-        console.warn(`AI Service busy (503). Retrying in ${delay}ms... (Attempt ${i + 1}/${maxRetries})`);
+        console.warn(`AI Service busy or warming up. Retrying in ${delay}ms... (Attempt ${i + 1}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
@@ -91,6 +92,9 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
         throw new Error(errorMessage);
       } else {
         const text = await response.text();
+        if (text.includes("Please wait while your application starts")) {
+          throw new Error("SERVER_WARMUP: The server is still starting up. Please wait a few seconds and try again.");
+        }
         console.error(`[Data Board] Server error (${response.status}):`, text);
         throw new Error(`Server error (${response.status}). ${text.includes("503") ? "The AI service is currently overloaded. Please try again in a few seconds." : "Please check server logs."}`);
       }
