@@ -1614,7 +1614,7 @@ export default function App() {
         <div className="max-w-md">
           <p className="text-xs mono uppercase mb-2 font-bold">The Open Source Method — Created by Ruth Aharon</p>
           <p className="text-sm serif-italic leading-tight">
-            "A rejected word is not a failure. It reveals an assumption the group was making without knowing it."
+            "What we cannot think, that we cannot think; we cannot therefore say what we cannot think" Ludwig Wittgenstein (Tractatus 5.61)
             <br /><br />
             The Data Board framework and the Pseudo-Antonyms© methodology are proprietary conceptual frameworks created by Ruth Aharon.
             <br /><br />
