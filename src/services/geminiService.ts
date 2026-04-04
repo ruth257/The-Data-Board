@@ -156,7 +156,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       - EDGE_CASE: A structural tension point or a false assumption (Red).
       
       Context: ${scenario.context}
-      Outcomes: ${scenario.outcomes.join(", ")}
+      Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing Board: ${existingWords.join(", ")}
       
       Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
@@ -222,7 +222,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       - EDGE_CASE: A structural tension point or an outlier (Red).
       
       Context: ${scenario.context}
-      Outcomes: ${scenario.outcomes.join(", ")}
+      Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing: ${existingWords.join(", ")}
       
       Return JSON array: word, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
@@ -450,7 +450,7 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       
       INSTRUCTIONS:
       1. Guess the context/scenario of the data. 
-      2. Create a Scenario: title, description, and context.
+      2. Create a Scenario: title, description, context, and two primary opposing outcomes (e.g., ["Success", "Failure"]).
       3. Generate 8-12 initial "Vocabulary Tiles" (handles).
       4. CRITICAL: The tiles should NOT be trivial (don't just use column names).
       5. PSEUDO-ANTONYMS© & STRUCTURAL TENSIONS: Identify the "Deducible Space" by finding opposing categories or variables that define the boundaries of the problem.
@@ -460,7 +460,7 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       
       Return JSON: 
       {
-        "scenario": { "title": "...", "description": "...", "context": "..." },
+        "scenario": { "title": "...", "description": "...", "context": "...", "outcomes": ["...", "..."] },
         "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "category": "..." } ]
       }
     `,
@@ -474,9 +474,10 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
             properties: {
               title: { type: Type.STRING },
               description: { type: Type.STRING },
-              context: { type: Type.STRING }
+              context: { type: Type.STRING },
+              outcomes: { type: Type.ARRAY, items: { type: Type.STRING } }
             },
-            required: ["title", "description", "context"]
+            required: ["title", "description", "context", "outcomes"]
           },
           tiles: {
             type: Type.ARRAY,
@@ -502,7 +503,10 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
   
   const scenario: Scenario = {
     id: `custom-${Date.now()}`,
-    ...result.scenario
+    title: result.scenario.title,
+    description: result.scenario.description,
+    context: result.scenario.context,
+    outcomes: result.scenario.outcomes || ["Outcome A", "Outcome B"]
   };
 
   const tiles: Tile[] = (result.tiles || []).map((t: any, i: number) => ({

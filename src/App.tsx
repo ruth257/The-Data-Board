@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText } from "lucide-react";
+import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight } from "lucide-react";
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
 import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
@@ -95,6 +95,60 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
           </section>
 
           <section className="md:col-span-2 border-t-2 border-ink pt-8">
+            <h3 className="text-xl font-bold uppercase mb-8 flex items-center gap-2 text-databoard-yellow">
+              <Cpu className="w-5 h-5" /> Process Architecture
+            </h3>
+            <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-0">
+              {/* Step 1: Raw Data */}
+              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                <div className="w-12 h-12 bg-ink text-bg flex items-center justify-center mb-3">
+                  <Database className="w-6 h-6" />
+                </div>
+                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">1. Raw Data</h4>
+                <p className="text-[9px] mono opacity-60 px-4 leading-tight">Quantitative Input & Evidence</p>
+              </div>
+
+              <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
+
+              {/* Step 2: Pseudo-Antonyms */}
+              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                <div className="w-12 h-12 bg-databoard-yellow text-ink flex items-center justify-center mb-3 border-2 border-ink">
+                  <Scale className="w-6 h-6" />
+                </div>
+                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">2. Pseudo-Antonyms©</h4>
+                <p className="text-[9px] mono opacity-60 px-4 leading-tight">Defining the Deducible Space</p>
+              </div>
+
+              <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
+
+              {/* Step 3: Semantic Density */}
+              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                <div className="w-12 h-12 bg-ink text-bg flex items-center justify-center mb-3">
+                  <Network className="w-6 h-6" />
+                </div>
+                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">3. Semantic Density</h4>
+                <p className="text-[9px] mono opacity-60 px-4 leading-tight">Clustering Narrative Themes</p>
+              </div>
+
+              <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
+
+              {/* Step 4: Narrative */}
+              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                <div className="w-12 h-12 bg-databoard-green text-ink flex items-center justify-center mb-3 border-2 border-ink">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">4. Global Story</h4>
+                <p className="text-[9px] mono opacity-60 px-4 leading-tight">The Eureka Moment / Synthesis</p>
+              </div>
+            </div>
+            
+            <div className="mt-8 p-4 bg-bg border border-ink/10 text-[10px] mono leading-tight opacity-70 italic text-center">
+              "Semantic proximity indicates a potential for consistent narrative; 
+              detached nodes represent conceptual gaps that must be bridged to find the global story."
+            </div>
+          </section>
+
+          <section className="md:col-span-2 border-t-2 border-ink pt-8">
             <h3 className="text-xl font-bold uppercase mb-6 flex items-center gap-2">
               <Activity className="w-5 h-5" /> The Centrality Scale
             </h3>
@@ -115,11 +169,68 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
           </section>
 
           <section className="md:col-span-2 border-t-2 border-ink pt-8">
+            <h3 className="text-xl font-bold uppercase mb-8 flex items-center gap-2 text-databoard-yellow">
+              <BookOpen className="w-5 h-5" /> Case Study: The Titanic
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-4">
+                <div className="p-4 border border-ink/20 bg-ink/5">
+                  <h4 className="text-[10px] font-black uppercase mb-3 opacity-50">1. Raw Data</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {["Pclass", "Sex", "Age", "Fare"].map((item, i) => (
+                      <div key={i} className="text-[9px] mono px-2 py-1 bg-white border border-ink/10">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-4 text-[9px] mono leading-tight opacity-60">Quantitative inputs that standard analysis uses for correlation.</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="p-4 border border-ink/20 bg-databoard-yellow/5">
+                  <h4 className="text-[10px] font-black uppercase mb-3 opacity-50">2. Pseudo-Antonyms© (Tension Pairs)</h4>
+                  <div className="space-y-3">
+                    <div className="p-2 bg-white border-2 border-ink">
+                      <div className="flex justify-between text-[9px] font-bold mb-1">
+                        <span className="text-databoard-green">CHIVALRY</span>
+                        <span className="opacity-30">vs</span>
+                        <span className="text-amber-600">CLASS</span>
+                      </div>
+                      <p className="text-[8px] mono leading-tight opacity-60">Social Protocol vs. Social Standing</p>
+                    </div>
+                    <div className="p-2 bg-white border-2 border-ink">
+                      <div className="flex justify-between text-[9px] font-bold mb-1">
+                        <span className="text-databoard-red">LIFEBOAT</span>
+                        <span className="opacity-30">vs</span>
+                        <span className="text-amber-600">ALLOCATION</span>
+                      </div>
+                      <p className="text-[8px] mono leading-tight opacity-60">Raw Scarcity vs. Systemic Logic</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="p-4 border-2 border-ink bg-databoard-green/10">
+                  <h4 className="text-[10px] font-black uppercase mb-3 opacity-50">3. The Deducible Space</h4>
+                  <p className="text-[10px] leading-relaxed font-medium mb-3">
+                    "Survival was not an anecdote of luck, but a structural inevitability of the tension between <span className="text-amber-600 font-bold">Systemic Logic</span> and <span className="text-databoard-red font-bold">Physical Scarcity</span>."
+                  </p>
+                  <div className="p-2 bg-white/50 border border-ink/10 text-[8px] mono leading-tight opacity-70">
+                    By mapping the "tug-of-war" between these handles, the narrative conclusion follows inevitably from the grounded concepts.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="md:col-span-2 border-t-2 border-ink pt-8">
             <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5" /> Empirical Demonstration
+              <Globe className="w-5 h-5" /> Global Applications
             </h3>
             <p className="text-sm opacity-80 leading-relaxed">
-              Two cases — <strong>Titanic survival</strong>, <strong>global plastic leakage</strong> — where correlational anecdotes produced by standard analysis are elevated to consistent narratives by constructing the deducible space first.
+              The Databoard is the first methodology to use structured language for constructing a deducible space, enabling powerful human-AI collaborative reasoning and narrative logic. It is ideally suited for data analysis, investigative journalism, intellectual exploration, and education.
             </p>
           </section>
         </div>
@@ -1304,6 +1415,16 @@ export default function App() {
             <p className="text-sm opacity-70 serif-italic">
               {scenario.context}
             </p>
+
+            {scenario.outcomes && scenario.outcomes.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {scenario.outcomes.map((outcome, i) => (
+                  <span key={i} className="px-2 py-0.5 bg-ink text-white text-[8px] mono uppercase tracking-widest">
+                    {outcome}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {scenario.id === 'ai-sustainability' && tiles.length === 0 && (
               <button
