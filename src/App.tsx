@@ -689,6 +689,7 @@ export default function App() {
   const [isSystemKeyActive, setIsSystemKeyActive] = useState(false);
   const [systemStatus, setSystemStatus] = useState<{ source: string, maskedKey: string | null } | null>(null);
   const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
+  const [isExpansionAvailable, setIsExpansionAvailable] = useState(true);
 
   // Handle retry countdown
   useEffect(() => {
@@ -900,12 +901,24 @@ export default function App() {
       const suggestions = await generateBestVocabulary(scenario, existingWords);
       
       if (!suggestions || suggestions.length === 0) {
+        setIsExpansionAvailable(false);
         setError("The AI didn't return any new vocabulary. Try a different scenario.");
         return;
       }
 
+      // Filter out suggestions that are already on the board (case-insensitive)
+      const newSuggestions = suggestions.filter(s => 
+        !existingWords.some(ew => ew.toLowerCase() === s.word.toLowerCase())
+      );
+
+      if (newSuggestions.length === 0) {
+        setIsExpansionAvailable(false);
+        setError("No more unique concepts found for this deducible space.");
+        return;
+      }
+
       setTiles((prev) => {
-        const newTiles = [...suggestions, ...prev];
+        const newTiles = [...newSuggestions, ...prev];
         // Only trigger metrics automatically if it's the first board generation
         // to save AI quota for the user.
         if (prev.length === 0) {
@@ -1138,6 +1151,7 @@ export default function App() {
                     setScenario(s);
                     setTiles([]);
                     setSelectedTile(null);
+                    setIsExpansionAvailable(true);
                   }
                 }}
                 className="bg-transparent border-b-2 border-ink py-2 pr-8 focus:outline-none mono text-sm cursor-pointer"
@@ -1185,11 +1199,11 @@ export default function App() {
                   <button 
                     id="ai-suggestions"
                     onClick={handleGeminiSuggest}
-                    disabled={isLoading}
-                    className="flex-1 py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    disabled={isLoading || !isExpansionAvailable}
+                    className="flex-1 py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
                   >
                     <Zap className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    {tiles.length === 0 ? "The Data Board" : "Expand Deducible Space"}
+                    {!isExpansionAvailable ? "Space Fully Expanded" : tiles.length === 0 ? "The Data Board" : "Expand Deducible Space"}
                   </button>
                   
                   <button 

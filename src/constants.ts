@@ -57,4 +57,11 @@ export const SCENARIOS: Scenario[] = [
     context: "Global happiness data (GDP per capita, social support, healthy life expectancy, freedom, generosity, perceptions of corruption). Move beyond simple rankings to a formal vocabulary of the deducible space. Focus on structural tensions: 'Economic-Security' vs 'Social-Cohesion', 'Individual-Freedom' vs 'Institutional-Trust'. The goal is a minimal set of concepts where narrative conclusions about global well-being follow inevitably.",
     outcomes: ["High Life Satisfaction", "Systemic Distress"],
   },
+  {
+    id: "ai-sustainability-kaggle",
+    title: "AI Sustainability- Kaggle",
+    description: "Analyzing the environmental and systemic impact of large-scale AI models.",
+    context: "Kaggle dataset on AI model training costs, energy consumption, and hardware efficiency. Construct a deducible space for sustainable AI development. Focus on structural tensions: 'Compute-Intensity' vs 'Energy-Efficiency', 'Innovation-Velocity' vs 'Carbon-Constraint', 'Hardware-Lifecycle' vs 'Model-Obsolescence'. The goal is a vocabulary that makes the narrative of AI's environmental footprint deducible.",
+    outcomes: ["Sustainable Innovation", "Ecological Debt"],
+  },
 ];
