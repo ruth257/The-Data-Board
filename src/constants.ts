@@ -50,4 +50,11 @@ export const SCENARIOS: Scenario[] = [
     context: "General data analysis principles. Focus on 'Selection-Bias', 'Causal-Illusion', 'Sample-Fragility', 'Narrative-Coherence'. Use vocabulary that helps teams construct the deducible space upstream of causal graphs.",
     outcomes: ["Informed Decision", "Misinterpretation"],
   },
+  {
+    id: "world-happiness-2025",
+    title: "World Happiness Rating 2025",
+    description: "Constructing the deducible space for global well-being and life satisfaction.",
+    context: "Global happiness data (GDP per capita, social support, healthy life expectancy, freedom, generosity, perceptions of corruption). Move beyond simple rankings to a formal vocabulary of the deducible space. Focus on structural tensions: 'Economic-Security' vs 'Social-Cohesion', 'Individual-Freedom' vs 'Institutional-Trust'. The goal is a minimal set of concepts where narrative conclusions about global well-being follow inevitably.",
+    outcomes: ["High Life Satisfaction", "Systemic Distress"],
+  },
 ];

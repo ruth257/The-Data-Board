@@ -1065,7 +1065,7 @@ export default function App() {
             The Data Board
           </h1>
           <p className="text-lg serif-italic mt-2 opacity-70">
-            Constructing the Deducible Space: Formalizing the conceptual foundation for narrative causal reasoning.
+            Constructing the conceptual foundation for narrative causal reasoning.
           </p>
         </div>
         <div className="flex flex-col items-end gap-4">
