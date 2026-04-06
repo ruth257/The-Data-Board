@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight } from "lucide-react";
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
+import { CACHED_BOARDS } from "./cachedData";
 import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
 import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, auditCausalTension, analyzeCSVData } from "./services/geminiService";
 import { RelationshipGraph } from "./components/RelationshipGraph";
@@ -230,7 +231,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
               <Globe className="w-5 h-5" /> Global Applications
             </h3>
             <p className="text-sm opacity-80 leading-relaxed">
-              The Databoard is the first methodology to use structured language for constructing a deducible space, enabling powerful human-AI collaborative reasoning and narrative logic. It is ideally suited for data analysis, investigative journalism, intellectual exploration, and education.
+              The Databoard is the first AI-first methodology using human language to construct a deducible space, enabling seamless human-AI collaborative reasoning and narrative logic. It is the definitive method for data analysis, investigative journalism, intellectual exploration, and modern education.
             </p>
           </section>
         </div>
@@ -296,22 +297,22 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
       <motion.div 
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        className="bg-bg w-full max-w-md border-2 border-ink p-8 shadow-[16px_16px_0px_0px_rgba(20,20,20,1)]"
+        className="bg-bg w-full max-w-md border-2 border-ink p-6 shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6" /> Secure AI Setup
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-black uppercase tracking-tighter flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5" /> Secure AI Setup
           </h2>
           <button onClick={onClose} className="p-1 hover:bg-ink hover:text-bg transition-colors">
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* System Status */}
           {isSystemKeyActive ? (
-            <div className="p-4 bg-databoard-green/5 border-l-4 border-databoard-green">
+            <div className="p-3 bg-databoard-green/5 border-l-4 border-databoard-green">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 rounded-full bg-databoard-green animate-pulse" />
                 <span className="text-[10px] mono uppercase font-bold text-databoard-green">Shared AI Active</span>
@@ -321,13 +322,12 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
               </p>
               {systemStatus && (
                 <div className="mt-2 pt-2 border-t border-databoard-green/10 text-[9px] mono opacity-50">
-                  <div>Source: {systemStatus.source}</div>
-                  <div>Key: {systemStatus.maskedKey}</div>
+                  <div>Status: Connected to Secure Backend</div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="p-4 bg-databoard-red/5 border-l-4 border-databoard-red">
+            <div className="p-3 bg-databoard-red/5 border-l-4 border-databoard-red">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 rounded-full bg-databoard-red" />
                 <span className="text-[10px] mono uppercase font-bold text-databoard-red">Shared AI Inactive</span>
@@ -339,13 +339,13 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
           )}
 
           {/* Platform Key Selection (Preferred) */}
-          <div className="p-4 bg-databoard-green/10 border-2 border-databoard-green/30">
-            <h3 className="text-xs mono uppercase font-bold mb-2 flex items-center gap-2">
+          <div className="p-3 bg-databoard-green/10 border-2 border-databoard-green/30">
+            <h3 className="text-xs mono uppercase font-bold mb-1 flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${isPlatformKeySelected ? 'bg-databoard-green' : 'bg-gray-300'}`} />
-              Platform Key Selection (Recommended)
+              Platform Key Selection
             </h3>
-            <p className="text-[10px] mono opacity-70 mb-4 leading-tight">
-              Use the built-in AI Studio key selector. This is the most secure way to connect your account.
+            <p className="text-[10px] mono opacity-70 mb-3 leading-tight">
+              Use the built-in AI Studio key selector. This is the most secure way to connect.
             </p>
             <button 
               onClick={onSelectPlatformKey}
@@ -353,9 +353,6 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
             >
               {isPlatformKeySelected ? "Key Selected" : "Select Platform Key"}
             </button>
-            <p className="text-[9px] mono mt-2 opacity-50 italic">
-              * Required for Gemini 3 series models. See <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noreferrer" className="underline">billing docs</a>.
-            </p>
           </div>
 
           <div className="relative">
@@ -369,16 +366,16 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
 
           {/* Manual Key Entry */}
           <div>
-            <p className="text-[10px] mono uppercase opacity-60 mb-4 leading-relaxed">
-              To protect your privacy, we don't store API keys on our servers. Your key is saved locally in your browser.
-            </p>
+            <div className="mb-3 p-2 bg-databoard-yellow/10 border border-databoard-yellow/30 text-[9px] mono leading-tight">
+              <strong className="text-databoard-yellow uppercase">Note:</strong> To upload and analyze your own CSV data, you <strong>must</strong> provide your own API key here.
+            </div>
             <label className="block text-[10px] mono uppercase font-bold mb-1">Gemini API Key</label>
             <input 
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               placeholder="AIzaSy..."
-              className="w-full bg-white border-2 border-ink p-3 mono text-sm focus:outline-none focus:ring-2 focus:ring-databoard-yellow"
+              className="w-full bg-white border-2 border-ink p-2 mono text-sm focus:outline-none focus:ring-2 focus:ring-databoard-yellow"
             />
           </div>
           
@@ -386,42 +383,39 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
             <button 
               onClick={handleSave}
               disabled={isSaved}
-              className={`flex-1 py-4 mono uppercase font-bold text-sm transition-all flex items-center justify-center gap-2
+              className={`flex-1 py-3 mono uppercase font-bold text-xs transition-all flex items-center justify-center gap-2
                 ${isSaved ? 'bg-databoard-green text-white' : 'bg-ink text-bg hover:translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(20,20,20,0.2)] active:translate-0 active:shadow-none'}
               `}
             >
               {isSaved ? (
                 <>
-                  <ShieldCheck className="w-4 h-4" /> Key Saved & Applied
+                  <ShieldCheck className="w-4 h-4" /> Key Saved
                 </>
               ) : (
                 'Save & Reload'
               )}
             </button>
             
-            <div className="flex gap-2">
+            {localStorage.getItem("GEMINI_API_KEY") && (
               <button 
-                onClick={() => window.location.reload()}
-                className="flex-1 py-2 bg-ink/5 text-ink/60 border border-ink/10 hover:bg-ink/10 transition-all mono uppercase font-bold text-[10px] flex items-center justify-center gap-2"
+                onClick={handleClear}
+                className="w-full py-2 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all mono uppercase font-bold text-[9px]"
+                title="Clear manual key"
               >
-                <RefreshCw className="w-3 h-3" /> Force Re-check
+                Clear Manual Key
               </button>
-              
-              {localStorage.getItem("GEMINI_API_KEY") && (
-                <button 
-                  onClick={handleClear}
-                  className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all mono uppercase font-bold text-[10px]"
-                  title="Clear manual key"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
+            )}
           </div>
           
-          <p className="text-[10px] mono text-center opacity-40">
-            Don't have a key? Get one for free at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline hover:text-ink">Google AI Studio</a>.
-          </p>
+          <div className="p-3 bg-ink/5 border border-ink/10 space-y-2">
+            <h4 className="text-[10px] mono uppercase font-bold flex items-center gap-2">
+              <HelpCircle className="w-3 h-3" /> How to get an API Key:
+            </h4>
+            <ol className="text-[9px] mono space-y-1 opacity-70 list-decimal pl-4">
+              <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline font-bold hover:text-databoard-yellow">Google AI Studio</a>.</li>
+              <li>Click <strong>"Create API key"</strong> and copy it.</li>
+            </ol>
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -675,9 +669,23 @@ export default function App() {
   });
   const [tiles, setTiles] = useState<Tile[]>(() => {
     const saved = localStorage.getItem("databoard-tiles");
-    return saved ? JSON.parse(saved) : [];
+    if (saved) return JSON.parse(saved);
+    
+    // Fallback to cached data for the initial scenario
+    if (CACHED_BOARDS[scenario.id]) {
+      return CACHED_BOARDS[scenario.id].tiles;
+    }
+    return [];
   });
-  const [metrics, setMetrics] = useState<BoardMetrics | null>(null);
+  const [metrics, setMetrics] = useState<BoardMetrics | null>(() => {
+    const savedTiles = localStorage.getItem("databoard-tiles");
+    if (savedTiles) return null; // Let it load normally if there's saved state
+    
+    if (CACHED_BOARDS[scenario.id]) {
+      return CACHED_BOARDS[scenario.id].metrics;
+    }
+    return null;
+  });
   const [isMetricsLoading, setIsMetricsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -716,21 +724,20 @@ export default function App() {
   useEffect(() => {
     const checkKeyStatus = async () => {
       const localKey = localStorage.getItem("GEMINI_API_KEY");
+      const platformKey = typeof process !== 'undefined' ? process.env?.API_KEY : null;
       
       try {
         // First check server health
         const healthUrl = `${window.location.origin}/api/health`;
-        console.log("Checking health at:", healthUrl);
         const healthCheck = await fetch(healthUrl);
         if (!healthCheck.ok) {
           console.error("Server health check failed:", healthCheck.status);
-          setHasApiKey(!!localKey);
+          setHasApiKey(!!localKey || !!platformKey);
           setIsSystemKeyActive(false);
           return;
         }
 
         const statusUrl = `${window.location.origin}/api/ai/status`;
-        console.log("Checking status at:", statusUrl);
         const response = await fetch(statusUrl);
         const contentType = response.headers.get("content-type");
         
@@ -738,17 +745,17 @@ export default function App() {
           const data = await response.json();
           // If the server has a shared key, we consider the system key active.
           // The service will still prioritize the local key if it exists.
-          setHasApiKey(!!localKey || data.isReady); 
+          setHasApiKey(!!localKey || !!platformKey || data.isReady); 
           setIsSystemKeyActive(data.isReady);
           setSystemStatus({ source: data.source, maskedKey: data.maskedKey });
         } else {
           console.error("Status check failed:", response.status, contentType);
-          setHasApiKey(!!localKey);
+          setHasApiKey(!!localKey || !!platformKey);
           setIsSystemKeyActive(false);
         }
       } catch (e) {
         console.error("Connectivity error:", e);
-        setHasApiKey(!!localKey);
+        setHasApiKey(!!localKey || !!platformKey);
         setIsSystemKeyActive(false);
       }
     };
@@ -758,15 +765,16 @@ export default function App() {
   useEffect(() => {
     if (isSettingsOpen) {
       const checkKeyStatus = async () => {
+        const localKey = localStorage.getItem("GEMINI_API_KEY");
+        const platformKey = typeof process !== 'undefined' ? process.env?.API_KEY : null;
         try {
-          const localKey = localStorage.getItem("GEMINI_API_KEY");
           const statusUrl = `${window.location.origin}/api/ai/status`;
           const response = await fetch(statusUrl);
           const contentType = response.headers.get("content-type");
           
           if (response.ok && contentType && contentType.includes("application/json")) {
             const data = await response.json();
-            setHasApiKey(!!localKey || data.isReady); 
+            setHasApiKey(!!localKey || !!platformKey || data.isReady); 
             setIsSystemKeyActive(data.isReady);
             setSystemStatus({ source: data.source, maskedKey: data.maskedKey });
           }
@@ -895,7 +903,6 @@ export default function App() {
     if (isLoading) return;
     setIsLoading(true);
     setError(null);
-    console.log("Generating initial board for scenario:", scenario.title);
     try {
       const existingWords = tiles.map(t => t.word);
       const suggestions = await generateBestVocabulary(scenario, existingWords);
@@ -939,7 +946,15 @@ export default function App() {
     setAuditingTileId(tile.id);
     setError(null);
     try {
-      const shadowTile = await auditCausalTension(scenario, tile);
+      let shadowTile: Tile;
+      if (tile.cachedShadow) {
+        // Simulate a small delay for "wow" effect
+        await new Promise(r => setTimeout(r, 800));
+        shadowTile = tile.cachedShadow;
+      } else {
+        shadowTile = await auditCausalTension(scenario, tile);
+      }
+      
       setTiles(prev => {
         if (prev.some(t => t.word.toLowerCase() === shadowTile.word.toLowerCase())) {
           return prev;
@@ -1018,10 +1033,6 @@ export default function App() {
           setScenario(newScenario);
           setTiles(newTiles);
           setSelectedTile(null);
-          
-          // Add to scenarios list if it's not there (though SCENARIOS is a constant, 
-          // we'll just handle it via state for the current session)
-          console.log("New scenario generated:", newScenario);
         }
       } catch (err: any) {
         console.error(err);
@@ -1078,7 +1089,7 @@ export default function App() {
             The Data Board
           </h1>
           <p className="text-lg serif-italic mt-2 opacity-70">
-            Constructing the conceptual foundation for narrative causal reasoning.
+            AI powered Data Analysis in Human Language
           </p>
         </div>
         <div className="flex flex-col items-end gap-4">
@@ -1149,9 +1160,17 @@ export default function App() {
                   const s = scenarios.find((s) => s.id === e.target.value);
                   if (s) {
                     setScenario(s);
-                    setTiles([]);
                     setSelectedTile(null);
                     setIsExpansionAvailable(true);
+                    
+                    // Load cached data if available
+                    if (CACHED_BOARDS[s.id]) {
+                      setTiles(CACHED_BOARDS[s.id].tiles);
+                      setMetrics(CACHED_BOARDS[s.id].metrics);
+                    } else {
+                      setTiles([]);
+                      setMetrics(null);
+                    }
                   }
                 }}
                 className="bg-transparent border-b-2 border-ink py-2 pr-8 focus:outline-none mono text-sm cursor-pointer"
@@ -1544,7 +1563,10 @@ export default function App() {
                 The Vocabulary Board
               </h2>
               <div className="flex gap-4">
-                <label className="flex items-center gap-1 text-[10px] mono uppercase opacity-30 hover:opacity-100 transition-opacity cursor-pointer">
+                <label 
+                  className="flex items-center gap-1 text-[10px] mono uppercase opacity-30 hover:opacity-100 transition-opacity cursor-pointer group relative"
+                  title="Requires personal API key in Settings"
+                >
                   <Upload className="w-3 h-3" />
                   Import CSV/JSON
                   <input 

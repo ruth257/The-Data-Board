@@ -16,15 +16,6 @@ async function startServer() {
     app.use(cors());
     app.use(express.json());
 
-    // Global Request Logger (Move to top for debugging)
-    app.use((req, res, next) => {
-      console.log(`[Data Board] [${new Date().toISOString()}] ${req.method} ${req.url}`);
-      if (req.method === "POST") {
-        console.log(`[Data Board] Body keys: ${Object.keys(req.body || {})}`);
-      }
-      next();
-    });
-
     // Health Check
     app.get("/api/health", (req, res) => {
       res.json({ status: "ok", timestamp: new Date().toISOString() });
@@ -151,15 +142,6 @@ async function startServer() {
 
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`[Data Board] Server running on http://localhost:${PORT}`);
-      const websiteKey = process.env.WEBSITE_API_KEY;
-      const dbKey = process.env.DATA_BOARD_KEY;
-      const geminiKey = process.env.GEMINI_API_KEY;
-      const apiKey = process.env.API_KEY;
-      
-      console.log(`[Data Board] WEBSITE_API_KEY: ${websiteKey ? `${websiteKey.substring(0, 4)}...${websiteKey.substring(websiteKey.length - 4)}` : "MISSING"}`);
-      console.log(`[Data Board] DATA_BOARD_KEY: ${dbKey ? `${dbKey.substring(0, 4)}...${dbKey.substring(dbKey.length - 4)}` : "MISSING"}`);
-      console.log(`[Data Board] GEMINI_API_KEY: ${geminiKey ? `${geminiKey.substring(0, 4)}...${geminiKey.substring(geminiKey.length - 4)}` : "MISSING"}`);
-      console.log(`[Data Board] API_KEY: ${apiKey ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : "MISSING"}`);
     });
   } catch (error) {
     console.error("[Data Board] Server failed to start:", error);

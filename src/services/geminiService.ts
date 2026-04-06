@@ -47,11 +47,14 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay =
 const callAIProxy = async (model: string, contents: any, config: any) => {
   return await withRetry(async () => {
     const localKey = localStorage.getItem("GEMINI_API_KEY");
+    // The platform injects the selected API key into process.env.API_KEY
+    const platformKey = typeof process !== 'undefined' ? process.env?.API_KEY : null;
+    const activeKey = localKey || platformKey;
     
-    // If user has a private key in localStorage, use it directly (client-side)
-    if (localKey) {
-      console.log("[Data Board] Using local API key from Settings.");
-      const ai = new GoogleGenAI({ apiKey: localKey });
+    // If user has a private key or platform key, use it directly (client-side)
+    if (activeKey) {
+      console.log(`[Data Board] Using ${localKey ? 'local' : 'platform'} API key.`);
+      const ai = new GoogleGenAI({ apiKey: activeKey });
       const result = await ai.models.generateContent({ model, contents, config });
       return { text: result.text || "" };
     }

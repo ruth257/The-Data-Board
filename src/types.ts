@@ -15,6 +15,7 @@ export interface Tile {
   isAIConfirmed?: boolean; // The ★ mark
   relevanceScore?: number; // 0-100
   specificityScore: number; // 0-100
+  cachedShadow?: Tile; // Pre-generated causal audit (shadow tile)
 }
 
 export interface Scenario {
