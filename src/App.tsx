@@ -845,12 +845,19 @@ export default function App() {
     localStorage.setItem("databoard-scenario", scenario.id);
   }, [scenario]);
 
-  const updateMetrics = async (currentTiles?: Tile[]) => {
+  const updateMetrics = async (currentTiles?: Tile[], isUserAction = false) => {
     const activeTiles = currentTiles || tiles;
     if (activeTiles.length === 0) {
       setMetrics(null);
       return;
     }
+
+    if (!hasApiKey) {
+      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+      if (isUserAction) setIsSettingsOpen(true);
+      return;
+    }
+
     setIsMetricsLoading(true);
     setError(null);
     try {
@@ -858,7 +865,10 @@ export default function App() {
       setMetrics(newMetrics);
     } catch (err: any) {
       console.error("Failed to update metrics", err);
-      setError(err.message || "Failed to update board metrics.");
+      if (err.message?.includes("API_KEY_REQUIRED") && isUserAction) {
+        setIsSettingsOpen(true);
+      }
+      setError(err.message?.replace("API_KEY_REQUIRED: ", "") || "Failed to update board metrics.");
     } finally {
       setIsMetricsLoading(false);
     }
@@ -874,6 +884,12 @@ export default function App() {
   const handleAddWord = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!inputValue.trim() || isLoading) return;
+
+    if (!hasApiKey) {
+      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+      setIsSettingsOpen(true);
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -899,6 +915,13 @@ export default function App() {
 
   const handleApplySynthesis = async (original: string[], replacement: string) => {
     if (isLoading) return;
+
+    if (!hasApiKey) {
+      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+      setIsSettingsOpen(true);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
@@ -918,6 +941,13 @@ export default function App() {
 
   const handleGeminiSuggest = async () => {
     if (isLoading) return;
+
+    if (!hasApiKey) {
+      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+      setIsSettingsOpen(true);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
@@ -969,6 +999,12 @@ export default function App() {
         await new Promise(r => setTimeout(r, 800));
         shadowTile = tile.cachedShadow;
       } else {
+        if (!hasApiKey) {
+          setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+          setIsSettingsOpen(true);
+          setAuditingTileId(null);
+          return;
+        }
         shadowTile = await auditCausalTension(scenario, tile);
       }
       
@@ -980,7 +1016,10 @@ export default function App() {
       });
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Causal audit failed.");
+      if (err.message?.includes("API_KEY_REQUIRED")) {
+        setIsSettingsOpen(true);
+      }
+      setError(err.message?.replace("API_KEY_REQUIRED: ", "") || "Causal audit failed.");
     } finally {
       setAuditingTileId(null);
     }
@@ -1029,6 +1068,9 @@ export default function App() {
             setSelectedTile(null);
           }
         } else if (file.name.endsWith('.csv')) {
+          if (!hasApiKey) {
+            throw new Error("API_KEY_REQUIRED: CSV analysis requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+          }
           // Parse CSV
           const results = Papa.parse(content, { header: true, skipEmptyLines: true });
           if (results.errors.length > 0) {
@@ -1053,7 +1095,10 @@ export default function App() {
         }
       } catch (err: any) {
         console.error(err);
-        setError(`Import failed: ${err.message || "Invalid file format"}`);
+        if (err.message?.includes("API_KEY_REQUIRED")) {
+          setIsSettingsOpen(true);
+        }
+        setError(`Import failed: ${err.message?.replace("API_KEY_REQUIRED: ", "") || "Invalid file format"}`);
       } finally {
         setIsLoading(false);
       }
@@ -1243,7 +1288,7 @@ export default function App() {
                   </button>
                   
                   <button 
-                    onClick={() => updateMetrics()}
+                    onClick={() => updateMetrics(undefined, true)}
                     disabled={isMetricsLoading || tiles.length === 0}
                     className="px-6 py-4 bg-ink text-bg font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                   >
@@ -1284,7 +1329,7 @@ export default function App() {
                       setError(null);
                       // Context-aware retry
                       if (prevError.includes("metrics") || prevError.includes("Synthesize") || prevError.includes("SERVER_WARMUP") || prevError.includes("QUOTA_EXHAUSTED")) {
-                        updateMetrics();
+                        updateMetrics(undefined, true);
                       } else if (tiles.length === 0 || prevError.includes("vocabulary")) {
                         handleGeminiSuggest();
                       }
@@ -1311,7 +1356,7 @@ export default function App() {
               <div className="flex items-center gap-3">
                 {tiles.length > 0 && (
                   <button 
-                    onClick={() => updateMetrics()}
+                    onClick={() => updateMetrics(undefined, true)}
                     disabled={isMetricsLoading}
                     className={`flex items-center gap-1 text-[9px] mono uppercase font-bold px-2 py-1 border border-ink/20 hover:bg-ink hover:text-bg transition-all ${isMetricsLoading ? 'animate-pulse' : ''}`}
                   >

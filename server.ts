@@ -40,7 +40,10 @@ async function startServer() {
       
       if (!apiKey) {
         console.error("[Data Board] No API key found in environment.");
-        return res.status(401).json({ error: "No API key configured on server. Please check your Secrets for WEBSITE_API_KEY or DATA_BOARD_KEY." });
+        return res.status(401).json({ 
+          error: "API Key Required", 
+          message: "This action requires an AI connection. Please add your Gemini API key in the Vault (Settings) to continue." 
+        });
       }
 
       const { model, contents, config } = req.body;

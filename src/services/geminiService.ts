@@ -68,6 +68,10 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
     });
 
     if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error("API_KEY_REQUIRED: This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+      }
+      
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         const error = await response.json();
