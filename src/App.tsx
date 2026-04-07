@@ -853,7 +853,6 @@ export default function App() {
     }
 
     if (!hasApiKey) {
-      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
       if (isUserAction) setIsSettingsOpen(true);
       return;
     }
@@ -865,10 +864,11 @@ export default function App() {
       setMetrics(newMetrics);
     } catch (err: any) {
       console.error("Failed to update metrics", err);
-      if (err.message?.includes("API_KEY_REQUIRED") && isUserAction) {
-        setIsSettingsOpen(true);
+      if (err.message?.includes("API_KEY_REQUIRED")) {
+        if (isUserAction) setIsSettingsOpen(true);
+      } else {
+        setError(err.message?.replace("API_KEY_REQUIRED: ", "") || "Failed to update board metrics.");
       }
-      setError(err.message?.replace("API_KEY_REQUIRED: ", "") || "Failed to update board metrics.");
     } finally {
       setIsMetricsLoading(false);
     }
@@ -886,7 +886,6 @@ export default function App() {
     if (!inputValue.trim() || isLoading) return;
 
     if (!hasApiKey) {
-      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
       setIsSettingsOpen(true);
       return;
     }
@@ -907,7 +906,11 @@ export default function App() {
       inputRef.current?.focus();
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to evaluate word. Please try again.");
+      if (err.message?.includes("API_KEY_REQUIRED")) {
+        setIsSettingsOpen(true);
+      } else {
+        setError(err.message || "Failed to evaluate word. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -917,7 +920,6 @@ export default function App() {
     if (isLoading) return;
 
     if (!hasApiKey) {
-      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
       setIsSettingsOpen(true);
       return;
     }
@@ -933,7 +935,11 @@ export default function App() {
       setTiles([newTile, ...filteredTiles]);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to apply synthesis suggestion.");
+      if (err.message?.includes("API_KEY_REQUIRED")) {
+        setIsSettingsOpen(true);
+      } else {
+        setError(err.message || "Failed to apply synthesis suggestion.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -943,7 +949,6 @@ export default function App() {
     if (isLoading) return;
 
     if (!hasApiKey) {
-      setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
       setIsSettingsOpen(true);
       return;
     }
@@ -982,7 +987,11 @@ export default function App() {
       });
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to generate initial board.");
+      if (err.message?.includes("API_KEY_REQUIRED")) {
+        setIsSettingsOpen(true);
+      } else {
+        setError(err.message || "Failed to generate initial board.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -1000,7 +1009,6 @@ export default function App() {
         shadowTile = tile.cachedShadow;
       } else {
         if (!hasApiKey) {
-          setError("This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
           setIsSettingsOpen(true);
           setAuditingTileId(null);
           return;
@@ -1018,8 +1026,9 @@ export default function App() {
       console.error(err);
       if (err.message?.includes("API_KEY_REQUIRED")) {
         setIsSettingsOpen(true);
+      } else {
+        setError(err.message?.replace("API_KEY_REQUIRED: ", "") || "Causal audit failed.");
       }
-      setError(err.message?.replace("API_KEY_REQUIRED: ", "") || "Causal audit failed.");
     } finally {
       setAuditingTileId(null);
     }
@@ -1069,7 +1078,9 @@ export default function App() {
           }
         } else if (file.name.endsWith('.csv')) {
           if (!hasApiKey) {
-            throw new Error("API_KEY_REQUIRED: CSV analysis requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+            setIsSettingsOpen(true);
+            setIsLoading(false);
+            return;
           }
           // Parse CSV
           const results = Papa.parse(content, { header: true, skipEmptyLines: true });
@@ -1097,8 +1108,9 @@ export default function App() {
         console.error(err);
         if (err.message?.includes("API_KEY_REQUIRED")) {
           setIsSettingsOpen(true);
+        } else {
+          setError(`Import failed: ${err.message?.replace("API_KEY_REQUIRED: ", "") || "Invalid file format"}`);
         }
-        setError(`Import failed: ${err.message?.replace("API_KEY_REQUIRED: ", "") || "Invalid file format"}`);
       } finally {
         setIsLoading(false);
       }
