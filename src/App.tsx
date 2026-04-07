@@ -678,6 +678,15 @@ export default function App() {
     return [];
   });
   const [metrics, setMetrics] = useState<BoardMetrics | null>(() => {
+    const savedMetrics = localStorage.getItem("databoard-metrics");
+    if (savedMetrics) {
+      try {
+        return JSON.parse(savedMetrics);
+      } catch (e) {
+        console.error("Failed to parse saved metrics", e);
+      }
+    }
+    
     const savedTiles = localStorage.getItem("databoard-tiles");
     if (savedTiles) return null; // Let it load normally if there's saved state
     
@@ -819,10 +828,18 @@ export default function App() {
     setShowWalkthrough(false);
   };
 
-  // Persist tiles and scenario
+  // Persist tiles, metrics and scenario
   useEffect(() => {
     localStorage.setItem("databoard-tiles", JSON.stringify(tiles));
   }, [tiles]);
+
+  useEffect(() => {
+    if (metrics) {
+      localStorage.setItem("databoard-metrics", JSON.stringify(metrics));
+    } else {
+      localStorage.removeItem("databoard-metrics");
+    }
+  }, [metrics]);
 
   useEffect(() => {
     localStorage.setItem("databoard-scenario", scenario.id);

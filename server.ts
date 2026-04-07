@@ -35,24 +35,7 @@ async function startServer() {
     });
 
     // Unified AI Proxy Endpoint
-    app.all(["/api/ai/generate", "/api/ai/generate/"], async (req, res) => {
-      console.log(`[Data Board] [${new Date().toISOString()}] ${req.method} ${req.url}`);
-      
-      // Handle CORS Preflight
-      if (req.method === "OPTIONS") {
-        return res.status(204).end();
-      }
-
-      if (req.method !== "POST") {
-        console.warn(`[Data Board] Method ${req.method} not allowed for /api/ai/generate`);
-        return res.status(405).json({ 
-          error: "Method Not Allowed", 
-          message: `Please use POST instead of ${req.method}.`,
-          url: req.url,
-          method: req.method
-        });
-      }
-
+    app.post(["/api/ai/generate", "/api/ai/generate/"], async (req, res) => {
       const apiKey = process.env.WEBSITE_API_KEY || process.env.DATA_BOARD_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY;
       
       if (!apiKey) {
