@@ -30,13 +30,6 @@ export const SCENARIOS: Scenario[] = [
     outcomes: ["Survival", "Death"],
   },
   {
-    id: "plastic-leakage",
-    title: "Global Plastic Leakage",
-    description: "Analyzing the systemic drivers of plastic waste in the environment.",
-    context: "Global waste management data, production metrics, and environmental leakage rates. Construct a deducible space that bridges facts and deduction. Focus on cohesive handles: 'Waste-Velocity', 'Infrastructure-Lag', 'Circular-Fiction', 'Export-Dependency'. Use pseudo-antonyms to introduce structural tension that makes narrative conclusions about leakage inevitable.",
-    outcomes: ["Environmental Impact", "Mitigation"],
-  },
-  {
     id: "climate-data",
     title: "Climate Trend Analysis",
     description: "The formalization of the deducible space for climate variance.",

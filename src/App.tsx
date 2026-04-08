@@ -948,6 +948,25 @@ export default function App() {
   const handleGeminiSuggest = async () => {
     if (isLoading) return;
 
+    const existingWords = tiles.map(t => t.word);
+    const cachedBoard = CACHED_BOARDS[scenario.id];
+
+    // Check for cached expansion first
+    if (cachedBoard?.cachedExpansion) {
+      const newSuggestions = cachedBoard.cachedExpansion.filter(s => 
+        !existingWords.some(ew => ew.toLowerCase() === s.word.toLowerCase())
+      );
+
+      if (newSuggestions.length > 0) {
+        setIsLoading(true);
+        // Simulate a small delay for "wow" effect
+        await new Promise(r => setTimeout(r, 800));
+        setTiles((prev) => [...newSuggestions, ...prev]);
+        setIsLoading(false);
+        return;
+      }
+    }
+
     if (!hasApiKey) {
       setIsSettingsOpen(true);
       return;
