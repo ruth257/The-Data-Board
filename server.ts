@@ -17,6 +17,14 @@ async function startServer() {
     app.use(cors());
     app.use(express.json());
 
+    // Request Logging for Diagnostics
+    app.use((req, res, next) => {
+      if (!req.url.startsWith('/@') && !req.url.startsWith('/src/') && !req.url.startsWith('/node_modules/')) {
+        console.log(`[Data Board] ${new Date().toISOString()} ${req.method} ${req.url}`);
+      }
+      next();
+    });
+
     // Health Check
     app.get("/api/health", (req, res) => {
       res.json({ status: "ok", timestamp: new Date().toISOString() });
@@ -117,40 +125,46 @@ async function startServer() {
     const isProduction = fs.existsSync(distPath);
     let vite: any;
 
-    if (isProduction) {
-      console.log("[Data Board] Running in PRODUCTION mode (dist folder found)");
-      app.use(express.static(distPath));
-    } else {
+    if (!isProduction) {
       console.log("[Data Board] Running in DEVELOPMENT mode (dist folder not found)");
       vite = await createViteServer({
         server: { middlewareMode: true },
         appType: "spa",
       });
-      app.use(vite.middlewares);
+    } else {
+      console.log("[Data Board] Running in PRODUCTION mode (dist folder found)");
     }
 
-    // Catch-all SPA fallback
-    app.get('*', async (req, res, next) => {
-      const url = req.originalUrl;
-      
-      // Skip API routes
-      if (url.startsWith('/api/')) return next();
-      
+    // Explicitly handle /methodology and root to ensure they always serve index.html
+    const serveIndex = async (req: any, res: any, next: any) => {
       try {
         if (isProduction) {
           res.sendFile(path.join(distPath, 'index.html'));
         } else {
-          // In dev mode, transform index.html through Vite
           let template = fs.readFileSync(path.resolve(process.cwd(), 'index.html'), 'utf-8');
-          template = await vite.transformIndexHtml(url, template);
+          template = await vite.transformIndexHtml(req.url, template);
           res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
         }
       } catch (e) {
-        if (!isProduction && vite) {
-          vite.ssrFixStacktrace(e as Error);
-        }
         next(e);
       }
+    };
+
+    app.get(['/', '/methodology', '/methodology/'], serveIndex);
+
+    if (isProduction) {
+      app.use(express.static(distPath));
+    } else {
+      app.use(vite.middlewares);
+    }
+
+    // Catch-all SPA fallback for any other routes
+    app.get('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      if (url.startsWith('/api/')) return next();
+      if (url.includes('.')) return next(); // Skip files
+      
+      serveIndex(req, res, next);
     });
 
     app.listen(PORT, "0.0.0.0", () => {
