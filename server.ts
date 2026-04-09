@@ -111,6 +111,17 @@ async function startServer() {
       res.status(404).json({ error: `Route ${req.method} ${req.url} not found.` });
     });
 
+    // Explicitly handle /methodology for SEO/LLMO
+    app.get(["/methodology", "/methodology/"], (req, res, next) => {
+      if (process.env.NODE_ENV === "production") {
+        res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+      } else {
+        // In dev mode, let Vite handle it, but we can also explicitly redirect to /
+        // or just let the next() call hit the Vite middleware
+        next();
+      }
+    });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

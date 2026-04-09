@@ -867,7 +867,7 @@ export default function App() {
     }
 
     // Handle /methodology route for SEO/LLMO
-    if (window.location.pathname === "/methodology") {
+    if (window.location.pathname.replace(/\/$/, "") === "/methodology") {
       setShowMethodology(true);
     }
   }, []);
