@@ -865,6 +865,11 @@ export default function App() {
     if (!hasSeen) {
       setShowWalkthrough(true);
     }
+
+    // Handle /methodology route for SEO/LLMO
+    if (window.location.pathname === "/methodology") {
+      setShowMethodology(true);
+    }
   }, []);
 
   const completeWalkthrough = () => {

@@ -5,8 +5,8 @@ The Data Board is an AI-first methodology for data analysis that uses human lang
 
 ## Core Principles
 
-### 1. The Power of Synthesis
-Named concepts carry more meaning than their parts. In this framework, "naming" is the primary analytical act. By synthesizing raw data into high-level "handles" (e.g., "Hegemonic Benchmark"), we create a type that can be reasoned about and built upon.
+### 1. The Power of Synthesis (Semantic Synthesis)
+Named concepts carry more meaning than their parts. In this framework, "naming" is the primary analytical act. A successful **Semantic Synthesis** finds the "Goldilocks" word: precise enough to reduce statistical guessing but flexible enough to enable human narration and discovery. By synthesizing raw data into these high-level "handles" (e.g., "Hegemonic Benchmark"), we create a type that can be reasoned about and built upon.
 
 ### 2. Analytical Stability (Shared Vocabulary)
 LLMs are non-deterministic. Providing a pre-defined vocabulary anchors the model's latent space, reducing semantic noise and ensuring consistent, reproducible outputs across different runs.
