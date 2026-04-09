@@ -525,102 +525,134 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       synthesisSuggestions: []
     }
   },
-  "climate-data": {
+  "big-mac-index": {
     tiles: [
       {
-        id: "c-1",
-        word: "Temperature Anomalies",
+        id: "bm-1",
+        word: "Purchasing Power Parity",
         centrality: Centrality.DOMINANT,
-        explanation: "The core handle for variance, measuring deviation from the 1951-1980 baseline.",
-        dataInsight: "Global average temperature has risen by 1.2°C since the pre-industrial era.",
-        source: "NASA GISS",
-        category: "Climate",
+        explanation: "The theory that exchange rates should adjust so that identical goods cost the same in different countries.",
+        dataInsight: "The Big Mac Index shows deviations of up to 50% from theoretical PPP in emerging markets.",
+        source: "The Economist / GitHub Dataset",
+        category: "Economics",
         isAIConfirmed: true,
         relevanceScore: 98,
-        specificityScore: 95
+        specificityScore: 95,
+        cachedShadow: {
+          id: "bm-1-s",
+          word: "The Balassa-Samuelson Effect",
+          centrality: Centrality.PRESENT,
+          explanation: "The observation that consumer prices are naturally higher in richer countries due to higher productivity in tradable sectors.",
+          dataInsight: "Explains why the Big Mac is 'permanently' more expensive in Switzerland vs. India.",
+          source: "Economic Theory",
+          category: "Macroeconomics",
+          specificityScore: 94
+        }
       },
       {
-        id: "c-2",
-        word: "Carbon Concentration",
+        id: "bm-2",
+        word: "Currency Valuation",
         centrality: Centrality.DOMINANT,
-        explanation: "The primary driver of the greenhouse effect, measured in parts per million (ppm).",
-        dataInsight: "Atmospheric CO2 reached 420 ppm in 2024, the highest in 3 million years.",
-        source: "NOAA Mauna Loa Observatory",
-        category: "Atmosphere",
+        explanation: "The degree to which a currency is 'over' or 'under' valued relative to the US Dollar based on the price of a Big Mac.",
+        dataInsight: "The Swiss Franc is consistently 30%+ overvalued, while the Egyptian Pound is 60%+ undervalued.",
+        source: "Big Mac Index 2024",
+        category: "Finance",
         isAIConfirmed: true,
-        relevanceScore: 97,
-        specificityScore: 92
+        relevanceScore: 96,
+        specificityScore: 92,
+        cachedShadow: {
+          id: "bm-2-s",
+          word: "Monetary Distortion",
+          centrality: Centrality.EDGE_CASE,
+          explanation: "Artificial currency suppression or inflation that breaks the deducible link between price and value.",
+          dataInsight: "Observed in markets with heavy central bank intervention or hyperinflation.",
+          source: "Financial Audit",
+          category: "Policy",
+          specificityScore: 92
+        }
       },
       {
-        id: "c-3",
-        word: "Feedback Loops",
+        id: "bm-3",
+        word: "Cost of Living",
         centrality: Centrality.PRESENT,
-        explanation: "Self-reinforcing mechanisms like Albedo reduction from melting Arctic ice.",
-        dataInsight: "Arctic sea ice is declining at a rate of 12.2% per decade.",
-        source: "National Snow and Ice Data Center",
-        category: "Feedback",
+        explanation: "The local handle for the Big Mac price, reflecting rent, labor, and utility costs.",
+        dataInsight: "Labor costs account for ~30% of the variance in Big Mac prices globally.",
+        source: "Global Price Survey",
+        category: "Sociology",
         isAIConfirmed: true,
-        relevanceScore: 92,
-        specificityScore: 88
+        relevanceScore: 90,
+        specificityScore: 85
       },
       {
-        id: "c-4",
-        word: "Threshold Fragility",
-        centrality: Centrality.EDGE_CASE,
-        explanation: "The risk of crossing irreversible tipping points in the Earth system.",
-        dataInsight: "9 of 15 global tipping points are now considered 'active' or 'at risk'.",
-        source: "Potsdam Institute",
-        category: "Risk",
+        id: "bm-4",
+        word: "Economic Arbitrage",
+        centrality: Centrality.PRESENT,
+        explanation: "The potential for profit by exploiting price differences between markets, though limited by the non-tradable nature of a burger.",
+        dataInsight: "The 'Burgernomics' gap highlights structural inefficiencies in global trade.",
+        source: "Arbitrage Analysis",
+        category: "Trade",
         isAIConfirmed: true,
         relevanceScore: 88,
-        specificityScore: 95
+        specificityScore: 82
+      },
+      {
+        id: "bm-5",
+        word: "The Big Mac Standard",
+        centrality: Centrality.EDGE_CASE,
+        explanation: "The use of a single, standardized product as a proxy for the entire basket of consumer goods.",
+        dataInsight: "While simple, it correlates 0.85 with more complex CPI-based PPP measures.",
+        source: "Methodological Review",
+        category: "Metrics",
+        isAIConfirmed: true,
+        relevanceScore: 85,
+        specificityScore: 90
       }
     ],
     cachedExpansion: [
       {
-        id: "c-exp-1",
-        word: "Anomaly Normalization",
+        id: "bm-exp-1",
+        word: "Global Price Variance",
         centrality: Centrality.DOMINANT,
-        explanation: "The psychological shift where extreme weather becomes the baseline, reducing urgency.",
-        dataInsight: "Public perception of 'normal' weather shifts within a 5-year window.",
-        source: "Social Science Study",
-        category: "Psychology",
+        explanation: "The raw spread of prices from the cheapest (e.g., Taiwan) to the most expensive (e.g., Norway).",
+        dataInsight: "The absolute price range for a Big Mac spans from $2.30 to $8.20.",
+        source: "GitHub Price Data",
+        category: "Economics",
         specificityScore: 94
       },
       {
-        id: "c-exp-2",
-        word: "Feedback Acceleration",
+        id: "bm-exp-2",
+        word: "Labor Cost Differential",
         centrality: Centrality.PRESENT,
-        explanation: "The self-reinforcing loops that drive variance faster than linear models predict.",
-        dataInsight: "Permafrost melt could release 1500 billion tons of carbon.",
-        source: "Geophysical Research",
-        category: "Feedback",
-        specificityScore: 92
+        explanation: "The impact of local minimum wages on the final price of the standardized good.",
+        dataInsight: "High-wage nations show a 40% price premium regardless of raw ingredient costs.",
+        source: "Labor Market Analysis",
+        category: "Labor",
+        specificityScore: 91
       },
       {
-        id: "c-exp-3",
-        word: "Threshold Breach",
+        id: "bm-exp-3",
+        word: "Monetary Policy Impact",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The systemic outcome when feedback loops override mitigation handles.",
-        dataInsight: "1.5°C breach is now predicted within the next 5 years.",
-        source: "WMO Report",
-        category: "Outcome",
+        explanation: "How interest rate hikes and quantitative easing shift the currency valuation handle.",
+        dataInsight: "USD strength in 2023 caused a 15% shift in global Big Mac valuations.",
+        source: "Central Bank Reports",
+        category: "Finance",
         specificityScore: 96
       }
     ],
     metrics: {
-      cohesion: 85,
-      coverage: 88,
-      entropy: 55,
-      sharpness: 90,
-      explanation: "The board maps the physical drivers of climate variance and the systemic risks involved.",
-      synthesis: "Climate variance is a deducible outcome of Carbon Concentration overriding Feedback Loops.",
-      emergentPatterns: ["The 1.5°C Threshold", "Albedo Feedback"],
+      cohesion: 92,
+      coverage: 90,
+      entropy: 38,
+      sharpness: 94,
+      explanation: "The board successfully maps the tension between theoretical value and local economic reality.",
+      synthesis: "Global currency valuation is a structural outcome of the tension between PPP Theory and Local Cost of Living.",
+      emergentPatterns: ["The Balassa-Samuelson Gap", "Emerging Market Undervaluation"],
       links: [
-        { source: "Carbon Concentration", target: "Temperature Anomalies", label: "Drives" },
-        { source: "Temperature Anomalies", target: "Feedback Loops", label: "Triggers" }
+        { source: "Purchasing Power Parity", target: "Currency Valuation", label: "Defines" },
+        { source: "Cost of Living", target: "Economic Arbitrage", label: "Limits" }
       ],
-      coverageBreakdown: { dominant: 50, present: 25, edgeCase: 25 },
+      coverageBreakdown: { dominant: 40, present: 40, edgeCase: 20 },
       synthesisSuggestions: []
     }
   }

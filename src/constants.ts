@@ -30,10 +30,10 @@ export const SCENARIOS: Scenario[] = [
     outcomes: ["Survival", "Death"],
   },
   {
-    id: "climate-data",
-    title: "Climate Trend Analysis",
-    description: "The formalization of the deducible space for climate variance.",
-    context: "Temperature anomalies, carbon data, and feedback loops. Focus on 'Anomaly-Normalization', 'Feedback-Acceleration', 'Threshold-Fragility'. Construct a space where long-term narrative conclusions follow inevitably from the minimal set of grounded concepts.",
-    outcomes: ["Threshold Breach", "Stabilization"],
+    id: "big-mac-index",
+    title: "Economist Big Mac Index (GitHub)",
+    description: "The formalization of the deducible space for global currency valuation.",
+    context: "Global price data for the Big Mac across 50+ countries. Construct the deducible space for 'Purchasing Power Parity' vs 'Currency Valuation'. Focus on structural handles: 'Local-Price-Variance', 'Exchange-Rate-Deviation', 'Cost-of-Living-Index'. The goal is a vocabulary that makes the narrative of global economic arbitrage deducible.",
+    outcomes: ["Currency Alignment", "Economic Arbitrage"],
   },
 ];

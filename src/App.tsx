@@ -50,42 +50,135 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
           </button>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid md:grid-cols-3 gap-12 mb-12">
           <section>
             <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <ShieldCheck className="w-5 h-5" /> The Premise
+              <ShieldCheck className="w-5 h-5" /> 1. The Power of Synthesis
             </h3>
-            <p className="text-sm opacity-80 leading-relaxed mb-4">
-              Data analysis is a combination of <strong>qualitative</strong> and <strong>quantitative</strong> reasoning. Standard tools often force a choice between "gut feel" and "raw numbers," leading to local findings that are globally incoherent.
-            </p>
-            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <Zap className="w-5 h-5" /> The Bridge
-            </h3>
+            <p className="text-[11px] font-bold uppercase tracking-wider mb-2 opacity-60 italic">Named concepts carry more meaning than their parts.</p>
             <p className="text-sm opacity-80 leading-relaxed">
-              The Databoard uses AI to bridge these two worlds. It merges conceptual "handles" with quantitative evidence into a single, solid process. This creates the <strong>Deducible Space</strong>—a conceptual foundation where narrative follows logic.
+              When analysts synthesize a new term—combining "stagnation" and "inflation" into "stagflation"—something more than shorthand is created. The new word becomes a <strong>type</strong> that can be reasoned about and built upon. The Data Board works at this level: naming what you see is not cosmetic; it is the analysis.
             </p>
           </section>
 
           <section>
             <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <Activity className="w-5 h-5" /> The Methodology
+              <Zap className="w-5 h-5" /> 2. Analytical Stability
             </h3>
-            <div className="space-y-4">
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-ink text-bg flex items-center justify-center text-[10px] font-bold shrink-0">1</div>
-                <p className="text-sm opacity-80"><strong>Conceptualization:</strong> Propose the core concepts (either via human insight or autonomous AI generation from raw data).</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider mb-2 opacity-60 italic">Shared vocabulary reduces semantic noise.</p>
+            <p className="text-sm opacity-80 leading-relaxed">
+              Without a pre-defined name, AI guesses—drawing on statistical priors rather than domain knowledge. This leads to inconsistent labels across runs. When The Data Board supplies the vocabulary first, the model's output stabilizes. You are giving the AI the same semantic anchor a human expert would use.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
+              <Activity className="w-5 h-5" /> 3. The Verification Shift
+            </h3>
+            <p className="text-[11px] font-bold uppercase tracking-wider mb-2 opacity-60 italic">Pre-supplying concepts shifts AI from invention to verification.</p>
+            <p className="text-sm opacity-80 leading-relaxed">
+              When a concept is introduced at the naming stage, the model stops generating meaning and starts <strong>checking</strong> it. It moves from invention to verification. This eliminates the subtle mistake of framing the analysis with words nobody agreed on.
+            </p>
+          </section>
+        </div>
+
+        <section className="mb-16">
+          <h3 className="text-xl font-bold uppercase mb-8 flex items-center gap-2 text-databoard-yellow">
+            <Scale className="w-5 h-5" /> Methodological Matrix
+          </h3>
+          <div className="border-2 border-ink shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] overflow-hidden">
+            <div className="grid grid-cols-4 bg-ink text-bg text-[9px] font-black uppercase tracking-[0.2em] p-4 gap-4">
+              <div className="col-span-1">Core Principle</div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-databoard-yellow" /> Prompting</div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-databoard-green" /> Data Representation</div>
+              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-databoard-red" /> Topic Discovery</div>
+            </div>
+            
+            {/* Row 1 */}
+            <div className="grid grid-cols-4 border-t-2 border-ink p-6 gap-6 bg-white hover:bg-databoard-yellow/5 transition-colors">
+              <div className="col-span-1 pr-6 border-r-2 border-ink/5">
+                <p className="text-xs font-black uppercase leading-tight tracking-tight">1. Synthesized terms carry more meaning than their parts</p>
               </div>
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-ink text-bg flex items-center justify-center text-[10px] font-bold shrink-0">2</div>
-                <p className="text-sm opacity-80"><strong>Quantitative Grounding:</strong> AI validates these concepts against the data to ensure they are factually anchored.</p>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Model inherits a richer semantic frame, drastically reducing misinterpretation.</div>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Labels encode analytical relationships and intent, not just raw observations.</div>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Latent topics surface around named concepts rather than statistical co-occurrence noise.</div>
+            </div>
+
+            {/* Row 2 */}
+            <div className="grid grid-cols-4 border-t-2 border-ink p-6 gap-6 bg-bg hover:bg-databoard-green/5 transition-colors">
+              <div className="col-span-1 pr-6 border-r-2 border-ink/5">
+                <p className="text-xs font-black uppercase leading-tight tracking-tight">2. Shared vocabulary reduces analytical noise</p>
               </div>
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-ink text-bg flex items-center justify-center text-[10px] font-bold shrink-0">3</div>
-                <p className="text-sm opacity-80"><strong>Structural Tension:</strong> We use <strong>Pseudo-Antonyms©</strong> to define the boundaries of the problem and make deduction inevitable.</p>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Ensures consistent, reproducible outputs across different runs and users.</div>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Standardized labels make disparate datasets comparable across time and teams.</div>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Topic models converge faster and more stably when seed vocabulary is pre-defined.</div>
+            </div>
+
+            {/* Row 3 */}
+            <div className="grid grid-cols-4 border-t-2 border-ink p-6 gap-6 bg-white hover:bg-databoard-red/5 transition-colors">
+              <div className="col-span-1 pr-6 border-r-2 border-ink/5">
+                <p className="text-xs font-black uppercase leading-tight tracking-tight">3. Pre-supplying concepts shifts AI to verification</p>
+              </div>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">The model checks for "fit" and evidence rather than guessing arbitrary names.</div>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Schema design becomes an intentional analytical act rather than a technical one.</div>
+              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Discovery is bounded by human intent, making findings auditable and reproducible.</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="md:col-span-2 border-t-2 border-ink pt-12">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-12">
+            <div className="flex-1 w-full">
+              <h3 className="text-xl font-bold uppercase mb-12 flex items-center gap-2 text-databoard-yellow">
+                <Cpu className="w-5 h-5" /> Process Architecture
+              </h3>
+              <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-0">
+                {/* Step 1: Raw Data */}
+                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                  <div className="w-14 h-14 bg-ink text-bg flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                    <Database className="w-7 h-7" />
+                  </div>
+                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">1. Raw Data</h4>
+                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">Quantitative Input & Evidence</p>
+                </div>
+
+                <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
+
+                {/* Step 2: Pseudo-Antonyms */}
+                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                  <div className="w-14 h-14 bg-databoard-yellow text-ink flex items-center justify-center mb-4 border-2 border-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                    <Scale className="w-7 h-7" />
+                  </div>
+                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">2. Pseudo-Antonyms©</h4>
+                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">Defining the Deducible Space</p>
+                </div>
+
+                <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
+
+                {/* Step 3: Semantic Density */}
+                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                  <div className="w-14 h-14 bg-ink text-bg flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                    <Network className="w-7 h-7" />
+                  </div>
+                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">3. Semantic Density</h4>
+                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">Clustering Narrative Themes</p>
+                </div>
+
+                <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
+
+                {/* Step 4: Narrative */}
+                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
+                  <div className="w-14 h-14 bg-databoard-green text-ink flex items-center justify-center mb-4 border-2 border-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                    <Zap className="w-7 h-7" />
+                  </div>
+                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">4. Global Story</h4>
+                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">The Eureka Moment / Synthesis</p>
+                </div>
               </div>
             </div>
-            <div className="mt-6 p-4 bg-ink text-bg border-2 border-ink">
-              <p className="text-[10px] mono leading-tight opacity-80">
+
+            <div className="w-full lg:w-80 p-6 bg-ink text-bg border-2 border-ink shadow-[8px_8px_0px_0px_rgba(20,20,20,0.2)]">
+              <p className="text-[10px] mono leading-relaxed opacity-80">
                 The Databoard sits upstream of causal graphs, providing the conceptual foundation that standard analysis usually assumes but rarely defines.
                 <br /><br />
                 * The term "Pseudo-Antonyms" is a proprietary conceptual framework created by Ruth Aharon.
@@ -93,61 +186,13 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                 * <strong>License:</strong> MIT License with a Profit-Sharing Clause. Commercial use of this framework requires a profit-sharing agreement with the creator. For non-commercial use, the framework is open-source under CC BY-SA 4.0.
               </p>
             </div>
-          </section>
-
-          <section className="md:col-span-2 border-t-2 border-ink pt-8">
-            <h3 className="text-xl font-bold uppercase mb-8 flex items-center gap-2 text-databoard-yellow">
-              <Cpu className="w-5 h-5" /> Process Architecture
-            </h3>
-            <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-0">
-              {/* Step 1: Raw Data */}
-              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                <div className="w-12 h-12 bg-ink text-bg flex items-center justify-center mb-3">
-                  <Database className="w-6 h-6" />
-                </div>
-                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">1. Raw Data</h4>
-                <p className="text-[9px] mono opacity-60 px-4 leading-tight">Quantitative Input & Evidence</p>
-              </div>
-
-              <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
-
-              {/* Step 2: Pseudo-Antonyms */}
-              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                <div className="w-12 h-12 bg-databoard-yellow text-ink flex items-center justify-center mb-3 border-2 border-ink">
-                  <Scale className="w-6 h-6" />
-                </div>
-                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">2. Pseudo-Antonyms©</h4>
-                <p className="text-[9px] mono opacity-60 px-4 leading-tight">Defining the Deducible Space</p>
-              </div>
-
-              <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
-
-              {/* Step 3: Semantic Density */}
-              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                <div className="w-12 h-12 bg-ink text-bg flex items-center justify-center mb-3">
-                  <Network className="w-6 h-6" />
-                </div>
-                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">3. Semantic Density</h4>
-                <p className="text-[9px] mono opacity-60 px-4 leading-tight">Clustering Narrative Themes</p>
-              </div>
-
-              <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
-
-              {/* Step 4: Narrative */}
-              <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                <div className="w-12 h-12 bg-databoard-green text-ink flex items-center justify-center mb-3 border-2 border-ink">
-                  <Zap className="w-6 h-6" />
-                </div>
-                <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">4. Global Story</h4>
-                <p className="text-[9px] mono opacity-60 px-4 leading-tight">The Eureka Moment / Synthesis</p>
-              </div>
-            </div>
-            
-            <div className="mt-8 p-4 bg-bg border border-ink/10 text-[10px] mono leading-tight opacity-70 italic text-center">
-              "Semantic proximity indicates a potential for consistent narrative; 
-              detached nodes represent conceptual gaps that must be bridged to find the global story."
-            </div>
-          </section>
+          </div>
+          
+          <div className="mt-12 p-6 bg-bg border-2 border-ink/10 text-[11px] mono leading-relaxed opacity-70 italic text-center max-w-2xl mx-auto">
+            "Semantic proximity indicates a potential for consistent narrative; 
+            detached nodes represent conceptual gaps that must be bridged to find the global story."
+          </div>
+        </section>
 
           <section className="md:col-span-2 border-t-2 border-ink pt-8">
             <h3 className="text-xl font-bold uppercase mb-6 flex items-center gap-2">
@@ -234,7 +279,6 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
               The Databoard is the first AI-first methodology using human language to construct a deducible space, enabling seamless human-AI collaborative reasoning and narrative logic. It is the definitive method for data analysis, investigative journalism, intellectual exploration, and modern education.
             </p>
           </section>
-        </div>
 
         <div className="mt-12 pt-8 border-t-2 border-ink flex justify-center">
           <button 
@@ -1252,17 +1296,19 @@ export default function App() {
                 onChange={(e) => {
                   const s = scenarios.find((s) => s.id === e.target.value);
                   if (s) {
-                    setScenario(s);
+                    // Clear board immediately
+                    setTiles([]);
+                    setMetrics(null);
                     setSelectedTile(null);
+                    setScenario(s);
                     setIsExpansionAvailable(true);
                     
-                    // Load cached data if available
+                    // Load cached data if available with a tiny delay to ensure "clean" state is rendered
                     if (CACHED_BOARDS[s.id]) {
-                      setTiles(CACHED_BOARDS[s.id].tiles);
-                      setMetrics(CACHED_BOARDS[s.id].metrics);
-                    } else {
-                      setTiles([]);
-                      setMetrics(null);
+                      setTimeout(() => {
+                        setTiles(CACHED_BOARDS[s.id].tiles);
+                        setMetrics(CACHED_BOARDS[s.id].metrics);
+                      }, 10);
                     }
                   }
                 }}

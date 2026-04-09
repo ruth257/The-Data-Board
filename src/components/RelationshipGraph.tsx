@@ -36,29 +36,31 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = React.memo(({
   }, []);
 
   useEffect(() => {
-    if (!svgRef.current || tiles.length === 0 || dimensions.width === 0) return;
+    if (!svgRef.current || dimensions.width === 0) return;
 
     const { width, height } = dimensions;
 
     // Clear previous graph
     d3.select(svgRef.current).selectAll("*").remove();
 
+    if (tiles.length === 0) return;
+
     const svg = d3.select(svgRef.current)
       .attr("viewBox", [0, 0, width, height]);
 
     // Prepare data
     const nodes: Node[] = tiles.map(t => ({
-      id: t.word,
+      id: t.word.toLowerCase(),
       word: t.word,
       centrality: t.centrality
     }));
 
-    const tileWords = new Set(tiles.map(t => t.word));
+    const tileWords = new Set(tiles.map(t => t.word.toLowerCase()));
     const validLinks: Link[] = links
-      .filter(l => tileWords.has(l.source) && tileWords.has(l.target))
+      .filter(l => tileWords.has(l.source.toLowerCase()) && tileWords.has(l.target.toLowerCase()))
       .map(l => ({
-        source: l.source,
-        target: l.target,
+        source: l.source.toLowerCase(),
+        target: l.target.toLowerCase(),
         label: l.label
       }));
 
@@ -66,7 +68,9 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = React.memo(({
       .force("link", d3.forceLink<Node, Link>(validLinks).id(d => d.id).distance(100))
       .force("charge", d3.forceManyBody().strength(-300))
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(50));
+      .force("collision", d3.forceCollide().radius(50))
+      .alpha(1)
+      .restart();
 
     // Draw links
     const link = svg.append("g")
