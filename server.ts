@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import cors from "cors";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
@@ -111,31 +112,27 @@ async function startServer() {
       res.status(404).json({ error: `Route ${req.method} ${req.url} not found.` });
     });
 
-    // Explicitly handle /methodology for SEO/LLMO
-    app.get(["/methodology", "/methodology/"], (req, res, next) => {
-      if (process.env.NODE_ENV === "production") {
-        res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
-      } else {
-        // In dev mode, let Vite handle it, but we can also explicitly redirect to /
-        // or just let the next() call hit the Vite middleware
-        next();
-      }
-    });
-
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
+    // SPA Routing & Static Files
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
+    const isProduction = fs.existsSync(distPath);
+
+    if (isProduction) {
+      console.log("[Data Board] Running in PRODUCTION mode (dist folder found)");
+      app.use(express.static(distPath));
+      
+      // Handle /methodology and other SPA routes in production
+      app.get('*', (req, res, next) => {
+        if (req.url.startsWith('/api/')) return next();
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
+    } else {
+      console.log("[Data Board] Running in DEVELOPMENT mode (dist folder not found)");
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    }
 
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`[Data Board] Server running on http://localhost:${PORT}`);
