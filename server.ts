@@ -115,24 +115,43 @@ async function startServer() {
     // SPA Routing & Static Files
     const distPath = path.join(process.cwd(), 'dist');
     const isProduction = fs.existsSync(distPath);
+    let vite: any;
 
     if (isProduction) {
       console.log("[Data Board] Running in PRODUCTION mode (dist folder found)");
       app.use(express.static(distPath));
-      
-      // Handle /methodology and other SPA routes in production
-      app.get('*', (req, res, next) => {
-        if (req.url.startsWith('/api/')) return next();
-        res.sendFile(path.join(distPath, 'index.html'));
-      });
     } else {
       console.log("[Data Board] Running in DEVELOPMENT mode (dist folder not found)");
-      const vite = await createViteServer({
+      vite = await createViteServer({
         server: { middlewareMode: true },
         appType: "spa",
       });
       app.use(vite.middlewares);
     }
+
+    // Catch-all SPA fallback
+    app.get('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      
+      // Skip API routes
+      if (url.startsWith('/api/')) return next();
+      
+      try {
+        if (isProduction) {
+          res.sendFile(path.join(distPath, 'index.html'));
+        } else {
+          // In dev mode, transform index.html through Vite
+          let template = fs.readFileSync(path.resolve(process.cwd(), 'index.html'), 'utf-8');
+          template = await vite.transformIndexHtml(url, template);
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+        }
+      } catch (e) {
+        if (!isProduction && vite) {
+          vite.ssrFixStacktrace(e as Error);
+        }
+        next(e);
+      }
+    });
 
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`[Data Board] Server running on http://localhost:${PORT}`);
