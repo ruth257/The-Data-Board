@@ -529,130 +529,114 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     tiles: [
       {
         id: "bm-1",
-        word: "Purchasing Power Parity",
+        word: "HEGEMONIC BENCHMARK",
         centrality: Centrality.DOMINANT,
-        explanation: "The theory that exchange rates should adjust so that identical goods cost the same in different countries.",
-        dataInsight: "The Big Mac Index shows deviations of up to 50% from theoretical PPP in emerging markets.",
+        explanation: "The US Dollar price of a Big Mac serves as the global standard against which all other currencies are measured.",
+        dataInsight: "The US price acts as the 'zero point' for calculating global purchasing power deviations.",
         source: "The Economist / GitHub Dataset",
-        category: "Economics",
+        category: "Reference Standards",
         isAIConfirmed: true,
         relevanceScore: 98,
-        specificityScore: 95,
-        cachedShadow: {
-          id: "bm-1-s",
-          word: "The Balassa-Samuelson Effect",
-          centrality: Centrality.PRESENT,
-          explanation: "The observation that consumer prices are naturally higher in richer countries due to higher productivity in tradable sectors.",
-          dataInsight: "Explains why the Big Mac is 'permanently' more expensive in Switzerland vs. India.",
-          source: "Economic Theory",
-          category: "Macroeconomics",
-          specificityScore: 94
-        }
+        specificityScore: 95
       },
       {
         id: "bm-2",
-        word: "Currency Valuation",
+        word: "AFFLUENCE PREMIUM",
         centrality: Centrality.DOMINANT,
-        explanation: "The degree to which a currency is 'over' or 'under' valued relative to the US Dollar based on the price of a Big Mac.",
-        dataInsight: "The Swiss Franc is consistently 30%+ overvalued, while the Egyptian Pound is 60%+ undervalued.",
-        source: "Big Mac Index 2024",
-        category: "Finance",
+        explanation: "The structural price increase observed in wealthy nations where higher wages and rents inflate the cost of standardized goods.",
+        dataInsight: "High-GDP nations consistently show a 30-50% price premium over the global average.",
+        source: "Economic Status Audit",
+        category: "Economic Status",
         isAIConfirmed: true,
         relevanceScore: 96,
-        specificityScore: 92,
-        cachedShadow: {
-          id: "bm-2-s",
-          word: "Monetary Distortion",
-          centrality: Centrality.EDGE_CASE,
-          explanation: "Artificial currency suppression or inflation that breaks the deducible link between price and value.",
-          dataInsight: "Observed in markets with heavy central bank intervention or hyperinflation.",
-          source: "Financial Audit",
-          category: "Policy",
-          specificityScore: 92
-        }
+        specificityScore: 92
       },
       {
         id: "bm-3",
-        word: "Cost of Living",
+        word: "DEVELOPING DISCOUNT",
+        centrality: Centrality.DOMINANT,
+        explanation: "The systemic undervaluation of currencies in emerging markets, making global goods appear cheaper in local terms.",
+        dataInsight: "Currencies in developing regions are often undervalued by 40-60% relative to the dollar benchmark.",
+        source: "Market Inequity Analysis",
+        category: "Market Inequity",
+        isAIConfirmed: true,
+        relevanceScore: 94,
+        specificityScore: 90
+      },
+      {
+        id: "bm-4",
+        word: "PRODUCTIVITY-PRICE ANCHOR",
         centrality: Centrality.PRESENT,
-        explanation: "The local handle for the Big Mac price, reflecting rent, labor, and utility costs.",
-        dataInsight: "Labor costs account for ~30% of the variance in Big Mac prices globally.",
-        source: "Global Price Survey",
-        category: "Sociology",
+        explanation: "The link between local productivity levels and the price of non-tradable inputs like labor and services.",
+        dataInsight: "Explains why price convergence is limited by structural differences in national productivity.",
+        source: "Structural Fundamentals",
+        category: "Structural Fundamentals",
+        isAIConfirmed: true,
+        relevanceScore: 92,
+        specificityScore: 88
+      },
+      {
+        id: "bm-5",
+        word: "VALUATION FRICTION",
+        centrality: Centrality.PRESENT,
+        explanation: "The resistance in exchange rates to adjust immediately to changes in local purchasing power.",
+        dataInsight: "Market volatility creates temporary gaps between 'burger' value and 'fiat' value.",
+        source: "Analysis Metrics",
+        category: "Analysis Metrics",
         isAIConfirmed: true,
         relevanceScore: 90,
         specificityScore: 85
       },
       {
-        id: "bm-4",
-        word: "Economic Arbitrage",
+        id: "bm-6",
+        word: "REGIONAL PARITY",
         centrality: Centrality.PRESENT,
-        explanation: "The potential for profit by exploiting price differences between markets, though limited by the non-tradable nature of a burger.",
-        dataInsight: "The 'Burgernomics' gap highlights structural inefficiencies in global trade.",
-        source: "Arbitrage Analysis",
-        category: "Trade",
+        explanation: "The tendency for neighboring countries with similar economic profiles to share consistent price levels.",
+        dataInsight: "Eurozone nations show high internal parity despite varying local labor costs.",
+        source: "Geopolitical Groups",
+        category: "Geopolitical Groups",
         isAIConfirmed: true,
         relevanceScore: 88,
         specificityScore: 82
       },
       {
-        id: "bm-5",
-        word: "The Big Mac Standard",
+        id: "bm-7",
+        word: "EFFICIENCY LEAKAGE",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The use of a single, standardized product as a proxy for the entire basket of consumer goods.",
-        dataInsight: "While simple, it correlates 0.85 with more complex CPI-based PPP measures.",
-        source: "Methodological Review",
-        category: "Metrics",
+        explanation: "Outliers where local supply chain failures or extreme taxes decouple the price from economic fundamentals.",
+        dataInsight: "Observed in markets with high import tariffs or hyper-local logistics bottlenecks.",
+        source: "Outlier Detection",
+        category: "Outlier Detection",
         isAIConfirmed: true,
         relevanceScore: 85,
-        specificityScore: 90
-      }
-    ],
-    cachedExpansion: [
-      {
-        id: "bm-exp-1",
-        word: "Global Price Variance",
-        centrality: Centrality.DOMINANT,
-        explanation: "The raw spread of prices from the cheapest (e.g., Taiwan) to the most expensive (e.g., Norway).",
-        dataInsight: "The absolute price range for a Big Mac spans from $2.30 to $8.20.",
-        source: "GitHub Price Data",
-        category: "Economics",
-        specificityScore: 94
+        specificityScore: 95
       },
       {
-        id: "bm-exp-2",
-        word: "Labor Cost Differential",
-        centrality: Centrality.PRESENT,
-        explanation: "The impact of local minimum wages on the final price of the standardized good.",
-        dataInsight: "High-wage nations show a 40% price premium regardless of raw ingredient costs.",
-        source: "Labor Market Analysis",
-        category: "Labor",
-        specificityScore: 91
-      },
-      {
-        id: "bm-exp-3",
-        word: "Monetary Policy Impact",
+        id: "bm-8",
+        word: "FIAT DIVERGENCE",
         centrality: Centrality.EDGE_CASE,
-        explanation: "How interest rate hikes and quantitative easing shift the currency valuation handle.",
-        dataInsight: "USD strength in 2023 caused a 15% shift in global Big Mac valuations.",
-        source: "Central Bank Reports",
-        category: "Finance",
-        specificityScore: 96
+        explanation: "The extreme decoupling of a currency's market value from its actual purchasing power due to policy intervention.",
+        dataInsight: "Significant in nations with artificial currency pegs or capital controls.",
+        source: "Currency Risk",
+        category: "Currency Risk",
+        isAIConfirmed: true,
+        relevanceScore: 82,
+        specificityScore: 92
       }
     ],
     metrics: {
-      cohesion: 92,
-      coverage: 90,
-      entropy: 38,
-      sharpness: 94,
-      explanation: "The board successfully maps the tension between theoretical value and local economic reality.",
-      synthesis: "Global currency valuation is a structural outcome of the tension between PPP Theory and Local Cost of Living.",
-      emergentPatterns: ["The Balassa-Samuelson Gap", "Emerging Market Undervaluation"],
+      cohesion: 94,
+      coverage: 92,
+      entropy: 35,
+      sharpness: 96,
+      explanation: "The board successfully maps the tension between global benchmarks and local market inequities.",
+      synthesis: "Global currency valuation is a structural outcome of the tension between the Hegemonic Benchmark and the Developing Discount.",
+      emergentPatterns: ["The Affluence Premium", "Fiat Divergence Risks"],
       links: [
-        { source: "Purchasing Power Parity", target: "Currency Valuation", label: "Defines" },
-        { source: "Cost of Living", target: "Economic Arbitrage", label: "Limits" }
+        { source: "HEGEMONIC BENCHMARK", target: "AFFLUENCE PREMIUM", label: "Measures" },
+        { source: "DEVELOPING DISCOUNT", target: "FIAT DIVERGENCE", label: "Predicts" }
       ],
-      coverageBreakdown: { dominant: 40, present: 40, edgeCase: 20 },
+      coverageBreakdown: { dominant: 37, present: 38, edgeCase: 25 },
       synthesisSuggestions: []
     }
   }
