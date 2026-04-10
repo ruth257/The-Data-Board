@@ -183,7 +183,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                 <br /><br />
                 * The term "Pseudo-Antonyms" is a proprietary conceptual framework created by Ruth Aharon.
                 <br /><br />
-                * <strong>License:</strong> MIT License with a Profit-Sharing Clause. Commercial use of this framework requires a profit-sharing agreement with the creator. For non-commercial use, the framework is open-source under CC BY-SA 4.0.
+                * <strong>License:</strong> MIT License. This framework is fully open-source and free for both commercial and non-commercial use.
               </p>
             </div>
           </div>
@@ -1798,7 +1798,7 @@ export default function App() {
             <br /><br />
             The Data Board framework and the Pseudo-Antonyms© methodology are proprietary conceptual frameworks created by Ruth Aharon.
             <br /><br />
-            <strong>License:</strong> MIT License with a Profit-Sharing Clause. Commercial use of this framework requires a profit-sharing agreement with the creator. For non-commercial use, the framework is open-source under CC BY-SA 4.0.
+            <strong>License:</strong> MIT License. This framework is fully open-source and free for both commercial and non-commercial use.
           </p>
           <div className="flex gap-4 mt-4">
             <p className="text-[10px] mono uppercase">
@@ -1829,7 +1829,7 @@ export default function App() {
             thedataboard.ai
           </p>
           <p className="text-[10px] mono uppercase">
-            Licensed under CC BY-SA 4.0
+            Licensed under MIT License
           </p>
           <div className="flex items-center justify-end gap-2 text-[10px] mono uppercase">
             <div className={`w-1.5 h-1.5 rounded-full ${isSystemKeyActive ? 'bg-databoard-green animate-pulse' : 'bg-databoard-red'}`} />
