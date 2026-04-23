@@ -42,7 +42,6 @@ The Wealthy Surcharge ↔ The Emerging Discount
 
 ```
 DOMINANT
-The Standard Burger The US price as the global zero-point for PPP deviations
 The Wealthy Surcharge 30–50% price premium in high-GDP nations (Balassa-Samuelson)
 The Emerging Discount 40–60% currency undervaluation in developing regions
 
@@ -56,11 +55,11 @@ Supply Chain Friction Outliers where import tariffs decouple price from fundamen
 Policy Gap Central bank intervention creates deducible gap: market ≠ real value
 ```
 
-**Board metrics:** Cohesion 94 · Coverage 92 · Sharpness 96
+**Board metrics:** Cohesion 96 · Coverage 90 · Sharpness 98
 
 **The deduction**
 
-> *"Global currency valuation is a structural outcome of the tension between The Standard Burger and The Emerging Discount. The numbers were always there. The board names the mechanism."*
+> *"Global currency valuation is a structural outcome of the tension between The Wealthy Surcharge and The Emerging Discount. The numbers were always there. The board names the mechanism."*
 
 ---
 

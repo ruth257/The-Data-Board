@@ -2,56 +2,26 @@
 ## PROJECT SPECIFICATION & DEDUCIBLE SPACE
 
 ### SECTION 1: BOARD METRICS & SYNTHESIS
-*   **Synthesis (The Global Story):** Global currency valuation is a structural outcome of the tension between The Standard Burger and The Emerging Discount.
-*   **Analytical Summary:** The board successfully maps the tension between global benchmarks and local market inequities.
+*   **Synthesis (The Global Story):** Global currency valuation is a structural outcome of the tension between The Wealthy Surcharge and The Emerging Discount. This board moves beyond simple price comparison to map the systemic price distortions inherent in global geography.
+*   **Analytical Summary:** The board successfully maps the tug-of-war between high-income price drivers and emerging market undervaluation.
 *   **Emergent Patterns:** 
-    *   The Wealthy Surcharge
-    *   Policy Gap Risks
-*   **Cohesion:** 94%
-*   **Coverage:** 92%
-*   **Entropy:** 35%
-*   **Sharpness:** 96%
+    *   Purchasing Power Asymmetry
+    *   Policy-Driven Undervaluation
+*   **Cohesion:** 96%
+*   **Coverage:** 90%
+*   **Entropy:** 30%
+*   **Sharpness:** 98%
 
 ---
 
 ### SECTION 2: RELATIONSHIP GRAPH (LINKS)
-1.  **The Standard Burger** $\rightarrow$ (Measures) $\rightarrow$ **The Wealthy Surcharge**
-2.  **The Emerging Discount** $\rightarrow$ (Predicts) $\rightarrow$ **Policy Gap**
+1.  **The Wealthy Surcharge** $\leftrightarrow$ (Contrasts) $\leftrightarrow$ **The Emerging Discount**
+2.  **Local Labor Anchor** $\rightarrow$ (Inflates) $\rightarrow$ **The Wealthy Surcharge**
+3.  **The Emerging Discount** $\rightarrow$ (Predicts) $\rightarrow$ **Policy Gap**
 
 ---
 
 ### SECTION 3: ANALYTICAL HANDLES (TILES)
-
-#### [DOMINANT] THE STANDARD BURGER
-*   **ID:** `bm-1`
-*   **Category:** Reference Standards
-*   **Source:** The Economist / GitHub Dataset
-*   **Explanation:** The US Dollar price of a Big Mac serves as the global standard against which all other currencies are measured.
-*   **Data Insight:** The US price acts as the 'zero point' for calculating global purchasing power deviations.
-*   **Specificity Score:** 95
-*   **YAML Logic:**
-```yaml
-concept "The Standard Burger"
-  is a: benchmark
-  context: "Global currency valuation benchmark"
-  mechanism: "it normalizes non-tradable local costs across 50+ countries"
-  evidence: "The Economist Big Mac Index methodology"
-  covers:
-    explains: [dollar_valuation]
-    aggregates: [local_price, dollar_ex]
-    replaces: "Standard CPI basket"
-  relation:
-    direction: upstream
-    of: "Currency Valuation"
-    via: price_normalization
-  contrasts_with: "Economic Arbitrage"
-  scope: global
-  fidelity: 0.98
-  fidelity_basis: empirical_test
-  valid_when:
-    - "standardized product availability"
-    - "market exchange rates exist"
-```
 
 #### [DOMINANT] THE WEALTHY SURCHARGE
 *   **ID:** `bm-2`
@@ -73,7 +43,7 @@ concept "The Wealthy Surcharge"
     replaces: "Linear GDP-Price correlation"
   relation:
     direction: upstream
-    of: "The Standard Burger"
+    of: "The Emerging Discount"
     via: cost_inflation
   contrasts_with: "The Emerging Discount"
   scope: global
@@ -104,7 +74,7 @@ concept "The Emerging Discount"
     replaces: "Market exchange rate parity"
   relation:
     direction: downstream
-    of: "The Standard Burger"
+    of: "The Wealthy Surcharge"
     via: valuation_gap
   contrasts_with: "The Wealthy Surcharge"
   scope: regional
@@ -135,7 +105,7 @@ concept "Local Labor Anchor"
     replaces: "Global supply chain cost model"
   relation:
     direction: upstream
-    of: "The Standard Burger"
+    of: "The Wealthy Surcharge"
     via: wage_pressure
   contrasts_with: "Global Supply Chain"
   scope: global
@@ -166,7 +136,7 @@ concept "Market Lag"
     replaces: "Instantaneous PPP adjustment"
   relation:
     direction: downstream
-    of: "The Standard Burger"
+    of: "The Emerging Discount"
     via: temporal_friction
   contrasts_with: "Instant Parity"
   scope: dataset-specific
@@ -228,7 +198,7 @@ concept "Supply Chain Friction"
     replaces: "Frictionless trade assumption"
   relation:
     direction: upstream
-    of: "The Standard Burger"
+    of: "The Wealthy Surcharge"
     via: price_distortion
   contrasts_with: "Free Trade Flow"
   scope: dataset-specific
@@ -259,7 +229,7 @@ concept "Policy Gap"
     replaces: "Free-floating currency model"
   relation:
     direction: downstream
-    of: "The Standard Burger"
+    of: "The Emerging Discount"
     via: policy_intervention
   contrasts_with: "Market Transparency"
   scope: dataset-specific

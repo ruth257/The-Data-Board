@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight, Code, Save, Layout, Share2, Link as LinkIcon, Check } from "lucide-react";
+import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight, Code, Save, Layout, Share2, Link as LinkIcon, Check, RotateCcw } from "lucide-react";
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
 import { CACHED_BOARDS } from "./cachedData";
@@ -1801,9 +1801,26 @@ export default function App() {
               </div>
 
               <div className="space-y-3">
-                <p className="text-lg leading-tight font-bold">
-                  {scenario.description}
-                </p>
+                <div className="flex justify-between items-start">
+                  <p className="text-lg leading-tight font-bold flex-1">
+                    {scenario.description}
+                  </p>
+                  {CACHED_BOARDS[scenario.id] && (
+                    <button 
+                      onClick={() => {
+                        if (confirm("Reset this board to original research defaults? Your custom changes to this board will be lost.")) {
+                          setTiles(CACHED_BOARDS[scenario.id].tiles);
+                          setMetrics(CACHED_BOARDS[scenario.id].metrics);
+                          setSelectedTile(null);
+                        }
+                      }}
+                      title="Reset board to defaults"
+                      className="ml-2 p-1.5 border border-ink/20 hover:bg-ink hover:text-bg transition-all"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
                 <p className="text-[11px] opacity-70 serif-italic leading-relaxed">
                   {scenario.context}
                 </p>

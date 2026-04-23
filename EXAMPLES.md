@@ -10,7 +10,7 @@ This document provides detailed case studies of the Data Board methodology appli
 **The Question**: "What structural conditions explain the persistent gap between market exchange rates and purchasing power parity?"
 
 ### THE BOARD
-- **Dominant**: The Standard Burger, The Wealthy Surcharge, The Emerging Discount
+- **Dominant**: The Wealthy Surcharge, The Emerging Discount
 - **Present**: Local Labor Anchor, Market Lag, Neighboring Parity
 - **Edge Case**: Supply Chain Friction, Policy Gap
 
@@ -18,13 +18,13 @@ This document provides detailed case studies of the Data Board methodology appli
 *   **The Wealthy Surcharge** ↔ **The Emerging Discount**
 
 ### GLOBAL STORY
-> "Global currency valuation is a structural outcome of the tension between *The Standard Burger* and *The Emerging Discount*."
+> "Global currency valuation is a structural outcome of the tension between *The Wealthy Surcharge* and *The Emerging Discount*."
 
 ### METRICS
-- **Cohesion**: 94
-- **Coverage**: 92
-- **Sharpness**: 96
-- **Entropy**: 35
+- **Cohesion**: 96
+- **Coverage**: 90
+- **Sharpness**: 98
+- **Entropy**: 30
 
 ---
 

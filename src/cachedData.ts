@@ -491,38 +491,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   "big-mac-index": {
     tiles: [
       {
-        id: "bm-1",
-        word: "The Standard Burger",
-        centrality: Centrality.DOMINANT,
-        explanation: "The US Dollar price of a Big Mac serves as the global standard against which all other currencies are measured.",
-        dataInsight: "The US price acts as the 'zero point' for calculating global purchasing power deviations.",
-        source: "The Economist / GitHub Dataset",
-        category: "Reference Standards",
-        isAIConfirmed: true,
-        relevanceScore: 98,
-        specificityScore: 95,
-        logic: `concept "The Standard Burger"
-  is a: benchmark
-  context: "Global currency valuation benchmark"
-  mechanism: "it normalizes non-tradable local costs across 50+ countries"
-  evidence: "The Economist Big Mac Index methodology"
-  covers:
-    explains: [dollar_valuation]
-    aggregates: [local_price, dollar_ex]
-    replaces: "Standard CPI basket"
-  relation:
-    direction: upstream
-    of: "Currency Valuation"
-    via: price_normalization
-  contrasts_with: "Economic Arbitrage"
-  scope: global
-  fidelity: 0.98
-  fidelity_basis: empirical_test
-  valid_when:
-    - "standardized product availability"
-    - "market exchange rates exist"`
-      },
-      {
         id: "bm-2",
         word: "The Wealthy Surcharge",
         centrality: Centrality.DOMINANT,
@@ -544,7 +512,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Linear GDP-Price correlation"
   relation:
     direction: upstream
-    of: "The Standard Burger"
+    of: "The Emerging Discount"
     via: cost_inflation
   contrasts_with: "The Emerging Discount"
   scope: global
@@ -576,7 +544,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Market exchange rate parity"
   relation:
     direction: downstream
-    of: "The Standard Burger"
+    of: "The Wealthy Surcharge"
     via: valuation_gap
   contrasts_with: "The Wealthy Surcharge"
   scope: regional
@@ -608,7 +576,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Global supply chain cost model"
   relation:
     direction: upstream
-    of: "The Standard Burger"
+    of: "The Wealthy Surcharge"
     via: wage_pressure
   contrasts_with: "Global Supply Chain"
   scope: global
@@ -640,7 +608,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Instantaneous PPP adjustment"
   relation:
     direction: downstream
-    of: "The Standard Burger"
+    of: "The Emerging Discount"
     via: temporal_friction
   contrasts_with: "Instant Parity"
   scope: dataset-specific
@@ -704,7 +672,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Frictionless trade assumption"
   relation:
     direction: upstream
-    of: "The Standard Burger"
+    of: "The Wealthy Surcharge"
     via: price_distortion
   contrasts_with: "Free Trade Flow"
   scope: dataset-specific
@@ -736,7 +704,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Free-floating currency model"
   relation:
     direction: downstream
-    of: "The Standard Burger"
+    of: "The Emerging Discount"
     via: policy_intervention
   contrasts_with: "Market Transparency"
   scope: dataset-specific
@@ -748,15 +716,16 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       }
     ],
     metrics: {
-      cohesion: 94,
-      coverage: 92,
-      entropy: 35,
-      sharpness: 96,
-      explanation: "The board successfully maps the tension between global benchmarks and local market inequities.",
-      synthesis: "Global currency valuation is a structural outcome of the tension between The Standard Burger and The Emerging Discount.",
-      emergentPatterns: ["The Wealthy Surcharge", "Policy Gap Risks"],
+      cohesion: 96,
+      coverage: 90,
+      entropy: 30,
+      sharpness: 98,
+      explanation: "The board successfully maps the tug-of-war between high-income price drivers and emerging market undervaluation.",
+      synthesis: "Global currency valuation is a structural outcome of the tension between The Wealthy Surcharge and The Emerging Discount.",
+      emergentPatterns: ["Purchasing Power Asymmetry", "Policy-Driven Undervaluation"],
       links: [
-        { source: "The Standard Burger", target: "The Wealthy Surcharge", label: "Measures" },
+        { source: "The Wealthy Surcharge", target: "The Emerging Discount", label: "Contrasts" },
+        { source: "Local Labor Anchor", target: "The Wealthy Surcharge", label: "Inflates" },
         { source: "The Emerging Discount", target: "Policy Gap", label: "Predicts" }
       ],
       synthesisSuggestions: []
