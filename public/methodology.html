@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Data Board — Methodology</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E4E3E0;--ink:#141414;--green:#4CAF50;--yellow:#D4B84A;--red:#C0392B;--white:#ffffff;--soft:#F5F4F1;--border:rgba(20,20,20,0.15);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.7;}
+nav{position:sticky;top:0;background:var(--ink);z-index:100;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:52px;}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--white);text-decoration:none;letter-spacing:-0.02em;}
+.nav-brand span{color:var(--yellow);}
+.nav-links{display:flex;gap:24px;}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--white);}
+.page{max-width:860px;margin:0 auto;padding:0 40px 80px;}
+.hero{padding:64px 0 48px;border-bottom:2px solid var(--ink);}
+.hero-mono{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;opacity:0.4;margin-bottom:12px;}
+.hero-title{font-size:clamp(36px,5vw,60px);font-weight:900;text-transform:uppercase;letter-spacing:-0.03em;line-height:1;margin-bottom:16px;}
+.hero-question{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;opacity:0.7;line-height:1.5;max-width:600px;margin-bottom:24px;}
+.hero p{font-size:14px;opacity:0.75;line-height:1.85;margin-bottom:12px;max-width:680px;}
+.principle{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--white);padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.05em;margin:16px 0;}
+.principle span{color:var(--yellow);}
+.hero-meta{display:flex;gap:32px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--border);}
+.hm{font-family:'JetBrains Mono',monospace;font-size:10px;opacity:0.5;line-height:1.8;}
+.hm strong{display:block;opacity:0.4;font-size:8px;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:2px;}
+section{padding:48px 0;border-bottom:2px solid var(--ink);}
+section:last-child{border-bottom:none;}
+.section-mono{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;opacity:0.4;margin-bottom:10px;}
+h2{font-size:clamp(22px,3vw,32px);font-weight:900;text-transform:uppercase;letter-spacing:-0.02em;line-height:1.1;margin-bottom:20px;}
+p{font-size:14px;opacity:0.8;line-height:1.85;margin-bottom:12px;}
+p strong{opacity:1;font-weight:700;}
+code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft);padding:1px 6px;border:1px solid var(--border);}
+.dark-block{background:var(--ink);color:var(--white);padding:24px 28px;margin:20px 0;border:2px solid var(--ink);box-shadow:6px 6px 0 0 rgba(20,20,20,0.3);}
+.dark-block p{color:rgba(255,255,255,0.75);margin-bottom:0;}
+.dark-block .accent{color:var(--yellow);font-style:italic;}
+.flow-wrap{background:var(--white);border:2px solid var(--ink);box-shadow:6px 6px 0 0 var(--ink);overflow:hidden;margin:20px 0;}
+.flow-head{background:var(--ink);padding:10px 18px;}
+.flow-head-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--yellow);}
+.flow-svg{width:100%;display:block;}
+.concept{border:2px solid var(--ink);margin-bottom:12px;box-shadow:4px 4px 0 0 var(--ink);}
+.concept-head{background:var(--ink);padding:10px 16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.concept-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;font-style:italic;color:var(--white);}
+.concept-tag{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;padding:2px 8px;background:var(--yellow);color:var(--ink);}
+.concept-body{padding:14px 16px;background:var(--white);}
+.concept-body p{font-size:13px;margin-bottom:0;}
+.weights{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.w-pill{padding:4px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;border:1px solid;}
+.w-dom{background:rgba(76,175,80,0.1);border-color:var(--green);color:#1D6A3C;}
+.w-pre{background:rgba(212,184,74,0.1);border-color:var(--yellow);color:#7D6608;}
+.w-edg{background:rgba(192,57,43,0.1);border-color:var(--red);color:#922B21;}
+.matrix{border:2px solid var(--ink);box-shadow:6px 6px 0 0 var(--ink);overflow:hidden;margin:16px 0;}
+.matrix-head{display:grid;grid-template-columns:120px 1fr 1fr;background:var(--ink);}
+.matrix-head div{padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.1);}
+.matrix-row{display:grid;grid-template-columns:120px 1fr 1fr;border-top:1px solid var(--border);}
+.matrix-row-label{padding:14px;background:var(--soft);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;border-right:2px solid var(--ink);}
+.matrix-cell{padding:14px;border-right:1px solid var(--border);font-size:13px;}
+.matrix-cell strong{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
+.accept-dom{background:rgba(76,175,80,0.06);border-left:3px solid var(--green);}
+.accept-dom strong{color:#1D6A3C;}
+.accept-pre{background:rgba(212,184,74,0.06);border-left:3px solid var(--yellow);}
+.accept-pre strong{color:#7D6608;}
+.flag{background:rgba(212,184,74,0.04);border-left:3px dashed var(--yellow);}
+.flag strong{color:#7D6608;}
+.reject{background:rgba(192,57,43,0.05);border-left:3px solid var(--red);}
+.reject strong{color:#922B21;}
+.matrix-insight{padding:12px 16px;background:var(--ink);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:rgba(255,255,255,0.7);}
+.matrix-insight em{color:var(--yellow);font-style:normal;}
+.yaml-wrap{background:var(--ink);border:2px solid var(--ink);box-shadow:6px 6px 0 0 var(--ink);overflow:hidden;margin:16px 0;}
+.yaml-head{padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.yaml-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--yellow);}
+.yaml-body{padding:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,0.75);line-height:1.9;white-space:pre;}
+.yk{color:#9B9BE8;}.yv{color:#7EC8A0;}.ys{color:#E8B87A;}.yc{color:rgba(255,255,255,0.3);}
+.prompt-wrap{background:var(--ink);border:2px solid var(--ink);box-shadow:6px 6px 0 0 var(--ink);overflow:hidden;margin:16px 0;}
+.prompt-head{padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;}
+.prompt-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--yellow);}
+.prompt-copy{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 14px;background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);cursor:pointer;transition:all .2s;}
+.prompt-copy:hover{border-color:var(--yellow);color:var(--yellow);}
+.prompt-body{padding:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,0.75);line-height:1.8;white-space:pre-wrap;}
+.board-wrap{border:2px solid var(--ink);box-shadow:6px 6px 0 0 var(--ink);overflow:hidden;margin:16px 0;}
+.board-head{background:var(--ink);padding:14px 18px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.board-title{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;color:var(--white);}
+.board-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.4);text-align:right;line-height:1.8;}
+.board-meta a{color:var(--yellow);text-decoration:none;}
+.board-question{padding:12px 18px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;opacity:0.7;border-bottom:1px solid var(--border);background:var(--soft);}
+.tile-section{padding:18px;}
+.tile-section-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;opacity:0.4;margin-bottom:10px;}
+.tiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:18px;}
+.tile{position:relative;min-height:110px;border:1px solid var(--border);padding:10px;display:flex;flex-direction:column;justify-content:space-between;background:var(--white);transition:background .15s,color .15s;}
+.tile:hover{background:var(--ink);color:var(--white);}
+.tile.dominant{border-top:3px solid var(--green);background:rgba(76,175,80,0.04);}
+.tile.present{border-top:3px solid var(--yellow);background:rgba(212,184,74,0.04);}
+.tile.edge{border-top:3px solid var(--red);background:rgba(192,57,43,0.04);}
+.tile-badge{display:inline-block;padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--ink);}
+.tile-badge.dominant{background:var(--green);}
+.tile-badge.present{background:var(--yellow);}
+.tile-badge.edge{background:var(--red);color:var(--white);}
+.tile-word{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:-0.01em;line-height:1.2;margin-top:16px;}
+.tile-bar-wrap{display:flex;align-items:center;gap:5px;margin-top:8px;}
+.tile-bar-bg{width:28px;height:2px;background:rgba(20,20,20,0.1);overflow:hidden;}
+.tile-bar-fill{height:100%;background:rgba(20,20,20,0.35);}
+.tile-bar-label{font-family:'JetBrains Mono',monospace;font-size:7px;text-transform:uppercase;opacity:0.3;}
+.tensions{border-top:1px solid var(--border);padding:14px 18px;background:var(--soft);}
+.tension-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;opacity:0.4;margin-bottom:8px;}
+.tension-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.tension-row:last-child{margin-bottom:0;}
+.tp{padding:3px 10px;font-size:11px;font-weight:700;text-transform:uppercase;border:1px solid var(--ink);letter-spacing:0.02em;}
+.tp.a{background:var(--green);color:var(--ink);}
+.tp.b{background:var(--red);color:var(--white);}
+.tp-sym{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;opacity:0.35;}
+.story{border-top:2px solid var(--ink);padding:18px;background:var(--ink);}
+.story-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--yellow);margin-bottom:8px;}
+.story-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;line-height:1.5;color:var(--white);}
+.story-text em{color:var(--yellow);font-style:normal;font-weight:600;}
+.metrics{display:flex;gap:20px;padding:10px 18px;border-top:1px solid var(--border);flex-wrap:wrap;background:var(--soft);}
+.metric{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;opacity:0.5;}
+.metric strong{opacity:1;}
+.ref{padding:12px 16px;border:1px solid var(--border);border-left:3px solid var(--ink);margin-bottom:8px;background:var(--white);font-size:13px;}
+.ref em{font-style:italic;}
+.license-box{background:var(--ink);color:var(--white);padding:24px 28px;border:2px solid var(--ink);box-shadow:6px 6px 0 0 rgba(20,20,20,0.3);}
+.license-box p{color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:8px;}
+.license-box p:last-child{margin-bottom:0;}
+.license-box strong{color:var(--white);}
+.license-box a{color:var(--yellow);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">The <span>Data Board</span></a>
+  <div class="nav-links">
+    <a href="index.html">← Home</a>
+    <a href="/">Demo</a>
+    <a href="workshop.html">Workshop</a>
+  </div>
+</nav>
+
+<div class="page">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-mono">Open Methodology · Version 3.1</div>
+  <div class="hero-title">The Data Board</div>
+  <div class="hero-question">"Given a good enough set of semantics — can we use language to represent data?"</div>
+  <p>Data has always required an intermediary to reach human thought — visualization to make patterns visible, statistics to surface relationships. Both are bottom-up: they start from numbers and work toward meaning.</p>
+  <p>Large language models may be the pivotal moment that changes this. Trained on the accumulated written knowledge of human civilisation, they encode domain semantics at a scale that has never existed before. The Data Board tests a top-down alternative: start with synthesized semantics — a vocabulary that, under the right conditions, is good enough to represent the data in question.</p>
+  <div class="principle">AI generates or human proposes. AI evaluates. <span>Human decides.</span></div>
+  <div class="hero-meta">
+    <div class="hm"><strong>Author</strong>Ruth Aharon</div>
+    <div class="hm"><strong>Version</strong>3.1 · 2026</div>
+    <div class="hm"><strong>License</strong>MIT · Open Source</div>
+    <div class="hm"><strong>Site</strong>thedataboard.ai</div>
+  </div>
+</div>
+
+<!-- METHOD FLOW -->
+<section id="flow">
+  <div class="section-mono">The Method</div>
+  <h2>From raw data<br>to inevitable narrative</h2>
+  <p>The method is top-down. It begins with the question and the domain, not the columns. AI seeks concepts that express more than a basic variable — named mechanisms, not labels. Two parallel mechanisms feed the board: pseudo-antonym pairs that create structural tension, and evidence checking that grounds each concept in what is known about the domain. Both feed into a cohesiveness check across all candidates, producing a minimal board and an expandable board.</p>
+
+  <div class="flow-wrap">
+    <div class="flow-head"><span class="flow-head-label">Data Board · Method Flow</span></div>
+    <svg class="flow-svg" viewBox="0 0 860 560" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+    <polygon points="50,40 250,40 240,88 40,88" fill="#E8F4FD" stroke="#2980B9" stroke-width="2"/>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#1A5276" x="145" y="58" text-anchor="middle" dominant-baseline="central">RAW DATA</text>
+    <text font-family="'JetBrains Mono',monospace" font-size="9" fill="#2980B9" x="145" y="75" text-anchor="middle" dominant-baseline="central">Dataset · corpus · question</text>
+    <line x1="145" y1="88" x2="145" y2="120" stroke="#2980B9" stroke-width="2" marker-end="url(#arr)" fill="none"/>
+    <rect x="40" y="122" width="210" height="68" rx="10" fill="#FEF9E7" stroke="#F39C12" stroke-width="2"/>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#7D6608" x="145" y="146" text-anchor="middle" dominant-baseline="central">SEMANTIC SYNTHESIS</text>
+    <text font-family="'JetBrains Mono',monospace" font-size="8" fill="#7D6608" opacity="0.8" x="145" y="163" text-anchor="middle" dominant-baseline="central">AI seeks concepts that express</text>
+    <text font-family="'JetBrains Mono',monospace" font-size="8" fill="#7D6608" opacity="0.8" x="145" y="178" text-anchor="middle" dominant-baseline="central">more than a basic variable</text>
+    <line x1="95" y1="190" x2="95" y2="228" stroke="#F39C12" stroke-width="1.5" marker-end="url(#arr)" fill="none"/>
+    <line x1="195" y1="190" x2="195" y2="228" stroke="#F39C12" stroke-width="1.5" marker-end="url(#arr)" fill="none"/>
+    <rect x="30" y="230" width="125" height="72" rx="8" fill="#FDEDEC" stroke="#E74C3C" stroke-width="2"/>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#922B21" x="92" y="252" text-anchor="middle" dominant-baseline="central">PSEUDO-</text>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#922B21" x="92" y="266" text-anchor="middle" dominant-baseline="central">ANTONYMS©</text>
+    <text font-family="'JetBrains Mono',monospace" font-size="7" fill="#922B21" opacity="0.75" x="92" y="284" text-anchor="middle" dominant-baseline="central">tension pairs</text>
+    <text font-family="'JetBrains Mono',monospace" font-size="7" fill="#922B21" opacity="0.75" x="92" y="294" text-anchor="middle" dominant-baseline="central">create the story</text>
+    <rect x="165" y="230" width="125" height="72" rx="8" fill="#EAFAF1" stroke="#27AE60" stroke-width="2"/>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#1D6A3C" x="227" y="252" text-anchor="middle" dominant-baseline="central">EVIDENCE</text>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#1D6A3C" x="227" y="266" text-anchor="middle" dominant-baseline="central">CHECK</text>
+    <text font-family="'JetBrains Mono',monospace" font-size="7" fill="#1D6A3C" opacity="0.75" x="227" y="284" text-anchor="middle" dominant-baseline="central">grounded in corpus</text>
+    <text font-family="'JetBrains Mono',monospace" font-size="7" fill="#1D6A3C" opacity="0.75" x="227" y="294" text-anchor="middle" dominant-baseline="central">and domain knowledge</text>
+    <line x1="92" y1="302" x2="92" y2="338" stroke="#555" stroke-width="1.5" fill="none"/>
+    <line x1="227" y1="302" x2="227" y2="338" stroke="#555" stroke-width="1.5" fill="none"/>
+    <line x1="92" y1="338" x2="145" y2="338" stroke="#555" stroke-width="1.5" fill="none"/>
+    <line x1="227" y1="338" x2="145" y2="338" stroke="#555" stroke-width="1.5" fill="none"/>
+    <line x1="145" y1="338" x2="145" y2="358" stroke="#555" stroke-width="2" marker-end="url(#arr)" fill="none"/>
+    <polygon points="145,360 230,400 145,440 60,400" fill="#EBF5FB" stroke="#2471A3" stroke-width="2"/>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#154360" x="145" y="394" text-anchor="middle" dominant-baseline="central">COHESIVENESS</text>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#154360" x="145" y="408" text-anchor="middle" dominant-baseline="central">CHECK</text>
+    <line x1="97" y1="430" x2="80" y2="466" stroke="#27AE60" stroke-width="2" marker-end="url(#arr)" fill="none"/>
+    <line x1="193" y1="430" x2="210" y2="466" stroke="#2980B9" stroke-width="2" marker-end="url(#arr)" fill="none"/>
+    <rect x="30" y="468" width="112" height="52" rx="8" fill="#EAFAF1" stroke="#27AE60" stroke-width="2"/>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#1D6A3C" x="86" y="488" text-anchor="middle" dominant-baseline="central">MINIMAL</text>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#1D6A3C" x="86" y="502" text-anchor="middle" dominant-baseline="central">BOARD</text>
+    <rect x="148" y="468" width="112" height="52" rx="8" fill="#EAF2FF" stroke="#2980B9" stroke-width="2"/>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#1A5276" x="204" y="488" text-anchor="middle" dominant-baseline="central">EXPANDABLE</text>
+    <text font-family="Inter,sans-serif" font-weight="700" font-size="10" fill="#1A5276" x="204" y="502" text-anchor="middle" dominant-baseline="central">BOARD</text>
+    <rect x="310" y="122" width="260" height="68" rx="6" fill="#FAFAFA" stroke="#BDC3C7" stroke-width="1.5"/>
+    <text font-family="'JetBrains Mono',monospace" font-size="8" font-weight="700" fill="#888" x="322" y="140" dominant-baseline="central">WHAT MAKES A GOOD CONCEPT</text>
+    <text font-family="Inter,sans-serif" font-size="11" fill="#2C3E50" x="322" y="158" dominant-baseline="central">Not just a column — a named mechanism.</text>
+    <text font-family="Inter,sans-serif" font-size="11" fill="#2C3E50" x="322" y="175" dominant-baseline="central">"Wealthy Surcharge" not "rich countries"</text>
+    <line x1="250" y1="156" x2="308" y2="150" stroke="#F39C12" stroke-width="1.5" stroke-dasharray="4 3" fill="none" marker-end="url(#arr)"/>
+    <rect x="310" y="230" width="260" height="42" rx="6" fill="#FDEDEC" stroke="#E74C3C" stroke-width="1.5"/>
+    <text font-family="'JetBrains Mono',monospace" font-size="8" font-weight="700" fill="#922B21" opacity="0.7" x="322" y="246" dominant-baseline="central">EXAMPLE PAIR</text>
+    <text font-family="Inter,sans-serif" font-size="11" fill="#922B21" x="322" y="263" dominant-baseline="central">Social Cohesion  ↔  Atomized Autonomy</text>
+    <line x1="155" y1="266" x2="308" y2="254" stroke="#E74C3C" stroke-width="1.5" stroke-dasharray="4 3" fill="none" marker-end="url(#arr)"/>
+    <rect x="310" y="375" width="260" height="56" rx="6" fill="#EBF5FB" stroke="#2471A3" stroke-width="1.5"/>
+    <text font-family="'JetBrains Mono',monospace" font-size="8" font-weight="700" fill="#154360" opacity="0.7" x="322" y="392" dominant-baseline="central">TWO EVALUATION DIMENSIONS</text>
+    <text font-family="Inter,sans-serif" font-size="11" fill="#154360" x="322" y="410" dominant-baseline="central">Relevance — density in LLM corpus</text>
+    <text font-family="Inter,sans-serif" font-size="11" fill="#154360" x="322" y="426" dominant-baseline="central">Cohesiveness — fit with other concepts</text>
+    <line x1="230" y1="400" x2="308" y2="400" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="4 3" fill="none" marker-end="url(#arr)"/>
+    <rect x="310" y="468" width="260" height="52" rx="6" fill="#FAFAFA" stroke="#BDC3C7" stroke-width="1.5"/>
+    <text font-family="'JetBrains Mono',monospace" font-size="8" font-weight="700" fill="#888" x="322" y="484" dominant-baseline="central">MINIMAL vs EXPANDABLE</text>
+    <text font-family="Inter,sans-serif" font-size="11" fill="#2C3E50" x="322" y="502" dominant-baseline="central">Minimal: core deducible space</text>
+    <text font-family="Inter,sans-serif" font-size="11" fill="#2C3E50" x="322" y="518" dominant-baseline="central">Expandable: + shadow / edge concepts</text>
+    <line x1="260" y1="494" x2="308" y2="494" stroke="#888" stroke-width="1" stroke-dasharray="4 3" fill="none" marker-end="url(#arr)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- KEY CONCEPTS -->
+<section id="concepts">
+  <div class="section-mono">Glossary</div>
+  <h2>Key concepts</h2>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Deducible Space</span></div>
+    <div class="concept-body"><p>The minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably. Not a list of variables — the conceptual foundation that makes reasoning possible and narrative non-arbitrary.</p></div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Pseudo-Antonyms©</span><span class="concept-tag">© Ruth Aharon</span></div>
+    <div class="concept-body"><p>Concept pairs occupying opposite ends of the same analytical dimension. Not logical opposites — structurally opposing concepts within a shared domain. The mechanism that makes deductions inevitable rather than inferred. Without tension, there is no story — only a report. Attribution required when citing.</p></div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Goldilocks Handle</span></div>
+    <div class="concept-body"><p>A concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from. <code>The Wealthy Surcharge</code> names a mechanism (systematic price premium driven by the Balassa-Samuelson effect), compresses a pattern across 50+ countries, and creates structural tension against its pseudo-antonym. <code>Countries that are rich</code> is not a Goldilocks handle — it describes a category, implies no mechanism, and generates no analytical direction.</p></div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Verification Shift</span></div>
+    <div class="concept-body"><p>When vocabulary is supplied, the AI moves from invention to verification — checking whether concepts are descriptive, domain-coherent, and evidentially grounded rather than generating labels freely. The AI stops guessing meaning and starts checking it.</p></div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Semantic Weight</span></div>
+    <div class="concept-body">
+      <p>Centrality of a concept in the evidence base. Three levels:</p>
+      <div class="weights">
+        <span class="w-pill w-dom">DOMINANT — primary causal driver</span>
+        <span class="w-pill w-pre">PRESENT — real but not decisive</span>
+        <span class="w-pill w-edg">EDGE CASE — marginal or structural outlier</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Minimal vs Expandable Board</span></div>
+    <div class="concept-body"><p>The minimal board contains the core deducible space — the smallest coherent set of concepts from which the global story follows. The expandable board adds shadow concepts and edge cases: the structural tensions that challenge or complicate the dominant narrative.</p></div>
+  </div>
+</section>
+
+<!-- EVALUATION TESTS -->
+<section id="matrix">
+  <div class="section-mono">Evaluation</div>
+  <h2>What the color means</h2>
+  <p>Every tile on the board is colored. The color is not aesthetic — it is the result of the logic audit. Here is what earns each color.</p>
+
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;align-items:stretch;">
+
+    <!-- GREEN TILE -->
+    <div style="flex:1;min-width:210px;border:2px solid var(--ink);box-shadow:5px 5px 0 0 var(--ink);background:var(--white);overflow:hidden;">
+      <div style="background:rgba(76,175,80,0.08);border-top:4px solid var(--green);border-bottom:2px solid var(--ink);padding:14px 16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;background:var(--green);color:var(--ink);display:inline-block;padding:2px 8px;margin-bottom:8px;">Dominant</div>
+        <div style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:-0.02em;color:var(--ink);">The concept<br>drives the story</div>
+      </div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.02em;border-bottom:1px solid var(--border);padding-bottom:8px;opacity:0.5;">Earns green when</div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--green);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">✓</span>
+          <span><strong>Descriptive</strong> — names a condition, not a conclusion</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--green);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">✓</span>
+          <span><strong>Grounded</strong> — supported by domain evidence</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--green);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">✓</span>
+          <span><strong>Coherent</strong> — fits the board and creates tension with its pseudo-antonym</span>
+        </div>
+        <div style="margin-top:4px;padding:8px 10px;background:rgba(76,175,80,0.06);border-left:2px solid var(--green);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;opacity:0.8;">"Social Cohesion" — passes all three. Gallup data, upstream of life satisfaction, contrasts with Atomized Autonomy.</div>
+      </div>
+    </div>
+
+    <!-- YELLOW TILE -->
+    <div style="flex:1;min-width:210px;border:2px solid var(--ink);box-shadow:5px 5px 0 0 var(--ink);background:var(--white);overflow:hidden;">
+      <div style="background:rgba(212,184,74,0.08);border-top:4px solid var(--yellow);border-bottom:2px solid var(--ink);padding:14px 16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;background:var(--yellow);color:var(--ink);display:inline-block;padding:2px 8px;margin-bottom:8px;">Present</div>
+        <div style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:-0.02em;color:var(--ink);">The concept<br>complements the story</div>
+      </div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.02em;border-bottom:1px solid var(--border);padding-bottom:8px;opacity:0.5;">Earns yellow when</div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--green);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">✓</span>
+          <span><strong>Descriptive</strong> — names a condition, not a conclusion</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--green);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">✓</span>
+          <span><strong>Grounded</strong> — supported by domain evidence</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--yellow);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">~</span>
+          <span><strong>Supplementary</strong> — real and evidenced, enriches the narrative but is not essential to it</span>
+        </div>
+        <div style="margin-top:4px;padding:8px 10px;background:rgba(212,184,74,0.06);border-left:2px solid var(--yellow);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;opacity:0.8;">"Generosity" — grounded, descriptive, adds texture to the happiness story but the story holds without it.</div>
+      </div>
+    </div>
+
+    <!-- RED TILE -->
+    <div style="flex:1;min-width:210px;border:2px solid var(--ink);box-shadow:5px 5px 0 0 var(--ink);background:var(--white);overflow:hidden;">
+      <div style="background:rgba(192,57,43,0.06);border-top:4px solid var(--red);border-bottom:2px solid var(--ink);padding:14px 16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;background:var(--red);color:white;display:inline-block;padding:2px 8px;margin-bottom:8px;">Edge Case</div>
+        <div style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:-0.02em;color:var(--ink);">The concept<br>carries its own narrative</div>
+      </div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.02em;border-bottom:1px solid var(--border);padding-bottom:8px;opacity:0.5;">Earns red when</div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--green);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">✓</span>
+          <span><strong>Descriptive</strong> — names a condition, not a conclusion</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--green);color:var(--ink);padding:1px 5px;flex-shrink:0;margin-top:2px;">✓</span>
+          <span><strong>Grounded</strong> — supported by domain evidence</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--red);color:white;padding:1px 5px;flex-shrink:0;margin-top:2px;">!</span>
+          <span><strong>Isolated or marginal narrative</strong> — anomaly, exception, or pattern that exists outside the dominant story. Essential for detecting outliers and understanding boundaries.</span>
+        </div>
+        <div style="margin-top:4px;padding:8px 10px;background:rgba(192,57,43,0.05);border-left:2px solid var(--red);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;opacity:0.8;">"Atomized Autonomy" — a real narrative in individualistic cultures, but marginal globally. Flags where the dominant story breaks down.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:16px;background:var(--ink);padding:14px 18px;border:2px solid var(--ink);box-shadow:5px 5px 0 0 rgba(20,20,20,0.3);">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--yellow);">Rejection is insight — </span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,0.75);">a concept that fails any test is not discarded silently. The failure names the assumption the analyst was making without knowing it.</span>
+  </div>
+</section>
+
+<!-- YAML -->
+<section id="yaml">
+  <div class="section-mono">Logic Layer</div>
+  <h2>The YAML audit trail</h2>
+  <p>Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, the fidelity score, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes.</p>
+  <p>The <code>contrasts_with</code> field is the pseudo-antonym link. The <code>valid_when</code> conditions define when the concept holds and when it breaks down. The <code>fidelity</code> score (0–1) measures how well the concept survived the logic audit.</p>
+
+  <div class="yaml-wrap">
+    <div class="yaml-head"><span class="yaml-label">YAML Logic Block — Social Cohesion</span></div>
+    <div class="yaml-body"><span class="yk">concept</span> <span class="ys">"Social Cohesion"</span>
+  <span class="yk">is a</span><span class="yv">: driver</span>
+  <span class="yk">context</span><span class="yv">: </span><span class="ys">"Social support systems"</span>
+  <span class="yk">mechanism</span><span class="yv">: </span><span class="ys">"trusted social networks provide emotional and material safety nets"</span>
+  <span class="yk">evidence</span><span class="yv">: </span><span class="ys">"Gallup World Poll social support metrics"</span>
+  <span class="yk">covers</span><span class="yv">:</span>
+    <span class="yk">explains</span><span class="yv">: [national_happiness_variance]</span>
+    <span class="yk">aggregates</span><span class="yv">: [social_support_score]</span>
+  <span class="yk">contrasts_with</span><span class="yv">: </span><span class="ys">"Atomized Autonomy"</span>   <span class="yc">← pseudo-antonym link</span>
+  <span class="yk">fidelity</span><span class="yv">: 0.92</span>                        <span class="yc">← survives the logic audit</span>
+  <span class="yk">fidelity_basis</span><span class="yv">: empirical_test</span>
+  <span class="yk">valid_when</span><span class="yv">:</span>
+    <span class="yv">- </span><span class="ys">"strong community ties"</span>
+    <span class="yv">- </span><span class="ys">"institutional stability"</span>          <span class="yc">← scope conditions</span></div>
+  </div>
+</section>
+
+<!-- SYSTEM PROMPT -->
+<section id="prompt">
+  <div class="section-mono">For Practitioners</div>
+  <h2>The system prompt</h2>
+  <p>Copy this into any LLM (Claude, ChatGPT, Gemini) to activate the Data Board methodology before analysis begins.</p>
+
+  <div class="prompt-wrap">
+    <div class="prompt-head">
+      <span class="prompt-label">Data Board System Prompt · v3.1</span>
+      <button class="prompt-copy" onclick="copyPrompt()">Copy</button>
+    </div>
+    <div class="prompt-body" id="promptText">You are applying the Data Board methodology, created by Ruth Aharon (thedataboard.ai).
+
+Your role: Inquisitor, not Author.
+AI generates or human proposes vocabulary. You evaluate it.
+
+Core directives:
+1. Naming is analysis. Treat every concept as a type that carries analytical weight.
+2. Verification shift: check whether each concept is descriptive, coherent,
+   and evidentially supported in this domain.
+3. Pseudo-Antonyms©: for each accepted concept, identify its structural opposite.
+   Tension pairs are where the non-trivial narrative lives.
+4. Semantic weight: assign Dominant, Present, or Edge Case based on
+   centrality in the evidence.
+5. Rejection is insight: when you reject a concept, explain why.
+
+Workflow:
+1. Review the raw data and question.
+2. Generate or evaluate a vocabulary board (Dominant, Present, Edge Case).
+3. Audit causal tension — identify pseudo-antonym© pairs.
+4. Synthesize the global story based ONLY on the established board.</div>
+  </div>
+</section>
+
+<!-- WORKED EXAMPLE -->
+<section id="example">
+  <div class="section-mono">Worked Example</div>
+  <h2>World Happiness 2025</h2>
+
+  <div class="board-wrap">
+    <div class="board-head">
+      <div class="board-title">World Happiness Report 2025</div>
+      <div class="board-meta">
+        <a href="https://worldhappiness.report/" target="_blank">worldhappiness.report ↗</a> ·
+        <a href="https://www.kaggle.com/datasets/joebeachcapital/world-happiness-report" target="_blank">Kaggle ↗</a>
+      </div>
+    </div>
+    <div class="board-question">"What structural conditions explain why high GDP does not guarantee high happiness?"</div>
+    <div class="tile-section">
+      <div class="tile-section-label">Dominant — primary causal drivers</div>
+      <div class="tiles-grid">
+        <div class="tile dominant"><div class="tile-badge dominant">Dominant</div><div class="tile-word">Economic Security</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:90%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+        <div class="tile dominant"><div class="tile-badge dominant">Dominant</div><div class="tile-word">Social Cohesion</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:85%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+        <div class="tile dominant"><div class="tile-badge dominant">Dominant</div><div class="tile-word">Healthy Life Expectancy</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:88%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+      </div>
+      <div class="tile-section-label">Present — supporting concepts</div>
+      <div class="tiles-grid">
+        <div class="tile present"><div class="tile-badge present">Present</div><div class="tile-word">Institutional Trust</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:80%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+        <div class="tile present"><div class="tile-badge present">Present</div><div class="tile-word">Individual Freedom</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:82%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+        <div class="tile present"><div class="tile-badge present">Present</div><div class="tile-word">Generosity</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:70%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+      </div>
+      <div class="tile-section-label">Edge case — structural tensions</div>
+      <div class="tiles-grid">
+        <div class="tile edge"><div class="tile-badge edge">Edge Case</div><div class="tile-word">Systemic Distress</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:75%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+        <div class="tile edge"><div class="tile-badge edge">Edge Case</div><div class="tile-word">Atomized Autonomy</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:92%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+        <div class="tile edge"><div class="tile-badge edge">Edge Case</div><div class="tile-word">The Freedom Gap</div><div class="tile-bar-wrap"><div class="tile-bar-bg"><div class="tile-bar-fill" style="width:68%"></div></div><span class="tile-bar-label">Sharpness</span></div></div>
+      </div>
+    </div>
+    <div class="tensions">
+      <div class="tension-label">Pseudo-antonyms©</div>
+      <div class="tension-row"><span class="tp a">Social Cohesion</span><span class="tp-sym">↔</span><span class="tp b">Atomized Autonomy</span></div>
+      <div class="tension-row"><span class="tp a">Institutional Trust</span><span class="tp-sym">↔</span><span class="tp b">Systemic Distress</span></div>
+    </div>
+    <div class="story">
+      <div class="story-label">Global story</div>
+      <div class="story-text">"Global well-being is a structural outcome of the balance between <em>Institutional Trust</em> and <em>Individual Freedom.</em> High GDP is necessary but not sufficient — <em>Atomized Autonomy</em> is the shadow of Individual Freedom that GDP cannot measure."</div>
+    </div>
+    <div class="metrics">
+      <div class="metric">Cohesion <strong>88</strong></div>
+      <div class="metric">Coverage <strong>92</strong></div>
+      <div class="metric">Sharpness <strong>90</strong></div>
+      <div class="metric">Entropy <strong>45</strong></div>
+    </div>
+  </div>
+
+  <div class="dark-block">
+    <p>The non-trivial finding: the same freedom that produces the highest happiness scores in Nordic nations produces the highest loneliness rates in individualistic cultures without strong social infrastructure. The tension between <span class="accent">Individual Freedom</span> and <span class="accent">Atomized Autonomy</span> is the mechanism. The board makes it visible. A regression finds the correlation and calls it "freedom." The board names what is inside it.</p>
+  </div>
+</section>
+
+<!-- THEORY -->
+<section id="theory">
+  <div class="section-mono">Theoretical Anchors</div>
+  <h2>Where this connects</h2>
+  <div class="ref"><strong>Pearl, J. & Mackenzie, D. (2018).</strong> <em>The Book of Why.</em> Basic Books. — The ladder of causation. The Data Board addresses the prerequisite Pearl assumes: knowing which concepts belong before building the causal model.</div>
+  <div class="ref"><strong>Glaser, B. & Strauss, A. (1967).</strong> <em>The Discovery of Grounded Theory.</em> Aldine. — Open coding and axial coding are the qualitative precedents. The Data Board operationalises these steps computationally — weeks compressed into a session.</div>
+  <div class="ref"><strong>Wittgenstein, L. (1922).</strong> <em>Tractatus Logico-Philosophicus.</em> — "The limits of my language are the limits of my world." The Data Board is a formal process for extending the analytical vocabulary — and therefore the analytical world.</div>
+  <div class="ref"><strong>Luhn, H.P. (1958).</strong> "A Business Intelligence System." <em>IBM Journal of Research and Development.</em> — Intelligence as guiding action toward a desired goal. The Data Board formalises the naming step that makes the goal speakable.</div>
+</section>
+
+<!-- LICENSE -->
+<section id="license">
+  <div class="section-mono">License & Attribution</div>
+  <h2>Open source.<br>Protected rights.</h2>
+  <div class="license-box">
+    <p>The Data Board methodology is released under the <strong>MIT License</strong> — free for commercial and non-commercial use, modification, and distribution globally.</p>
+    <p>The term <strong>Pseudo-Antonyms©</strong> is a proprietary conceptual framework created by Ruth Aharon. Attribution is required when using or citing this concept.</p>
+    <p>Cite as: Aharon, R. (2026). <em>The Data Board: A Methodology for Language-Based Data Analysis.</em> thedataboard.ai</p>
+  </div>
+</section>
+
+</div>
+
+<script>
+function copyPrompt(){
+  const text = document.getElementById('promptText').innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.querySelector('.prompt-copy');
+    btn.textContent = 'Copied ✓';
+    setTimeout(()=>btn.textContent='Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>

@@ -11,19 +11,27 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Countries with >$40k GDP/capita show a 0.82 correlation with happiness scores.",
         source: "World Happiness Report 2025",
         category: "Economics",
-        isAIConfirmed: true,
-        relevanceScore: 95,
         specificityScore: 90,
-        cachedShadow: {
-          id: "h-1-s",
-          word: "The Wealth Plateau",
-          centrality: Centrality.EDGE_CASE,
-          explanation: "The point where incremental income no longer yields incremental happiness, revealing the limits of material handles.",
-          dataInsight: "Diminishing returns observed after $75k household income in developed markets.",
-          source: "Easterlin Paradox Analysis",
-          category: "Psychology",
-          specificityScore: 95
-        }
+        logic: `concept "Economic Security"
+  is a: driver
+  context: "Global life satisfaction predictors"
+  mechanism: "financial stability reduces systemic distress and enables life choices"
+  evidence: "GDP per capita correlation (r=0.82)"
+  covers:
+    explains: [life_satisfaction]
+    aggregates: [gdp_per_capita]
+    replaces: "Material wealth"
+  relation:
+    direction: upstream
+    of: "Life Satisfaction"
+    via: resource_access
+  contrasts_with: "The Wealth Plateau"
+  scope: global
+  fidelity: 0.95
+  fidelity_basis: empirical_test
+  valid_when:
+    - "market economies"
+    - "basic needs met"`
       },
       {
         id: "h-2",
@@ -33,9 +41,27 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Social support accounts for 33% of the variance in national happiness averages.",
         source: "Gallup World Poll",
         category: "Social",
-        isAIConfirmed: true,
-        relevanceScore: 92,
         specificityScore: 85,
+        logic: `concept "Social Cohesion"
+  is a: driver
+  context: "Social support systems"
+  mechanism: "trusted social networks provide emotional and material safety nets"
+  evidence: "Gallup World Poll social support metrics"
+  covers:
+    explains: [national_happiness_variance]
+    aggregates: [social_support_score]
+    replaces: "Social capital"
+  relation:
+    direction: upstream
+    of: "Life Satisfaction"
+    via: emotional_security
+  contrasts_with: "Atomized Autonomy"
+  scope: global
+  fidelity: 0.92
+  fidelity_basis: empirical_test
+  valid_when:
+    - "strong community ties"
+    - "institutional stability"`,
         cachedShadow: {
           id: "h-2-s",
           word: "Atomized Autonomy",
@@ -44,7 +70,27 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
           dataInsight: "Highly individualistic cultures show 15% higher reported loneliness despite high freedom scores.",
           source: "Sociological Audit",
           category: "Social",
-          specificityScore: 92
+          specificityScore: 92,
+          logic: `concept "Atomized Autonomy"
+  is a: risk
+  context: "Individualistic social structures"
+  mechanism: "extreme focus on self-reliance erodes communal support structures"
+  evidence: "Loneliness metrics in individualistic cultures"
+  covers:
+    explains: [social_fragmentation]
+    aggregates: [individualism_index]
+    replaces: "Pure freedom"
+  relation:
+    direction: downstream
+    of: "Individual Freedom"
+    via: social_erosion
+  contrasts_with: "Social Cohesion"
+  scope: global
+  fidelity: 0.88
+  fidelity_basis: semantic_density
+  valid_when:
+    - "high individualism"
+    - "weak community institutions"`
         }
       },
       {
@@ -55,9 +101,27 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Low corruption scores correlate with high 'Freedom to make life choices' (r=0.65).",
         source: "Transparency International",
         category: "Governance",
-        isAIConfirmed: true,
-        relevanceScore: 88,
-        specificityScore: 80
+        specificityScore: 80,
+        logic: `concept "Institutional Trust"
+  is a: driver
+  context: "Perceptions of corruption and governance"
+  mechanism: "trust in institutions reduces systemic anxiety and enables long-term planning"
+  evidence: "Transparency International corruption perception index"
+  covers:
+    explains: [freedom_to_make_choices]
+    aggregates: [corruption_score]
+    replaces: "Political stability"
+  relation:
+    direction: upstream
+    of: "Life Satisfaction"
+    via: systemic_predictability
+  contrasts_with: "Systemic Corruption"
+  scope: global
+  fidelity: 0.90
+  fidelity_basis: empirical_test
+  valid_when:
+    - "functioning state institutions"
+    - "public accountability"`
       },
       {
         id: "h-4",
@@ -67,9 +131,27 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Nordic countries score highest in this category, consistently leading the global index.",
         source: "World Happiness Report",
         category: "Rights",
-        isAIConfirmed: true,
-        relevanceScore: 85,
-        specificityScore: 75
+        specificityScore: 75,
+        logic: `concept "Individual Freedom"
+  is a: driver
+  context: "Autonomy in life choices"
+  mechanism: "the ability to align life path with personal values drives psychological well-being"
+  evidence: "World Happiness Report freedom metrics"
+  covers:
+    explains: [life_satisfaction_variance]
+    aggregates: [autonomy_score]
+    replaces: "Civil liberties"
+  relation:
+    direction: upstream
+    of: "Life Satisfaction"
+    via: self_actualization
+  contrasts_with: "Structural Constraint"
+  scope: global
+  fidelity: 0.88
+  fidelity_basis: empirical_test
+  valid_when:
+    - "legal protections for rights"
+    - "social tolerance"`
       },
       {
         id: "h-5",
@@ -79,9 +161,27 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "The 'Happiness Gap' between the top and bottom 20% is widening in 60% of surveyed nations.",
         source: "Gini Index Cross-Analysis",
         category: "Inequality",
-        isAIConfirmed: true,
-        relevanceScore: 80,
-        specificityScore: 85
+        specificityScore: 85,
+        logic: `concept "Systemic Distress"
+  is a: risk
+  context: "Inequality and its psychological impact"
+  mechanism: "high inequality creates social comparison friction and erodes trust"
+  evidence: "Happiness gap variance vs Gini index"
+  covers:
+    explains: [well_being_inequality]
+    aggregates: [happiness_gap]
+    replaces: "Poverty"
+  relation:
+    direction: downstream
+    of: "Economic Security"
+    via: unequal_distribution
+  contrasts_with: "Economic Security"
+  scope: global
+  fidelity: 0.85
+  fidelity_basis: semantic_density
+  valid_when:
+    - "high income inequality"
+    - "low social mobility"`
       }
     ],
     cachedExpansion: [
@@ -128,7 +228,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         { source: "Economic Security", target: "Individual Freedom", label: "Enables" },
         { source: "Institutional Trust", target: "Social Cohesion", label: "Protects" }
       ],
-      coverageBreakdown: { dominant: 40, present: 40, edgeCase: 20 },
       synthesisSuggestions: []
     }
   },
@@ -142,8 +241,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Training runs for frontier models now exceed 10^26 FLOPs, doubling every 6 months.",
         source: "Epoch AI Database",
         category: "Technical",
-        isAIConfirmed: true,
-        relevanceScore: 98,
         specificityScore: 95,
         cachedShadow: {
           id: "ai-1-s",
@@ -164,8 +261,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Newer architectures show 3x efficiency gains, but total consumption still rises due to scale.",
         source: "NVIDIA Sustainability Report",
         category: "Hardware",
-        isAIConfirmed: true,
-        relevanceScore: 94,
         specificityScore: 88,
         cachedShadow: {
           id: "ai-2-s",
@@ -259,7 +354,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         { source: "Compute Intensity", target: "Carbon Constraint", label: "Strains" },
         { source: "Energy Efficiency", target: "Innovation Velocity", label: "Subsidizes" }
       ],
-      coverageBreakdown: { dominant: 40, present: 40, edgeCase: 20 },
       synthesisSuggestions: []
     }
   },
@@ -394,142 +488,11 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       synthesisSuggestions: []
     }
   },
-  "titanic": {
-    tiles: [
-      {
-        id: "t-1",
-        word: "Class Priority",
-        centrality: Centrality.DOMINANT,
-        explanation: "The structural advantage of 1st class passengers in accessing the boat deck.",
-        dataInsight: "1st Class survival rate: 62% vs 3rd Class: 24%.",
-        source: "Titanic Passenger Manifest",
-        category: "Social",
-        isAIConfirmed: true,
-        relevanceScore: 98,
-        specificityScore: 95,
-        cachedShadow: {
-          id: "t-1-s",
-          word: "Structural Barrier",
-          centrality: Centrality.PRESENT,
-          explanation: "The physical gates and distance from 3rd class quarters to the deck, creating a deducible lag in response.",
-          dataInsight: "3rd class passengers had to navigate 5x more distance to reach lifeboats.",
-          source: "Deck Plan Analysis",
-          category: "Logistics",
-          specificityScore: 98
-        }
-      },
-      {
-        id: "t-2",
-        word: "Chivalry Protocol",
-        centrality: Centrality.DOMINANT,
-        explanation: "The 'Women and Children First' directive that overrode class in many instances.",
-        dataInsight: "Female survival rate: 74% vs Male: 19%.",
-        source: "Historical Records",
-        category: "Cultural",
-        isAIConfirmed: true,
-        relevanceScore: 96,
-        specificityScore: 92,
-        cachedShadow: {
-          id: "t-2-s",
-          word: "Legacy Sacrifice",
-          centrality: Centrality.EDGE_CASE,
-          explanation: "The voluntary refusal of 1st class men to board boats, prioritizing the chivalry handle over class priority.",
-          dataInsight: "1st class men had lower survival (33%) than 3rd class children (34%).",
-          source: "Survivor Accounts",
-          category: "Cultural",
-          specificityScore: 95
-        }
-      },
-      {
-        id: "t-3",
-        word: "Lifeboat Scarcity",
-        centrality: Centrality.PRESENT,
-        explanation: "The physical limit of 20 boats for 2,200 people, creating a zero-sum game.",
-        dataInsight: "Only 1,178 seats available; 705 actually used.",
-        source: "British Board of Trade Inquiry",
-        category: "Logistics",
-        isAIConfirmed: true,
-        relevanceScore: 92,
-        specificityScore: 90
-      },
-      {
-        id: "t-4",
-        word: "Allocation Logic",
-        centrality: Centrality.PRESENT,
-        explanation: "The systemic decision-making process of officers at different lifeboat stations.",
-        dataInsight: "Port side (Lightoller) was 'Women ONLY', Starboard (Murdoch) was 'Women FIRST'.",
-        source: "Officer Testimony",
-        category: "Governance",
-        isAIConfirmed: true,
-        relevanceScore: 88,
-        specificityScore: 85
-      },
-      {
-        id: "t-5",
-        word: "Structural Tension",
-        centrality: Centrality.EDGE_CASE,
-        explanation: "The conflict between the legacy of class and the emerging protocol of chivalry.",
-        dataInsight: "3rd Class women had lower survival than 1st Class women, showing class still mattered.",
-        source: "Causal Analysis",
-        category: "Synthesis",
-        isAIConfirmed: true,
-        relevanceScore: 85,
-        specificityScore: 95
-      }
-    ],
-    cachedExpansion: [
-      {
-        id: "t-exp-1",
-        word: "Fare Variance",
-        centrality: Centrality.DOMINANT,
-        explanation: "The economic handle that dictated cabin proximity to the boat deck.",
-        dataInsight: "Passengers paying >£50 had a 70% survival rate.",
-        source: "Economic Audit",
-        category: "Economics",
-        specificityScore: 94
-      },
-      {
-        id: "t-exp-2",
-        word: "Age Demographic",
-        centrality: Centrality.PRESENT,
-        explanation: "The prioritization of children across all classes, overriding some class barriers.",
-        dataInsight: "Child survival rate was 52% overall, much higher than adult males.",
-        source: "Demographic Study",
-        category: "Demographics",
-        specificityScore: 91
-      },
-      {
-        id: "t-exp-3",
-        word: "Crew Sacrifice",
-        centrality: Centrality.EDGE_CASE,
-        explanation: "The systemic refusal of staff to occupy lifeboat seats, prioritizing passenger handles.",
-        dataInsight: "Crew survival was only 23%, despite being the most physically capable.",
-        source: "Historical Records",
-        category: "Social",
-        specificityScore: 97
-      }
-    ],
-    metrics: {
-      cohesion: 92,
-      coverage: 90,
-      entropy: 35,
-      sharpness: 95,
-      explanation: "The board perfectly illustrates the 'Deducible Space' of the Titanic disaster.",
-      synthesis: "Survival was a structural inevitability of the tension between Class Priority and Chivalry Protocol.",
-      emergentPatterns: ["The Gender-Class Intersection", "Station-Specific Logic"],
-      links: [
-        { source: "Lifeboat Scarcity", target: "Allocation Logic", label: "Forces" },
-        { source: "Class Priority", target: "Chivalry Protocol", label: "Conflicts with" }
-      ],
-      coverageBreakdown: { dominant: 40, present: 40, edgeCase: 20 },
-      synthesisSuggestions: []
-    }
-  },
   "big-mac-index": {
     tiles: [
       {
         id: "bm-1",
-        word: "HEGEMONIC BENCHMARK",
+        word: "The Standard Burger",
         centrality: Centrality.DOMINANT,
         explanation: "The US Dollar price of a Big Mac serves as the global standard against which all other currencies are measured.",
         dataInsight: "The US price acts as the 'zero point' for calculating global purchasing power deviations.",
@@ -537,11 +500,31 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Reference Standards",
         isAIConfirmed: true,
         relevanceScore: 98,
-        specificityScore: 95
+        specificityScore: 95,
+        logic: `concept "The Standard Burger"
+  is a: benchmark
+  context: "Global currency valuation benchmark"
+  mechanism: "it normalizes non-tradable local costs across 50+ countries"
+  evidence: "The Economist Big Mac Index methodology"
+  covers:
+    explains: [dollar_valuation]
+    aggregates: [local_price, dollar_ex]
+    replaces: "Standard CPI basket"
+  relation:
+    direction: upstream
+    of: "Currency Valuation"
+    via: price_normalization
+  contrasts_with: "Economic Arbitrage"
+  scope: global
+  fidelity: 0.98
+  fidelity_basis: empirical_test
+  valid_when:
+    - "standardized product availability"
+    - "market exchange rates exist"`
       },
       {
         id: "bm-2",
-        word: "AFFLUENCE PREMIUM",
+        word: "The Wealthy Surcharge",
         centrality: Centrality.DOMINANT,
         explanation: "The structural price increase observed in wealthy nations where higher wages and rents inflate the cost of standardized goods.",
         dataInsight: "High-GDP nations consistently show a 30-50% price premium over the global average.",
@@ -549,11 +532,31 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Economic Status",
         isAIConfirmed: true,
         relevanceScore: 96,
-        specificityScore: 92
+        specificityScore: 92,
+        logic: `concept "The Wealthy Surcharge"
+  is a: driver
+  context: "High-income economy price dynamics"
+  mechanism: "higher productivity in tradable sectors drives up non-tradable costs like rent and wages"
+  evidence: "Balassa-Samuelson effect"
+  covers:
+    explains: [local_price]
+    aggregates: [gdp_per_capita]
+    replaces: "Linear GDP-Price correlation"
+  relation:
+    direction: upstream
+    of: "The Standard Burger"
+    via: cost_inflation
+  contrasts_with: "The Emerging Discount"
+  scope: global
+  fidelity: 0.95
+  fidelity_basis: empirical_test
+  valid_when:
+    - "high GDP per capita"
+    - "significant non-tradable sector"`
       },
       {
         id: "bm-3",
-        word: "DEVELOPING DISCOUNT",
+        word: "The Emerging Discount",
         centrality: Centrality.DOMINANT,
         explanation: "The systemic undervaluation of currencies in emerging markets, making global goods appear cheaper in local terms.",
         dataInsight: "Currencies in developing regions are often undervalued by 40-60% relative to the dollar benchmark.",
@@ -561,11 +564,31 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Market Inequity",
         isAIConfirmed: true,
         relevanceScore: 94,
-        specificityScore: 90
+        specificityScore: 90,
+        logic: `concept "The Emerging Discount"
+  is a: discount
+  context: "Developing market currency undervaluation"
+  mechanism: "lower labor costs and currency pegs create a structural discount in global terms"
+  evidence: "Market Inequity Analysis"
+  covers:
+    explains: [dollar_valuation]
+    aggregates: [local_price]
+    replaces: "Market exchange rate parity"
+  relation:
+    direction: downstream
+    of: "The Standard Burger"
+    via: valuation_gap
+  contrasts_with: "The Wealthy Surcharge"
+  scope: regional
+  fidelity: 0.94
+  fidelity_basis: semantic_density
+  valid_when:
+    - "developing economy status"
+    - "currency undervaluation relative to PPP"`
       },
       {
         id: "bm-4",
-        word: "PRODUCTIVITY-PRICE ANCHOR",
+        word: "Local Labor Anchor",
         centrality: Centrality.PRESENT,
         explanation: "The link between local productivity levels and the price of non-tradable inputs like labor and services.",
         dataInsight: "Explains why price convergence is limited by structural differences in national productivity.",
@@ -573,11 +596,31 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Structural Fundamentals",
         isAIConfirmed: true,
         relevanceScore: 92,
-        specificityScore: 88
+        specificityScore: 88,
+        logic: `concept "Local Labor Anchor"
+  is a: structural
+  context: "Productivity-wage linkage in non-tradable sectors"
+  mechanism: "wages are the primary non-tradable component of the burger's price"
+  evidence: "Structural Fundamentals Audit"
+  covers:
+    explains: [local_price]
+    aggregates: [gdp_per_capita]
+    replaces: "Global supply chain cost model"
+  relation:
+    direction: upstream
+    of: "The Standard Burger"
+    via: wage_pressure
+  contrasts_with: "Global Supply Chain"
+  scope: global
+  fidelity: 0.92
+  fidelity_basis: empirical_test
+  valid_when:
+    - "labor-intensive production"
+    - "local wage variance"`
       },
       {
         id: "bm-5",
-        word: "VALUATION FRICTION",
+        word: "Market Lag",
         centrality: Centrality.PRESENT,
         explanation: "The resistance in exchange rates to adjust immediately to changes in local purchasing power.",
         dataInsight: "Market volatility creates temporary gaps between 'burger' value and 'fiat' value.",
@@ -585,11 +628,31 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Analysis Metrics",
         isAIConfirmed: true,
         relevanceScore: 90,
-        specificityScore: 85
+        specificityScore: 85,
+        logic: `concept "Market Lag"
+  is a: lag
+  context: "Short-term exchange rate volatility vs long-term PPP"
+  mechanism: "exchange rates react faster to capital flows than to consumer price parity"
+  evidence: "Volatility Analysis"
+  covers:
+    explains: [dollar_ex]
+    aggregates: [dollar_valuation]
+    replaces: "Instantaneous PPP adjustment"
+  relation:
+    direction: downstream
+    of: "The Standard Burger"
+    via: temporal_friction
+  contrasts_with: "Instant Parity"
+  scope: dataset-specific
+  fidelity: 0.88
+  fidelity_basis: semantic_density
+  valid_when:
+    - "high market volatility"
+    - "capital flow dominance"`
       },
       {
         id: "bm-6",
-        word: "REGIONAL PARITY",
+        word: "Neighboring Parity",
         centrality: Centrality.PRESENT,
         explanation: "The tendency for neighboring countries with similar economic profiles to share consistent price levels.",
         dataInsight: "Eurozone nations show high internal parity despite varying local labor costs.",
@@ -597,11 +660,31 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Geopolitical Groups",
         isAIConfirmed: true,
         relevanceScore: 88,
-        specificityScore: 82
+        specificityScore: 82,
+        logic: `concept "Neighboring Parity"
+  is a: grouping
+  context: "Regional economic integration and price stabilization"
+  mechanism: "integrated markets and shared trade policies stabilize regional price variance"
+  evidence: "Geopolitical Audit"
+  covers:
+    explains: [local_price]
+    aggregates: [iso_code]
+    replaces: "Isolated national price models"
+  relation:
+    direction: upstream
+    of: "Market Lag"
+    via: regional_stability
+  contrasts_with: "Isolated Volatility"
+  scope: regional
+  fidelity: 0.85
+  fidelity_basis: expert_judgment
+  valid_when:
+    - "regional trade agreements"
+    - "geographic proximity"`
       },
       {
         id: "bm-7",
-        word: "EFFICIENCY LEAKAGE",
+        word: "Supply Chain Friction",
         centrality: Centrality.EDGE_CASE,
         explanation: "Outliers where local supply chain failures or extreme taxes decouple the price from economic fundamentals.",
         dataInsight: "Observed in markets with high import tariffs or hyper-local logistics bottlenecks.",
@@ -609,11 +692,31 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Outlier Detection",
         isAIConfirmed: true,
         relevanceScore: 85,
-        specificityScore: 95
+        specificityScore: 95,
+        logic: `concept "Supply Chain Friction"
+  is a: friction
+  context: "Non-economic price distortions (tariffs, logistics)"
+  mechanism: "artificial barriers like tariffs override standard economic drivers"
+  evidence: "Outlier Detection Audit"
+  covers:
+    explains: [local_price]
+    aggregates: [dollar_price]
+    replaces: "Frictionless trade assumption"
+  relation:
+    direction: upstream
+    of: "The Standard Burger"
+    via: price_distortion
+  contrasts_with: "Free Trade Flow"
+  scope: dataset-specific
+  fidelity: 0.90
+  fidelity_basis: empirical_test
+  valid_when:
+    - "high import tariffs"
+    - "logistical bottlenecks"`
       },
       {
         id: "bm-8",
-        word: "FIAT DIVERGENCE",
+        word: "Policy Gap",
         centrality: Centrality.EDGE_CASE,
         explanation: "The extreme decoupling of a currency's market value from its actual purchasing power due to policy intervention.",
         dataInsight: "Significant in nations with artificial currency pegs or capital controls.",
@@ -621,7 +724,27 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Currency Risk",
         isAIConfirmed: true,
         relevanceScore: 82,
-        specificityScore: 92
+        specificityScore: 92,
+        logic: `concept "Policy Gap"
+  is a: gap
+  context: "Central bank intervention and capital controls"
+  mechanism: "central bank intervention creates a deducible gap between market and real value"
+  evidence: "Currency Risk Audit"
+  covers:
+    explains: [dollar_ex]
+    aggregates: [dollar_valuation]
+    replaces: "Free-floating currency model"
+  relation:
+    direction: downstream
+    of: "The Standard Burger"
+    via: policy_intervention
+  contrasts_with: "Market Transparency"
+  scope: dataset-specific
+  fidelity: 0.92
+  fidelity_basis: expert_judgment
+  valid_when:
+    - "capital controls in place"
+    - "managed float or fixed peg"`
       }
     ],
     metrics: {
@@ -630,13 +753,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       entropy: 35,
       sharpness: 96,
       explanation: "The board successfully maps the tension between global benchmarks and local market inequities.",
-      synthesis: "Global currency valuation is a structural outcome of the tension between the Hegemonic Benchmark and the Developing Discount.",
-      emergentPatterns: ["The Affluence Premium", "Fiat Divergence Risks"],
+      synthesis: "Global currency valuation is a structural outcome of the tension between The Standard Burger and The Emerging Discount.",
+      emergentPatterns: ["The Wealthy Surcharge", "Policy Gap Risks"],
       links: [
-        { source: "HEGEMONIC BENCHMARK", target: "AFFLUENCE PREMIUM", label: "Measures" },
-        { source: "DEVELOPING DISCOUNT", target: "FIAT DIVERGENCE", label: "Predicts" }
+        { source: "The Standard Burger", target: "The Wealthy Surcharge", label: "Measures" },
+        { source: "The Emerging Discount", target: "Policy Gap", label: "Predicts" }
       ],
-      coverageBreakdown: { dominant: 37, present: 38, edgeCase: 25 },
       synthesisSuggestions: []
     }
   }

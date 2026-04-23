@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Data Board — Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E4E3E0;--ink:#141414;--green:#4CAF50;--yellow:#D4B84A;--red:#C0392B;--white:#ffffff;--soft:#F5F4F1;--border:rgba(20,20,20,0.15);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.7;}
+nav{position:sticky;top:0;background:var(--ink);z-index:100;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:52px;}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--white);text-decoration:none;letter-spacing:-0.02em;}
+.nav-brand span{color:var(--yellow);}
+.nav-links{display:flex;gap:24px;}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--white);}
+.wrap{max-width:860px;margin:0 auto;padding:64px 40px 80px;}
+.section-mono{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;opacity:0.4;margin-bottom:12px;}
+h1{font-size: clamp(32px, 5vw, 48px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1; margin-bottom: 24px;}
+p{font-size: 16px; opacity: 0.8; margin-bottom: 24px;}
+.coming-soon{border: 2px solid var(--ink); padding: 48px; background: var(--white); box-shadow: 8px 8px 0 0 var(--ink); text-align: center;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">The <span>Data Board</span></a>
+  <div class="nav-links">
+    <a href="index.html">← Home</a>
+    <a href="methodology.html">Methodology</a>
+    <a href="/">Demo</a>
+    <a href="workshop.html">Workshop</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="section-mono">Workshop Module</div>
+  <h1>Analytical workshop facilitator</h1>
+  <div class="coming-soon">
+    <h2 style="text-transform: uppercase; font-weight: 900; margin-bottom: 16px;">Coming Soon</h2>
+    <p>We are currently formalizing the Data Board workshop curriculum for analysts and leadership teams.</p>
+    <a href="index.html" style="display: inline-block; background: var(--ink); color: var(--white); padding: 12px 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; border-bottom: 2px solid var(--yellow);">Back to Home</a>
+  </div>
+</div>
+
+</body>
+</html>

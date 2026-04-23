@@ -12,9 +12,10 @@ export interface Tile {
   dataInsight?: string; // Specific data distribution or pattern
   source?: string; // Historical or scientific source
   category?: string;
-  isAIConfirmed?: boolean; // The ★ mark
-  relevanceScore?: number; // 0-100
+  isAIConfirmed?: boolean;
+  relevanceScore?: number;
   specificityScore: number; // 0-100
+  logic?: string; // The "A Posteriori Ontology" markup (Mermaid-like code)
   cachedShadow?: Tile; // Pre-generated causal audit (shadow tile)
 }
 
@@ -24,6 +25,7 @@ export interface Scenario {
   description: string;
   context: string; // Detailed context for the AI
   outcomes: string[]; // e.g., ["Survival", "Death"]
+  url?: string; // Optional URL for the scenario source
 }
 
 export interface BoardMetrics {

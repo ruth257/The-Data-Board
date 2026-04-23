@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight } from "lucide-react";
+import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight, Code, Save, Layout } from "lucide-react";
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
 import { CACHED_BOARDS } from "./cachedData";
 import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
-import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, auditCausalTension, analyzeCSVData } from "./services/geminiService";
+import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData } from "./services/geminiService";
 import { RelationshipGraph } from "./components/RelationshipGraph";
+
+import yaml from "js-yaml";
 
 declare global {
   interface Window {
@@ -18,7 +20,40 @@ declare global {
 }
 
 const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void; key?: React.Key }) => {
+  const [activeStep, setActiveStep] = useState(0);
+
   if (!isOpen) return null;
+
+  const steps = [
+    {
+      title: "Evidence Base",
+      subtitle: "Scenario Context & Grounding",
+      icon: <Database className="w-7 h-7" />,
+      color: "bg-ink text-bg",
+      description: "We don't start with numbers; we start with situational logic. This ensures the model respects the physical and social constraints of the dataset's 'physics' before it begins synthesizing meaning."
+    },
+    {
+      title: "Pseudo-Antonyms©",
+      subtitle: "The Tension Search",
+      icon: <Scale className="w-7 h-7" />,
+      color: "bg-databoard-yellow text-ink",
+      description: "We identify conceptual conflict. A fact must be both 'Dense' (frequent) and 'Tense' (in conflict with another concept) to become a variable in a deducible space. Without tension, there is no story."
+    },
+    {
+      title: "Semantic Synthesis",
+      subtitle: "Naming as Analysis",
+      icon: <Zap className="w-7 h-7" />,
+      color: "bg-ink text-bg",
+      description: "We select a 'Goldilocks' word: precise enough to be data-driven, yet flexible enough to be narratable. Finding the right name is the primary analytical act that creates a new 'type' for reasoning."
+    },
+    {
+      title: "Verification Shift",
+      subtitle: "The Logical Auditor",
+      icon: <ShieldCheck className="w-7 h-7" />,
+      color: "bg-databoard-green text-ink",
+      description: "The AI stops guessing and starts checking. We audit every handle against the evidence. If a causal mechanism isn't supported, the handle is discarded. This ensures analytical stability across runs."
+    }
+  ];
 
   return (
     <motion.div 
@@ -31,263 +66,451 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       <motion.div 
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        className="bg-bg w-full max-w-4xl max-h-[90vh] overflow-y-auto border-2 border-ink p-8 shadow-[16px_16px_0px_0px_rgba(20,20,20,1)]"
+        className="bg-[#E4E3E0] text-[#141414] w-full max-w-4xl max-h-[90vh] overflow-y-auto border-2 border-[#141414] p-0 shadow-[16px_16px_0px_0px_rgba(20,20,20,1)] relative"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-start mb-8 border-b-2 border-ink pb-4">
-          <div>
-            <h2 className="text-4xl font-black uppercase tracking-tighter">The Deducible Space</h2>
-            <div className="flex items-center gap-3 mt-2">
-              <p className="mono text-xs uppercase tracking-widest opacity-50">Analytical Framework v3.0</p>
-              <div className="w-1 h-1 bg-ink/20 rounded-full" />
-              <p className="mono text-xs uppercase tracking-widest font-bold">Created by Ruth Aharon</p>
-              <div className="w-1 h-1 bg-ink/20 rounded-full" />
-              <a href="https://thedataboard.ai" className="mono text-xs uppercase tracking-widest hover:underline font-bold">thedataboard.ai</a>
-            </div>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-ink hover:text-bg transition-colors">
-            <X className="w-8 h-8" />
-          </button>
-        </div>
+        <button 
+          onClick={onClose}
+          className="absolute top-6 right-8 p-2 bg-[#141414] text-white hover:bg-white hover:text-ink transition-colors z-10"
+        >
+          <X className="w-6 h-6" />
+        </button>
 
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
-          <section>
-            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <ShieldCheck className="w-5 h-5" /> 1. The Power of Synthesis
-            </h3>
-            <p className="text-[11px] font-bold uppercase tracking-wider mb-2 opacity-60 italic">Named concepts carry more meaning than their parts.</p>
-            <p className="text-sm opacity-80 leading-relaxed">
-              When analysts synthesize a new term—combining "stagnation" and "inflation" into "stagflation"—something more than shorthand is created. The new word becomes a <strong>type</strong> that can be reasoned about and built upon. The Data Board works at this level: naming what you see is not cosmetic; it is the analysis.
+        <div className="p-8 md:p-12">
+          {/* HERO */}
+          <div className="pb-12 border-b-2 border-[#141414] mb-12">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-3">Open Methodology · Version 3.1</div>
+            <h1 className="text-4xl md:text-6xl font-[900] uppercase tracking-tighter leading-[0.9] mb-4">
+              The Data Board
+            </h1>
+            <p className="font-serif italic text-xl md:text-2xl opacity-70 leading-tight max-w-2xl mb-8">
+              "Given a good enough set of semantics — can we use language to represent data?"
             </p>
-          </section>
-
-          <section>
-            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <Zap className="w-5 h-5" /> 2. Analytical Stability
-            </h3>
-            <p className="text-[11px] font-bold uppercase tracking-wider mb-2 opacity-60 italic">Shared vocabulary reduces semantic noise.</p>
-            <p className="text-sm opacity-80 leading-relaxed">
-              Without a pre-defined name, AI guesses—drawing on statistical priors rather than domain knowledge. This leads to inconsistent labels across runs. When The Data Board supplies the vocabulary first, the model's output stabilizes. You are giving the AI the same semantic anchor a human expert would use.
-            </p>
-          </section>
-
-          <section>
-            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2 text-databoard-yellow">
-              <Activity className="w-5 h-5" /> 3. The Verification Shift
-            </h3>
-            <p className="text-[11px] font-bold uppercase tracking-wider mb-2 opacity-60 italic">Pre-supplying concepts shifts AI from invention to verification.</p>
-            <p className="text-sm opacity-80 leading-relaxed">
-              When a concept is introduced at the naming stage, the model stops generating meaning and starts <strong>checking</strong> it. It moves from invention to verification. This eliminates the subtle mistake of framing the analysis with words nobody agreed on.
-            </p>
-          </section>
-        </div>
-
-        <section className="mb-16">
-          <h3 className="text-xl font-bold uppercase mb-8 flex items-center gap-2 text-databoard-yellow">
-            <Scale className="w-5 h-5" /> Methodological Matrix
-          </h3>
-          <div className="border-2 border-ink shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] overflow-hidden">
-            <div className="grid grid-cols-4 bg-ink text-bg text-[9px] font-black uppercase tracking-[0.2em] p-4 gap-4">
-              <div className="col-span-1">Core Principle</div>
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-databoard-yellow" /> Prompting</div>
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-databoard-green" /> Data Representation</div>
-              <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-databoard-red" /> Topic Discovery</div>
-            </div>
-            
-            {/* Row 1 */}
-            <div className="grid grid-cols-4 border-t-2 border-ink p-6 gap-6 bg-white hover:bg-databoard-yellow/5 transition-colors">
-              <div className="col-span-1 pr-6 border-r-2 border-ink/5">
-                <p className="text-xs font-black uppercase leading-tight tracking-tight">1. Synthesized terms carry more meaning than their parts</p>
-              </div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Model inherits a richer semantic frame, drastically reducing misinterpretation.</div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Labels encode analytical relationships and intent, not just raw observations.</div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Latent topics surface around named concepts rather than statistical co-occurrence noise.</div>
-            </div>
-
-            {/* Row 2 */}
-            <div className="grid grid-cols-4 border-t-2 border-ink p-6 gap-6 bg-bg hover:bg-databoard-green/5 transition-colors">
-              <div className="col-span-1 pr-6 border-r-2 border-ink/5">
-                <p className="text-xs font-black uppercase leading-tight tracking-tight">2. Shared vocabulary reduces analytical noise</p>
-              </div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Ensures consistent, reproducible outputs across different runs and users.</div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Standardized labels make disparate datasets comparable across time and teams.</div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Topic models converge faster and more stably when seed vocabulary is pre-defined.</div>
-            </div>
-
-            {/* Row 3 */}
-            <div className="grid grid-cols-4 border-t-2 border-ink p-6 gap-6 bg-white hover:bg-databoard-red/5 transition-colors">
-              <div className="col-span-1 pr-6 border-r-2 border-ink/5">
-                <p className="text-xs font-black uppercase leading-tight tracking-tight">3. Pre-supplying concepts shifts AI to verification</p>
-              </div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">The model checks for "fit" and evidence rather than guessing arbitrary names.</div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Schema design becomes an intentional analytical act rather than a technical one.</div>
-              <div className="text-[11px] leading-relaxed opacity-80 font-medium">Discovery is bounded by human intent, making findings auditable and reproducible.</div>
-            </div>
-          </div>
-        </section>
-
-        <section className="md:col-span-2 border-t-2 border-ink pt-12">
-          <div className="flex flex-col lg:flex-row justify-between items-start gap-12">
-            <div className="flex-1 w-full">
-              <h3 className="text-xl font-bold uppercase mb-12 flex items-center gap-2 text-databoard-yellow">
-                <Cpu className="w-5 h-5" /> Process Architecture
-              </h3>
-              <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-0">
-                {/* Step 1: Raw Data */}
-                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                  <div className="w-14 h-14 bg-ink text-bg flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
-                    <Database className="w-7 h-7" />
-                  </div>
-                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">1. Raw Data</h4>
-                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">Quantitative Input & Evidence</p>
-                </div>
-
-                <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
-
-                {/* Step 2: Pseudo-Antonyms */}
-                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                  <div className="w-14 h-14 bg-databoard-yellow text-ink flex items-center justify-center mb-4 border-2 border-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
-                    <Scale className="w-7 h-7" />
-                  </div>
-                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">2. Pseudo-Antonyms©</h4>
-                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">Defining the Deducible Space</p>
-                </div>
-
-                <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
-
-                {/* Step 3: Semantic Density */}
-                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                  <div className="w-14 h-14 bg-ink text-bg flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
-                    <Network className="w-7 h-7" />
-                  </div>
-                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">3. Semantic Density</h4>
-                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">Clustering Narrative Themes</p>
-                </div>
-
-                <div className="hidden md:block h-[2px] bg-ink/20 flex-grow mx-2" />
-
-                {/* Step 4: Narrative */}
-                <div className="z-10 flex flex-col items-center text-center w-full md:w-1/4">
-                  <div className="w-14 h-14 bg-databoard-green text-ink flex items-center justify-center mb-4 border-2 border-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
-                    <Zap className="w-7 h-7" />
-                  </div>
-                  <h4 className="text-[10px] font-black uppercase mb-1 tracking-widest">4. Global Story</h4>
-                  <p className="text-[9px] mono opacity-60 px-4 leading-tight">The Eureka Moment / Synthesis</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full lg:w-80 p-6 bg-ink text-bg border-2 border-ink shadow-[8px_8px_0px_0px_rgba(20,20,20,0.2)]">
-              <p className="text-[10px] mono leading-relaxed opacity-80">
-                The Databoard sits upstream of causal graphs, providing the conceptual foundation that standard analysis usually assumes but rarely defines.
-                <br /><br />
-                * The term "Pseudo-Antonyms" is a proprietary conceptual framework created by Ruth Aharon.
-                <br /><br />
-                * <strong>License:</strong> MIT License. This framework is fully open-source and free for both commercial and non-commercial use.
+            <div className="space-y-4 max-w-3xl mb-8">
+              <p className="text-sm opacity-75 leading-relaxed">
+                Data has always required an intermediary to reach human thought — visualization to make patterns visible, statistics to surface relationships. Both are bottom-up: they start from numbers and work toward meaning.
+              </p>
+              <p className="text-sm opacity-75 leading-relaxed">
+                Large language models may be the pivotal moment that changes this. Trained on the accumulated written knowledge of human civilisation, they encode domain semantics at a scale that has never existed before. The Data Board tests a top-down alternative: start with synthesized semantics — a vocabulary that, under the right conditions, is good enough to represent the data in question.
               </p>
             </div>
+            <div className="inline-flex items-center gap-3 bg-[#141414] text-white px-5 py-3 font-mono text-[11px] font-bold tracking-wider mb-10">
+              AI generates or human proposes. AI evaluates. <span className="text-[#D4B84A]">Human decides.</span>
+            </div>
+            <div className="flex flex-wrap gap-x-12 gap-y-4 pt-6 border-t border-[#141414]/15">
+              {[
+                { label: "Author", value: "Ruth Aharon" },
+                { label: "Version", value: "3.1 · 2026" },
+                { label: "License", value: "MIT · Open Source" },
+                { label: "Site", value: "thedataboard.ai" }
+              ].map((m, i) => (
+                <div key={i} className="font-mono text-[10px] space-y-0.5">
+                  <div className="opacity-40 uppercase tracking-widest text-[8px] font-bold">{m.label}</div>
+                  <div className="opacity-60">{m.value}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          
-          <div className="mt-12 p-6 bg-bg border-2 border-ink/10 text-[11px] mono leading-relaxed opacity-70 italic text-center max-w-2xl mx-auto">
-            "Semantic proximity indicates a potential for consistent narrative; 
-            detached nodes represent conceptual gaps that must be bridged to find the global story."
-          </div>
-        </section>
 
-          <section className="md:col-span-2 border-t-2 border-ink pt-8">
-            <h3 className="text-xl font-bold uppercase mb-6 flex items-center gap-2">
-              <Activity className="w-5 h-5" /> The Centrality Scale
-            </h3>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="p-4 border border-ink/10 bg-white/50">
-                <h4 className="text-xs font-black uppercase mb-2 text-databoard-green">Dominant</h4>
-                <p className="text-[10px] mono leading-tight opacity-70">Major causal drivers that form the backbone of the deducible space.</p>
+          {/* METHOD FLOW */}
+          <section className="mb-16">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">The Method</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">
+              From raw data<br/>to inevitable narrative
+            </h2>
+            <p className="text-sm opacity-80 leading-relaxed max-w-3xl mb-8">
+              The method is top-down. It begins with the question and the domain, not the columns. AI seeks concepts that express more than a basic variable — named mechanisms, not labels. Two parallel mechanisms feed the board: pseudo-antonym pairs that create structural tension, and evidence checking that grounds each concept in what is known about the domain. Both feed into a cohesiveness check across all candidates, producing a minimal board and an expandable board.
+            </p>
+
+            <div className="bg-white border-2 border-[#141414] shadow-[6px_6px_0_0_#141414] overflow-hidden mb-8">
+              <div className="bg-[#141414] px-4 py-2 font-mono text-[9px] font-bold text-[#D4B84A] uppercase tracking-widest">
+                Data Board · Method Flow
               </div>
-              <div className="p-4 border border-ink/10 bg-white/50">
-                <h4 className="text-xs font-black uppercase mb-2 text-databoard-yellow">Present</h4>
-                <p className="text-[10px] mono leading-tight opacity-70">Secondary factors that provide nuance and depth to the narrative.</p>
-              </div>
-              <div className="p-4 border border-ink/10 bg-white/50">
-                <h4 className="text-xs font-black uppercase mb-2 text-databoard-red">Edge Case</h4>
-                <p className="text-[10px] mono leading-tight opacity-70">Structural tension points or outliers that challenge the narrative boundaries.</p>
+              <div className="p-4 overflow-x-auto">
+                <svg className="w-full min-w-[700px]" viewBox="0 0 860 560" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </marker>
+                  </defs>
+                  <polygon points="50,40 250,40 240,88 40,88" fill="#E8F4FD" stroke="#2980B9" strokeWidth="2"/>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="12" fill="#1A5276" x="145" y="58" textAnchor="middle" dominantBaseline="central">RAW DATA</text>
+                  <text fontFamily="ui-monospace, monospace" fontSize="9" fill="#2980B9" x="145" y="75" textAnchor="middle" dominantBaseline="central">Dataset · corpus · question</text>
+                  <line x1="145" y1="88" x2="145" y2="120" stroke="#2980B9" strokeWidth="2" markerEnd="url(#arr)" fill="none"/>
+                  <rect x="40" y="122" width="210" height="68" rx="10" fill="#FEF9E7" stroke="#F39C12" strokeWidth="2"/>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="12" fill="#7D6608" x="145" y="146" textAnchor="middle" dominantBaseline="central">SEMANTIC SYNTHESIS</text>
+                  <text fontFamily="ui-monospace, monospace" fontSize="8" fill="#7D6608" opacity="0.8" x="145" y="163" textAnchor="middle" dominantBaseline="central">AI seeks concepts that express</text>
+                  <text fontFamily="ui-monospace, monospace" fontSize="8" fill="#7D6608" opacity="0.8" x="145" y="178" textAnchor="middle" dominantBaseline="central">more than a basic variable</text>
+                  <line x1="95" y1="190" x2="95" y2="228" stroke="#F39C12" strokeWidth="1.5" markerEnd="url(#arr)" fill="none"/>
+                  <line x1="195" y1="190" x2="195" y2="228" stroke="#F39C12" strokeWidth="1.5" markerEnd="url(#arr)" fill="none"/>
+                  <rect x="30" y="230" width="125" height="72" rx="8" fill="#FDEDEC" stroke="#E74C3C" strokeWidth="2"/>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#922B21" x="92" y="252" textAnchor="middle" dominantBaseline="central">PSEUDO-</text>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#922B21" x="92" y="266" textAnchor="middle" dominantBaseline="central">ANTONYMS©</text>
+                  <text fontFamily="ui-monospace, monospace" fontSize="7" fill="#922B21" opacity="0.75" x="92" y="284" textAnchor="middle" dominantBaseline="central">tension pairs</text>
+                  <text fontFamily="ui-monospace, monospace" fontSize="7" fill="#922B21" opacity="0.75" x="92" y="294" textAnchor="middle" dominantBaseline="central">create the story</text>
+                  <rect x="165" y="230" width="125" height="72" rx="8" fill="#EAFAF1" stroke="#27AE60" strokeWidth="2"/>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#1D6A3C" x="227" y="252" textAnchor="middle" dominantBaseline="central">EVIDENCE</text>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#1D6A3C" x="227" y="266" textAnchor="middle" dominantBaseline="central">CHECK</text>
+                  <text fontFamily="ui-monospace, monospace" fontSize="7" fill="#1D6A3C" opacity="0.75" x="227" y="284" textAnchor="middle" dominantBaseline="central">grounded in corpus</text>
+                  <text fontFamily="ui-monospace, monospace" fontSize="7" fill="#1D6A3C" opacity="0.75" x="227" y="294" textAnchor="middle" dominantBaseline="central">and domain knowledge</text>
+                  <line x1="92" y1="302" x2="92" y2="338" stroke="#555" strokeWidth="1.5" fill="none"/>
+                  <line x1="227" y1="302" x2="227" y2="338" stroke="#555" strokeWidth="1.5" fill="none"/>
+                  <line x1="92" y1="338" x2="145" y2="338" stroke="#555" strokeWidth="1.5" fill="none"/>
+                  <line x1="227" y1="338" x2="145" y2="338" stroke="#555" strokeWidth="1.5" fill="none"/>
+                  <line x1="145" y1="338" x2="145" y2="358" stroke="#555" strokeWidth="2" markerEnd="url(#arr)" fill="none"/>
+                  <polygon points="145,360 230,400 145,440 60,400" fill="#EBF5FB" stroke="#2471A3" strokeWidth="2"/>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#154360" x="145" y="394" textAnchor="middle" dominantBaseline="central">COHESIVENESS</text>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#154360" x="145" y="408" textAnchor="middle" dominantBaseline="central">CHECK</text>
+                  <line x1="97" y1="430" x2="80" y2="466" stroke="#27AE60" strokeWidth="2" markerEnd="url(#arr)" fill="none"/>
+                  <line x1="193" y1="430" x2="210" y2="466" stroke="#2980B9" strokeWidth="2" markerEnd="url(#arr)" fill="none"/>
+                  <rect x="30" y="468" width="112" height="52" rx="8" fill="#EAFAF1" stroke="#27AE60" strokeWidth="2"/>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#1D6A3C" x="86" y="488" textAnchor="middle" dominantBaseline="central">MINIMAL</text>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#1D6A3C" x="86" y="502" textAnchor="middle" dominantBaseline="central">BOARD</text>
+                  <rect x="148" y="468" width="112" height="52" rx="8" fill="#EAF2FF" stroke="#2980B9" strokeWidth="2"/>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#1A5276" x="204" y="488" textAnchor="middle" dominantBaseline="central">EXPANDABLE</text>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#1A5276" x="204" y="502" textAnchor="middle" dominantBaseline="central">BOARD</text>
+                  <rect x="310" y="122" width="260" height="68" rx="6" fill="#FAFAFA" stroke="#BDC3C7" strokeWidth="1.5"/>
+                  <text fontFamily="ui-monospace, monospace" fontSize="8" fontWeight="700" fill="#888" x="322" y="140" dominantBaseline="central">WHAT MAKES A GOOD CONCEPT</text>
+                  <text fontFamily="Inter, sans-serif" fontSize="11" fill="#2C3E50" x="322" y="158" dominantBaseline="central">Not just a column — a named mechanism.</text>
+                  <text fontFamily="Inter, sans-serif" fontSize="11" fill="#2C3E50" x="322" y="175" dominantBaseline="central">"Wealthy Surcharge" not "rich countries"</text>
+                  <line x1="250" y1="156" x2="308" y2="150" stroke="#F39C12" strokeWidth="1.5" strokeDasharray="4 3" fill="none" markerEnd="url(#arr)"/>
+                  <rect x="310" y="230" width="260" height="42" rx="6" fill="#FDEDEC" stroke="#E74C3C" strokeWidth="1.5"/>
+                  <text fontFamily="ui-monospace, monospace" fontSize="8" fontWeight="700" fill="#922B21" opacity="0.7" x="322" y="246" dominantBaseline="central">EXAMPLE PAIR</text>
+                  <text fontFamily="Inter, sans-serif" fontSize="11" fill="#922B21" x="322" y="263" dominantBaseline="central">Social Cohesion  ↔  Atomized Autonomy</text>
+                  <line x1="155" y1="266" x2="308" y2="254" stroke="#E74C3C" strokeWidth="1.5" strokeDasharray="4 3" fill="none" markerEnd="url(#arr)"/>
+                  <rect x="310" y="375" width="260" height="56" rx="6" fill="#EBF5FB" stroke="#2471A3" strokeWidth="1.5"/>
+                  <text fontFamily="ui-monospace, monospace" fontSize="8" fontWeight="700" fill="#154360" opacity="0.7" x="322" y="392" dominantBaseline="central">TWO EVALUATION DIMENSIONS</text>
+                  <text fontFamily="Inter, sans-serif" fontSize="11" fill="#154360" x="322" y="410" dominantBaseline="central">Relevance — density in LLM corpus</text>
+                  <text fontFamily="Inter, sans-serif" fontSize="11" fill="#154360" x="322" y="426" dominantBaseline="central">Cohesiveness — fit with other concepts</text>
+                  <line x1="230" y1="400" x2="308" y2="400" stroke="#2471A3" strokeWidth="1.5" strokeDasharray="4 3" fill="none" markerEnd="url(#arr)"/>
+                  <rect x="310" y="468" width="260" height="52" rx="6" fill="#FAFAFA" stroke="#BDC3C7" strokeWidth="1.5"/>
+                  <text fontFamily="ui-monospace, monospace" fontSize="8" fontWeight="700" fill="#888" x="322" y="484" dominantBaseline="central">MINIMAL vs EXPANDABLE</text>
+                  <text fontFamily="Inter, sans-serif" fontSize="11" fill="#2C3E50" x="322" y="502" dominantBaseline="central">Minimal: core deducible space</text>
+                  <text fontFamily="Inter, sans-serif" fontSize="11" fill="#2C3E50" x="322" y="518" dominantBaseline="central">Expandable: + shadow / edge concepts</text>
+                  <line x1="260" y1="494" x2="308" y2="494" stroke="#888" strokeWidth="1" strokeDasharray="4 3" fill="none" markerEnd="url(#arr)"/>
+                </svg>
               </div>
             </div>
           </section>
 
-          <section className="md:col-span-2 border-t-2 border-ink pt-8">
-            <h3 className="text-xl font-bold uppercase mb-8 flex items-center gap-2 text-databoard-yellow">
-              <BookOpen className="w-5 h-5" /> Case Study: The Titanic
-            </h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="flex flex-col gap-4">
-                <div className="p-4 border border-ink/20 bg-ink/5">
-                  <h4 className="text-[10px] font-black uppercase mb-3 opacity-50">1. Raw Data</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {["Pclass", "Sex", "Age", "Fare"].map((item, i) => (
-                      <div key={i} className="text-[9px] mono px-2 py-1 bg-white border border-ink/10">
-                        {item}
+          {/* GLOSSARY */}
+          <section className="mb-16">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">Glossary</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-8 leading-tight">Key concepts</h2>
+            
+            <div className="space-y-4">
+              {[
+                { name: "Deducible Space", body: "The minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably. Not a list of variables — the conceptual foundation that makes reasoning possible and narrative non-arbitrary." },
+                { name: "Pseudo-Antonyms©", tag: "© Ruth Aharon", body: "Concept pairs occupying opposite ends of the same analytical dimension. Not logical opposites — structurally opposing concepts within a shared domain. The mechanism that makes deductions inevitable rather than inferred. Without tension, there is no story — only a report. Attribution required when citing." },
+                { 
+                  name: "Goldilocks Handle", 
+                  body: (
+                    <>
+                      A concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from.{" "}
+                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">The Wealthy Surcharge</code> names a mechanism (systematic price premium driven by the Balassa-Samuelson effect), compresses a pattern across 50+ countries, and creates structural tension against its pseudo-antonym.{" "}
+                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">Countries that are rich</code> is not a Goldilocks handle — it describes a category, implies no mechanism, and generates no analytical direction.
+                    </>
+                  )
+                },
+                { name: "Verification Shift", body: "When vocabulary is supplied, the AI moves from invention to verification — checking whether concepts are descriptive, domain-coherent, and evidentially grounded rather than generating labels freely. The AI stops guessing meaning and starts checking it." },
+                { name: "Semantic Weight", levels: true, body: "Centrality of a concept in the evidence base. Three levels:" },
+                { name: "Minimal vs Expandable Board", body: "The minimal board contains the core deducible space — the smallest coherent set of concepts from which the global story follows. The expandable board adds shadow concepts and edge cases: the structural tensions that challenge or complicate the dominant narrative." }
+              ].map((c, i) => (
+                <div key={i} className="border-2 border-[#141414] shadow-[4px_4px_0_0_#141414]">
+                  <div className="bg-[#141414] px-4 py-2 flex items-baseline gap-3">
+                    <span className="font-serif italic font-bold text-lg text-white">{c.name}</span>
+                    {c.tag && <span className="font-mono text-[8px] font-bold uppercase tracking-widest bg-[#D4B84A] text-ink px-2 py-0.5">{c.tag}</span>}
+                  </div>
+                  <div className="bg-white p-4">
+                    <div className="text-[13px] opacity-80 leading-relaxed m-0">{c.body}</div>
+                    {c.levels && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        <span className="px-3 py-1 bg-[#4CAF50]/10 border border-[#4CAF50] text-[#1D6A3C] font-mono text-[10px] font-bold uppercase">DOMINANT — primary causal driver</span>
+                        <span className="px-3 py-1 bg-[#D4B84A]/10 border border-[#D4B84A] text-[#7D6608] font-mono text-[10px] font-bold uppercase">PRESENT — real but not decisive</span>
+                        <span className="px-3 py-1 bg-[#C0392B]/10 border border-[#C0392B] text-[#922B21] font-mono text-[10px] font-bold uppercase">EDGE CASE — marginal or structural outlier</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* EVALUATION */}
+          <section className="mb-16">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">Evaluation</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-4 leading-tight">What the color means</h2>
+            <p className="text-sm opacity-80 mb-8">Every tile on the board is colored. The color is not aesthetic — it is the result of the logic audit. Here is what earns each color.</p>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {[
+                { 
+                  type: "Dominant", 
+                  color: "#4CAF50", 
+                  title: "The concept drives the story", 
+                  bg: "rgba(76,175,80,0.08)",
+                  criteria: [
+                    { label: "Descriptive", body: "names a condition, not a conclusion" },
+                    { label: "Grounded", body: "supported by domain evidence" },
+                    { label: "Coherent", body: "fits the board and creates tension with its pseudo-antonym" }
+                  ],
+                  example: '"Social Cohesion" — passes all three. Gallup data, upstream of life satisfaction, contrasts with Atomized Autonomy.'
+                },
+                { 
+                  type: "Present", 
+                  color: "#D4B84A", 
+                  title: "The concept complements the story", 
+                  bg: "rgba(212,184,74,0.08)",
+                  criteria: [
+                    { label: "Descriptive", body: "names a condition, not a conclusion" },
+                    { label: "Grounded", body: "supported by domain evidence" },
+                    { label: "Supplementary", body: "real and evidenced, enriches the narrative but is not essential to it", char: "~" }
+                  ],
+                  example: '"Generosity" — grounded, descriptive, adds texture to the happiness story but the story holds without it.'
+                },
+                { 
+                  type: "Edge Case", 
+                  color: "#C0392B", 
+                  title: "The concept carries its own narrative", 
+                  bg: "rgba(192,57,43,0.06)",
+                  textColor: "white",
+                  criteria: [
+                    { label: "Descriptive", body: "names a condition, not a conclusion" },
+                    { label: "Grounded", body: "supported by domain evidence" },
+                    { label: "Isolated", body: "anomaly, exception, or pattern that exists outside the dominant story. Essential for detecting outliers and understanding boundaries.", char: "!" }
+                  ],
+                  example: '"Atomized Autonomy" — a real narrative in individualistic cultures, but marginal globally. Flags where the dominant story breaks down.'
+                }
+              ].map((box, i) => (
+                <div key={i} className="border-2 border-[#141414] shadow-[5px_5px_0_0_#141414] bg-white overflow-hidden flex flex-col">
+                  <div className={`p-4 border-b-2 border-[#141414]`} style={{ backgroundColor: box.bg, borderTop: `4px solid ${box.color}` }}>
+                    <div className="font-mono text-[7px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 mb-2 inline-block" style={{ backgroundColor: box.color, color: box.textColor || '#141414' }}>{box.type}</div>
+                    <div className="text-base font-[900] uppercase tracking-tighter leading-tight">{box.title}</div>
+                  </div>
+                  <div className="p-4 space-y-3 flex-1">
+                    <div className="font-mono text-[10px] font-bold uppercase tracking-widest opacity-40 border-b border-[#141414]/10 pb-2">Earns {box.type.toLowerCase()} when</div>
+                    {box.criteria.map((c, j) => (
+                      <div key={j} className="flex items-start gap-2 text-[12px]">
+                        <span className="font-mono text-[9px] px-1 bg-white border border-[#141414]/20 shrink-0 mt-0.5" style={{ backgroundColor: box.color, color: box.textColor || '#141414' }}>{c.char || '✓'}</span>
+                        <span className="leading-snug"><strong>{c.label}</strong> — {c.body}</span>
                       </div>
                     ))}
-                  </div>
-                  <p className="mt-4 text-[9px] mono leading-tight opacity-60">Quantitative inputs that standard analysis uses for correlation.</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div className="p-4 border border-ink/20 bg-databoard-yellow/5">
-                  <h4 className="text-[10px] font-black uppercase mb-3 opacity-50">2. Pseudo-Antonyms© (Tension Pairs)</h4>
-                  <div className="space-y-3">
-                    <div className="p-2 bg-white border-2 border-ink">
-                      <div className="flex justify-between text-[9px] font-bold mb-1">
-                        <span className="text-databoard-green">CHIVALRY</span>
-                        <span className="opacity-30">vs</span>
-                        <span className="text-amber-600">CLASS</span>
-                      </div>
-                      <p className="text-[8px] mono leading-tight opacity-60">Social Protocol vs. Social Standing</p>
-                    </div>
-                    <div className="p-2 bg-white border-2 border-ink">
-                      <div className="flex justify-between text-[9px] font-bold mb-1">
-                        <span className="text-databoard-red">LIFEBOAT</span>
-                        <span className="opacity-30">vs</span>
-                        <span className="text-amber-600">ALLOCATION</span>
-                      </div>
-                      <p className="text-[8px] mono leading-tight opacity-60">Raw Scarcity vs. Systemic Logic</p>
+                    <div className="mt-2 p-2 border-l-2 font-serif italic text-[12px] opacity-80" style={{ borderColor: box.color, backgroundColor: `${box.color}10` }}>
+                      {box.example}
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
+            </div>
 
-              <div className="flex flex-col gap-4">
-                <div className="p-4 border-2 border-ink bg-databoard-green/10">
-                  <h4 className="text-[10px] font-black uppercase mb-3 opacity-50">3. The Deducible Space</h4>
-                  <p className="text-[10px] leading-relaxed font-medium mb-3">
-                    "Survival was not an anecdote of luck, but a structural inevitability of the tension between <span className="text-amber-600 font-bold">Systemic Logic</span> and <span className="text-databoard-red font-bold">Physical Scarcity</span>."
-                  </p>
-                  <div className="p-2 bg-white/50 border border-ink/10 text-[8px] mono leading-tight opacity-70">
-                    By mapping the "tug-of-war" between these handles, the narrative conclusion follows inevitably from the grounded concepts.
-                  </div>
-                </div>
+            <div className="bg-[#141414] p-5 shadow-[5px_5px_0_0_rgba(20,20,20,0.3)] border-2 border-[#141414]">
+               <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#D4B84A]">Rejection is insight — </span>
+               <span className="font-serif italic text-sm text-white/75">a concept that fails any test is not discarded silently. The failure names the assumption the analyst was making without knowing it.</span>
+            </div>
+          </section>
+
+          {/* YAML */}
+          <section className="mb-16">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">Logic Layer</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">The YAML audit trail</h2>
+            <p className="text-sm opacity-80 leading-relaxed mb-6 max-w-3xl">
+              Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, the fidelity score, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes.
+            </p>
+            <div className="bg-[#141414] border-2 border-[#141414] shadow-[6px_6px_0_0_#141414] overflow-hidden">
+              <div className="px-5 py-3 border-b border-white/10 font-mono text-[9px] font-bold text-[#D4B84A] uppercase tracking-widest">
+                YAML Logic Block — Social Cohesion
+              </div>
+              <pre className="p-6 font-mono text-xs text-white/75 leading-relaxed overflow-x-auto whitespace-pre">
+{`concept "Social Cohesion"
+  is a: driver
+  context: "Social support systems"
+  mechanism: "trusted social networks provide emotional and material safety nets"
+  evidence: "Gallup World Poll social support metrics"
+  covers:
+    explains: [national_happiness_variance]
+    aggregates: [social_support_score]
+  contrasts_with: "Atomized Autonomy"   ← pseudo-antonym link
+  fidelity: 0.92                        ← survives the logic audit
+  fidelity_basis: empirical_test
+  valid_when:
+    - "strong community ties"
+    - "institutional stability"          ← scope conditions`}
+              </pre>
+            </div>
+          </section>
+
+          {/* PROMPT */}
+          <section className="mb-16">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">For Practitioners</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">The system prompt</h2>
+            <p className="text-sm opacity-80 mb-6">Copy this into any LLM (Claude, ChatGPT, Gemini) to activate the Data Board methodology before analysis begins.</p>
+            
+            <div className="bg-[#141414] border-2 border-[#141414] shadow-[6px_6px_0_0_#141414] overflow-hidden">
+              <div className="px-5 py-3 border-b border-white/10 flex items-center justify-between">
+                <span className="font-mono text-[9px] font-bold text-[#D4B84A] uppercase tracking-widest">Data Board System Prompt · v3.1</span>
+                <button 
+                  onClick={(e) => {
+                    const el = document.getElementById('prompt-text');
+                    if (el) {
+                      navigator.clipboard.writeText(el.innerText);
+                      const target = e.currentTarget as HTMLButtonElement;
+                      if (target) {
+                        const old = target.innerText;
+                        target.innerText = "COPIED ✓";
+                        setTimeout(() => target.innerText = old, 1500);
+                      }
+                    }
+                  }}
+                  className="px-4 py-1.5 border border-white/20 text-white/60 font-mono text-[10px] uppercase hover:border-[#D4B84A] hover:text-[#D4B84A] transition-all"
+                >
+                  Copy
+                </button>
+              </div>
+              <div className="p-6 font-mono text-xs text-white/75 leading-relaxed overflow-x-auto whitespace-pre-wrap" id="prompt-text">
+{`You are applying the Data Board methodology, created by Ruth Aharon (thedataboard.ai).
+
+Your role: Inquisitor, not Author.
+AI generates or human proposes vocabulary. You evaluate it.
+
+Core directives:
+1. Naming is analysis. Treat every concept as a type that carries analytical weight.
+2. Verification shift: check whether each concept is descriptive, coherent, 
+   and evidentially supported in this domain.
+3. Pseudo-Antonyms©: for each accepted concept, identify its structural opposite. 
+   Tension pairs are where the non-trivial narrative lives.
+4. Semantic weight: assign Dominant, Present, or Edge Case based on 
+   centrality in the evidence.
+5. Rejection is insight: when you reject a concept, explain why.
+
+Workflow:
+1. Review the raw data and question.
+2. Generate or evaluate a vocabulary board (Dominant, Present, Edge Case).
+3. Audit causal tension — identify pseudo-antonym© pairs.
+4. Synthesize the global story based ONLY on the established board.`}
               </div>
             </div>
           </section>
 
-          <section className="md:col-span-2 border-t-2 border-ink pt-8">
-            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5" /> Global Applications
-            </h3>
-            <p className="text-sm opacity-80 leading-relaxed">
-              The Databoard is the first AI-first methodology using human language to construct a deducible space, enabling seamless human-AI collaborative reasoning and narrative logic. It is the definitive method for data analysis, investigative journalism, intellectual exploration, and modern education.
-            </p>
+          {/* EXAMPLE */}
+          <section className="mb-16">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">Worked Example</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-8 leading-tight">World Happiness 2025</h2>
+
+            <div className="border-2 border-[#141414] shadow-[8px_8px_0_0_#141414] overflow-hidden bg-white mb-8">
+              <div className="bg-[#141414] p-5 flex flex-wrap justify-between items-start gap-4">
+                <div className="space-y-1">
+                  <div className="text-lg font-[900] uppercase text-white tracking-tight">World Happiness Report 2025</div>
+                  <div className="font-serif italic text-sm text-white/60">"What structural conditions explain why high GDP does not guarantee high happiness?"</div>
+                </div>
+                <div className="font-mono text-[9px] text-white/40 space-y-1 text-right">
+                  <a href="#" className="text-[#D4B84A] hover:underline">worldhappiness.report ↗</a>
+                  <div className="block"><a href="#" className="text-[#D4B84A] hover:underline">Kaggle ↗</a></div>
+                </div>
+              </div>
+
+              <div className="p-6">
+                <div className="space-y-8">
+                  {[
+                    { label: "Dominant — primary causal drivers", color: "#4CAF50", words: ["Economic Security", "Social Cohesion", "Healthy Life Expectancy"] },
+                    { label: "Present — supporting concepts", color: "#D4B84A", words: ["Institutional Trust", "Individual Freedom", "Generosity"] },
+                    { label: "Edge Case — structural tensions", color: "#C0392B", words: ["Systemic Distress", "Atomized Autonomy", "The Freedom Gap"] }
+                  ].map((group, i) => (
+                    <div key={i}>
+                      <div className="font-mono text-[8px] font-bold uppercase tracking-widest opacity-40 mb-4">{group.label}</div>
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                        {group.words.map((word, j) => (
+                          <div key={j} className="h-28 p-3 border border-ink/10 flex flex-col justify-between bg-[#F5F4F1] group hover:bg-[#141414] transition-all" style={{ borderTop: `3px solid ${group.color}` }}>
+                            <span className="font-mono text-[8px] font-bold uppercase px-1.5 py-0.5 inline-block w-fit" style={{ backgroundColor: group.color, color: i === 2 ? 'white' : 'inherit' }}>{group.label.split(' — ')[0]}</span>
+                            <div>
+                              <div className="text-xs font-bold uppercase leading-tight group-hover:text-white">{word}</div>
+                              <div className="mt-2 flex items-center gap-2">
+                                <div className="h-0.5 w-8 bg-[#141414]/10 overflow-hidden"><div className="h-full bg-black/40" style={{ width: '80%' }}></div></div>
+                                <span className="font-mono text-[7px] opacity-30 group-hover:text-white/40">Sharpness</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="px-6 py-5 bg-[#F5F4F1] border-t border-ink/10">
+                <div className="font-mono text-[8px] font-bold uppercase tracking-widest opacity-40 mb-3">Pseudo-antonyms©</div>
+                <div className="flex flex-wrap gap-x-12 gap-y-3">
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 bg-[#4CAF50] text-ink font-bold text-[10px] uppercase border border-ink">Social Cohesion</span>
+                    <span className="font-mono text-xs opacity-30 font-bold">↔</span>
+                    <span className="px-3 py-1 bg-[#C0392B] text-white font-bold text-[10px] uppercase border border-ink">Atomized Autonomy</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 bg-[#4CAF50] text-ink font-bold text-[10px] uppercase border border-ink">Institutional Trust</span>
+                    <span className="font-mono text-xs opacity-30 font-bold">↔</span>
+                    <span className="px-3 py-1 bg-[#C0392B] text-white font-bold text-[10px] uppercase border border-ink">Systemic Distress</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-[#141414] border-t-2 border-[#141414]">
+                <div className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#D4B84A] mb-3">Global story</div>
+                <p className="font-serif italic text-lg text-white leading-relaxed">
+                  "Global well-being is a structural outcome of the balance between <span className="text-[#D4B84A] font-bold">Institutional Trust</span> and <span className="text-[#D4B84A] font-bold">Individual Freedom.</span> High GDP is necessary but not sufficient — <span className="text-[#D4B84A] font-bold">Atomized Autonomy</span> is the shadow of Individual Freedom that GDP cannot measure."
+                </p>
+              </div>
+
+              <div className="px-6 py-3 bg-[#F5F4F1] border-t border-ink/10 flex gap-10">
+                {['Cohesion 88', 'Coverage 92', 'Sharpness 90', 'Entropy 45'].map((m, i) => (
+                  <span key={i} className="font-mono text-[9px] uppercase tracking-widest opacity-50">{m.split(' ')[0]} <strong className="opacity-100">{m.split(' ')[1]}</strong></span>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-[#141414] p-8 shadow-[10px_10px_0_0_rgba(20,20,20,0.3)] border-2 border-[#141414]">
+              <p className="text-sm text-white/75 leading-relaxed m-0">
+                The non-trivial finding: the same freedom that produces the highest happiness scores in Nordic nations produces the highest loneliness rates in individualistic cultures without strong social infrastructure. The tension between <span className="text-[#D4B84A] italic">Individual Freedom</span> and <span className="text-[#D4B84A] italic">Atomized Autonomy</span> is the mechanism. The board makes it visible. A regression finds the correlation and calls it "freedom." The board names what is inside it.
+              </p>
+            </div>
           </section>
 
-        <div className="mt-12 pt-8 border-t-2 border-ink flex justify-center">
+          {/* THEORY */}
+          <section className="mb-16">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">Theoretical Anchors</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-8 leading-tight">Where this connects</h2>
+            <div className="space-y-3">
+              {[
+                { author: "Pearl, J. & Mackenzie, D. (2018)", title: "The Book of Why.", body: "The ladder of causation. The Data Board addresses the prerequisite Pearl assumes: knowing which concepts belong before building the causal model." },
+                { author: "Glaser, B. & Strauss, A. (1967)", title: "The Discovery of Grounded Theory.", body: "Open coding and axial coding are the qualitative precedents. The Data Board operationalises these steps computationally — weeks compressed into a session." },
+                { author: "Wittgenstein, L. (1922)", title: "Tractatus Logico-Philosophicus.", body: "\"The limits of my language are the limits of my world.\" The Data Board is a formal process for extending the analytical vocabulary — and therefore the analytical world." },
+                { author: "Luhn, H.P. (1958)", title: "A Business Intelligence System.", body: "Intelligence as guiding action toward a desired goal. The Data Board formalises the naming step that makes the goal speakable." }
+              ].map((ref, i) => (
+                <div key={i} className="p-4 border border-ink/10 border-l-4 border-l-[#141414] bg-white text-xs leading-relaxed">
+                  <strong>{ref.author}</strong> <span className="italic">{ref.title}</span> {ref.body}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* LICENSE */}
+          <section className="pb-12">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">License & Attribution</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">Open source.<br/>Protected rights.</h2>
+            <div className="bg-[#141414] text-white/70 p-8 shadow-[10px_10px_0_0_rgba(20,20,20,0.3)] border-2 border-[#141414] space-y-4 text-sm leading-relaxed">
+              <p>The Data Board methodology is released under the <strong>MIT License</strong> — free for commercial and non-commercial use, modification, and distribution globally.</p>
+              <p>The term <strong className="text-white">Pseudo-Antonyms©</strong> is a proprietary conceptual framework created by Ruth Aharon. Attribution is required when using or citing this concept.</p>
+              <p>Cite as: Aharon, R. (2026). <span className="italic">The Data Board: A Methodology for Language-Based Data Analysis.</span> thedataboard.ai</p>
+            </div>
+          </section>
+        </div>
+
+        <footer className="p-8 border-t-2 border-[#141414] bg-[#141414]/5 text-center">
           <button 
             onClick={onClose}
-            className="px-12 py-4 bg-ink text-bg font-bold uppercase tracking-widest hover:bg-bg hover:text-ink border-2 border-ink transition-all"
+            className="w-full md:w-auto px-16 py-5 bg-[#141414] text-white font-[900] uppercase tracking-[0.2em] text-xs hover:bg-[#E4E3E0] hover:text-ink border-2 border-[#141414] transition-all"
           >
             Return to Board
           </button>
-        </div>
+        </footer>
       </motion.div>
     </motion.div>
   );
@@ -466,90 +689,176 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
   );
 };
 
-const Walkthrough = ({ onComplete }: { onComplete: () => void; key?: React.Key }) => {
-  const [step, setStep] = useState(0);
-  
-  const steps = [
-    {
-      title: "Welcome to Data Board",
-      description: "A collaborative framework for analyzing complex data sets through structured analytical vocabulary.",
-      target: null
-    },
-    {
-      title: "1. Select a Scenario",
-      description: "Choose a data set or audit scenario. Each scenario provides a specific context for the AI to evaluate your analytical concepts.",
-      target: "#scenario-selector"
-    },
-    {
-      title: "2. Propose Analytical Handles",
-      description: "Type metrics or patterns you believe are central to the data. The AI will audit them based on statistical grounding.",
-      target: "#vocab-input"
-    },
-    {
-      title: "3. AI Suggestions",
-      description: "Stuck? Let Gemini suggest high-impact analytical vocabulary that offers precise lenses for data analysis.",
-      target: "#ai-suggestions"
-    },
-    {
-      title: "4. Board Strength",
-      description: "Monitor the health of your analysis. Cohesion measures focus, Coverage measures depth, and Sharpness measures data-grounding.",
-      target: "#board-metrics"
-    },
-    {
-      title: "5. The Semantic Board",
-      description: "Explore your tiles. Green is Dominant, Yellow is Present, and Red is an Edge Case or Assumption.",
-      target: "#vocab-board"
-    },
-    {
-      title: "6. Synthesis & Patterns",
-      description: "Discover non-obvious links and emergent patterns that connect your concepts into a unified narrative.",
-      target: "#board-metrics"
-    }
-  ];
+const LogicBoard = ({ 
+  isOpen, 
+  onClose, 
+  tiles, 
+  onSaveAll,
+  scenario
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  tiles: Tile[]; 
+  onSaveAll: (newTiles: Tile[]) => void;
+  scenario: Scenario;
+  key?: React.Key;
+}) => {
+  // Generate YAML in the render phase for instant feedback
+  const generatedCode = React.useMemo(() => {
+    if (!isOpen) return "";
+    try {
+      const yamlData = tiles.map(t => {
+        let data: any = {
+          concept: t.word,
+          is_a: t.category?.toLowerCase() || "driver",
+          mechanism: t.explanation || "",
+          evidence: t.dataInsight || "",
+          fidelity: 0.90
+        };
 
-  const nextStep = () => {
-    if (step < steps.length - 1) {
-      setStep(step + 1);
-    } else {
-      onComplete();
+        if (t.logic) {
+          try {
+            if (t.logic.includes('concept')) {
+              if (t.logic.includes('concept:')) {
+                const parsed = yaml.load(t.logic) as any;
+                if (parsed) data = { ...data, ...(Array.isArray(parsed) ? parsed[0] : parsed) };
+              } else {
+                // Old DBM migration
+                const m = t.logic.match(/mechanism: "([^"]+)"/);
+                if (m) data.mechanism = m[1];
+                const e = t.logic.match(/evidence: "([^"]+)"/);
+                if (e) data.evidence = e[1];
+              }
+            }
+          } catch (e) {}
+        }
+
+        const final: any = {};
+        const slots = ['concept', 'is_a', 'mechanism', 'evidence'];
+        slots.forEach(k => final[k] = data[k] || "");
+        Object.keys(data).forEach(k => {
+          if (!slots.includes(k) && data[k] !== undefined && data[k] !== null && data[k] !== "") final[k] = data[k];
+        });
+        return final;
+      });
+
+      if (yamlData.length === 0) {
+        return `# GROUNDING: ${scenario.title}\n# CONTEXT: ${scenario.context}\n#\n# The Board is empty.\n- concept: Example\n  is_a: driver`;
+      }
+      const header = `# GROUNDING: ${scenario.title}\n# CONTEXT: ${scenario.context}\n# URL: ${scenario.url || "N/A"}\n\n`;
+      return header + yaml.dump(yamlData, { indent: 2, lineWidth: -1, noRefs: true, sortKeys: false });
+    } catch (err) {
+      return "# YAML Error\n# " + String(err);
+    }
+  }, [isOpen, tiles]);
+
+  const [code, setCode] = useState("");
+
+  // Sync the editor with generated code only when the modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setCode(generatedCode);
+    }
+  }, [isOpen, generatedCode]);
+
+  if (!isOpen) return null;
+
+  const handleApply = () => {
+    try {
+      const parsed = yaml.load(code) as any[];
+      if (!Array.isArray(parsed)) {
+        alert("YAML must be a list of concepts starting with '- concept: Name'");
+        return;
+      }
+
+      const updatedTiles = [...tiles];
+      
+      parsed.forEach(entry => {
+        if (entry && entry.concept) {
+          const word = entry.concept;
+          const tileIndex = updatedTiles.findIndex(t => t.word.toLowerCase() === word.toLowerCase());
+          if (tileIndex !== -1) {
+            updatedTiles[tileIndex] = {
+              ...updatedTiles[tileIndex],
+              logic: yaml.dump(entry),
+              category: entry.is_a || updatedTiles[tileIndex].category,
+              explanation: entry.mechanism || updatedTiles[tileIndex].explanation
+            };
+          }
+        }
+      });
+
+      onSaveAll(updatedTiles);
+      onClose();
+    } catch (e: any) {
+      alert("YAML Error: " + e.message);
     }
   };
-
-  const currentStep = steps[step];
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/40 backdrop-blur-[2px]"
+      className="fixed inset-0 z-[100] bg-ink/90 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+      onClick={onClose}
     >
       <motion.div 
-        key={step}
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="bg-bg border-2 border-ink p-6 max-w-sm shadow-[12px_12px_0px_0px_rgba(20,20,20,1)] relative"
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="bg-bg border-4 border-ink w-full max-w-4xl h-[80vh] flex flex-col shadow-[16px_16px_0px_0px_rgba(20,20,20,1)]"
+        onClick={e => e.stopPropagation()}
       >
-        <div className="mb-4">
-          <p className="mono text-[10px] uppercase opacity-50 mb-1">Step {step + 1} of {steps.length}</p>
-          <h3 className="text-xl font-black uppercase tracking-tighter">{currentStep.title}</h3>
+        <div className="p-6 border-b-4 border-ink flex justify-between items-center bg-databoard-yellow/10">
+          <div>
+            <h2 className="text-2xl font-black uppercase tracking-tighter">A Posteriori Ontology Board</h2>
+            <p className="text-[10px] mono uppercase opacity-50 text-databoard-yellow font-bold">Logic Board Specification (YAML Syntax)</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-ink hover:text-bg transition-colors">
+            <X className="w-6 h-6" />
+          </button>
         </div>
-        <p className="text-sm opacity-80 leading-relaxed mb-6">
-          {currentStep.description}
-        </p>
-        <div className="flex justify-between items-center">
-          <button 
-            onClick={onComplete}
-            className="text-[10px] mono uppercase opacity-40 hover:opacity-100"
-          >
-            Skip Walkthrough
-          </button>
-          <button 
-            onClick={nextStep}
-            className="px-6 py-2 bg-ink text-bg font-bold uppercase text-xs tracking-widest hover:bg-bg hover:text-ink border border-ink transition-all"
-          >
-            {step === steps.length - 1 ? "Start Exploring" : "Next Step"}
-          </button>
+
+        <div className="flex-1 overflow-hidden flex flex-col p-6 gap-4">
+          <div className="flex-1 relative">
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="w-full h-full bg-ink text-bg p-6 mono text-sm focus:outline-none resize-none selection:bg-databoard-yellow selection:text-ink"
+              spellCheck={false}
+            />
+            <div className="absolute top-4 right-4 opacity-20 pointer-events-none">
+              <Code className="w-12 h-12" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-4 bg-ink/5 border border-ink/10">
+              <h4 className="text-[10px] mono uppercase font-bold mb-2 flex items-center gap-2">
+                <Info className="w-3 h-3" /> YAML Syntax Guide
+              </h4>
+              <ul className="text-[9px] mono space-y-1 opacity-70">
+                <li><span className="text-databoard-yellow">- concept: "Name"</span>: Start of a concept</li>
+                <li><span className="text-databoard-yellow">is_a</span>: [driver|benchmark|risk...]</li>
+                <li><span className="text-databoard-yellow">context</span>: Situational context</li>
+                <li><span className="text-databoard-yellow">mechanism</span>: The causal "how"</li>
+                <li><span className="text-databoard-yellow">contrasts_with</span>: Pseudo-antonym</li>
+              </ul>
+            </div>
+            <div className="flex flex-col justify-end gap-3">
+              <p className="text-[10px] mono opacity-50 italic leading-tight">
+                Editing this YAML directly updates the causal relationships and semantic grounding of the board.
+              </p>
+              <button 
+                onClick={handleApply}
+                className="w-full py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                Apply YAML to Board
+              </button>
+            </div>
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -560,14 +869,12 @@ const TileCard = React.memo(({
   tile, 
   isSelected, 
   onSelect,
-  onCausalAudit,
-  isAuditing
+  onEditLogic
 }: { 
   tile: Tile, 
   isSelected: boolean, 
   onSelect: (tile: Tile | null) => void,
-  onCausalAudit: (tile: Tile) => void,
-  isAuditing: boolean
+  onEditLogic: (tile: Tile) => void
 }) => {
   const getCentralityColor = (centrality: Centrality) => {
     switch (centrality) {
@@ -618,16 +925,10 @@ const TileCard = React.memo(({
               {tile.specificityScore > 70 && (
                 <Zap className="w-3 h-3 text-databoard-green fill-databoard-green" />
               )}
-              {tile.isAIConfirmed && (
-                <Star className="w-3 h-3 fill-ink group-hover:fill-databoard-yellow" />
-              )}
             </div>
           </div>
           
           <div className="mt-8">
-            <span className="text-[9px] mono uppercase opacity-40 group-hover:opacity-60 mb-1 block">
-              {tile.category}
-            </span>
             <h4 className="text-base font-bold uppercase leading-tight tracking-tight break-words group-hover:underline decoration-1 underline-offset-4">
               {tile.word}
             </h4>
@@ -660,7 +961,6 @@ const TileCard = React.memo(({
               {getCentralityLabel(tile.centrality)}
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-[8px] mono opacity-50">REL: {tile.relevanceScore}%</span>
               <button onClick={(e) => { e.stopPropagation(); onSelect(null); }}>
                 <X className="w-3 h-3 opacity-50 hover:opacity-100" />
               </button>
@@ -681,21 +981,114 @@ const TileCard = React.memo(({
           </div>
 
           <div className="mt-auto pt-2 border-t border-white/10 flex justify-between items-center text-[8px] mono uppercase opacity-50">
-            <button 
-              onClick={(e) => { e.stopPropagation(); onCausalAudit(tile); }}
-              disabled={isAuditing}
-              className="flex items-center gap-1 hover:text-databoard-yellow transition-colors disabled:opacity-30"
-            >
-              <Zap className={`w-3 h-3 ${isAuditing ? 'animate-pulse' : ''}`} />
-              {isAuditing ? 'Auditing...' : 'Causal Audit'}
-            </button>
-            <span>Score: {tile.relevanceScore}%</span>
+            <div className="flex gap-3">
+              <button 
+                onClick={(e) => { e.stopPropagation(); onEditLogic(tile); }}
+                className="flex items-center gap-1 hover:text-databoard-yellow transition-colors"
+              >
+                <Code className="w-3 h-3" />
+                Logic
+              </button>
+            </div>
+            <span>{tile.specificityScore}% Sharp</span>
           </div>
         </div>
       </motion.div>
     </div>
   );
 });
+
+const LogicEditorModal = ({ 
+  isOpen, 
+  onClose, 
+  tile, 
+  onSave 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  tile: Tile; 
+  onSave: (id: string, newLogic: string) => void;
+  key?: React.Key;
+}) => {
+  const [logic, setLogic] = useState(tile.logic || "");
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-ink/90 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="bg-bg border-4 border-ink w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[16px_16px_0px_0px_rgba(20,20,20,1)]"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="p-6 border-b-4 border-ink flex justify-between items-center bg-databoard-yellow/10">
+          <div>
+            <h2 className="text-2xl font-black uppercase tracking-tighter">A Posteriori Ontology</h2>
+            <p className="text-[10px] mono uppercase opacity-50">Logic Markup for: {tile.word}</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-ink hover:text-bg transition-colors">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="space-y-2">
+            <label className="text-[10px] mono uppercase font-bold opacity-50 block">Logic Markup (DBM Syntax)</label>
+            <textarea
+              value={logic}
+              onChange={(e) => setLogic(e.target.value)}
+              className="w-full h-64 bg-ink text-bg p-4 mono text-sm focus:outline-none border-2 border-ink focus:border-databoard-yellow transition-colors resize-none"
+              placeholder={`concept "${tile.word}"\n  is a: driver\n  context: "..."\n  mechanism: "..."\n  evidence: "..."\n  relation: direction, of, via\n  fidelity: 0.95`}
+            />
+          </div>
+
+          <div className="p-4 bg-ink/5 border-l-4 border-ink space-y-2">
+            <h3 className="text-[10px] mono uppercase font-bold">Syntax Guide (Each field on a new line)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[10px] mono opacity-70">
+              <ul className="space-y-1">
+                <li><span className="font-bold">concept "name"</span>: Define the handle</li>
+                <li><span className="font-bold">is a</span>: [driver|benchmark|risk...]</li>
+                <li><span className="font-bold">context</span>: Situational context</li>
+              </ul>
+              <ul className="space-y-1">
+                <li><span className="font-bold">mechanism</span>: Causal "how"</li>
+                <li><span className="font-bold">evidence</span>: Data grounding "why"</li>
+                <li><span className="font-bold">contrasts_with</span>: Pseudo-antonym</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t-4 border-ink flex justify-end gap-4">
+          <button 
+            onClick={onClose}
+            className="px-6 py-2 border-2 border-ink font-bold uppercase text-xs tracking-widest hover:bg-ink/5 transition-all"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={() => {
+              onSave(tile.id, logic);
+              onClose();
+            }}
+            className="px-6 py-2 bg-ink text-bg border-2 border-ink font-bold uppercase text-xs tracking-widest hover:bg-databoard-yellow hover:text-ink transition-all flex items-center gap-2"
+          >
+            <Save className="w-4 h-4" />
+            Save Logic
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 export default function App() {
   const [scenarios, setScenarios] = useState<Scenario[]>(() => {
@@ -745,7 +1138,8 @@ export default function App() {
   const [selectedTile, setSelectedTile] = useState<Tile | null>(null);
   const [showMethodology, setShowMethodology] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [showWalkthrough, setShowWalkthrough] = useState(false);
+  const [showLogicBoard, setShowLogicBoard] = useState(false);
+  const [editingLogicTile, setEditingLogicTile] = useState<Tile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSystemKeyActive, setIsSystemKeyActive] = useState(false);
   const [systemStatus, setSystemStatus] = useState<{ source: string, maskedKey: string | null } | null>(null);
@@ -771,7 +1165,6 @@ export default function App() {
     }
   }, [retryCountdown]);
   const [hasApiKey, setHasApiKey] = useState(false);
-  const [auditingTileId, setAuditingTileId] = useState<string | null>(null);
 
   // Check for API key status on mount
   useEffect(() => {
@@ -861,21 +1254,11 @@ export default function App() {
   };
 
   useEffect(() => {
-    const hasSeen = localStorage.getItem("hasSeenDataBoardWalkthrough");
-    if (!hasSeen) {
-      setShowWalkthrough(true);
-    }
-
     // Handle /methodology route for SEO/LLMO
     if (window.location.pathname.replace(/\/$/, "") === "/methodology") {
       setShowMethodology(true);
     }
   }, []);
-
-  const completeWalkthrough = () => {
-    localStorage.setItem("hasSeenDataBoardWalkthrough", "true");
-    setShowWalkthrough(false);
-  };
 
   // Persist tiles, metrics and scenario
   useEffect(() => {
@@ -1065,43 +1448,6 @@ export default function App() {
     }
   };
 
-  const handleCausalAudit = async (tile: Tile) => {
-    if (isLoading || auditingTileId) return;
-    setAuditingTileId(tile.id);
-    setError(null);
-    try {
-      let shadowTile: Tile;
-      if (tile.cachedShadow) {
-        // Simulate a small delay for "wow" effect
-        await new Promise(r => setTimeout(r, 800));
-        shadowTile = tile.cachedShadow;
-      } else {
-        if (!hasApiKey) {
-          setIsSettingsOpen(true);
-          setAuditingTileId(null);
-          return;
-        }
-        shadowTile = await auditCausalTension(scenario, tile);
-      }
-      
-      setTiles(prev => {
-        if (prev.some(t => t.word.toLowerCase() === shadowTile.word.toLowerCase())) {
-          return prev;
-        }
-        return [shadowTile, ...prev];
-      });
-    } catch (err: any) {
-      console.error(err);
-      if (err.message?.includes("API_KEY_REQUIRED")) {
-        setIsSettingsOpen(true);
-      } else {
-        setError(err.message?.replace("API_KEY_REQUIRED: ", "") || "Causal audit failed.");
-      }
-    } finally {
-      setAuditingTileId(null);
-    }
-  };
-
   const handleExport = () => {
     const data = JSON.stringify(tiles, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
@@ -1196,10 +1542,36 @@ export default function App() {
     }
   };
 
+  const handleSaveLogic = (id: string, newLogic: string) => {
+    setTiles(prev => prev.map(t => t.id === id ? { ...t, logic: newLogic } : t));
+  };
+
+  const handleSaveAllLogic = (newTiles: Tile[]) => {
+    setTiles(newTiles);
+  };
+
   return (
     <div className="min-h-screen flex flex-col p-4 md:p-8 max-w-7xl mx-auto">
       <AnimatePresence>
-        {showWalkthrough && <Walkthrough key="walkthrough" onComplete={completeWalkthrough} />}
+        {showLogicBoard && (
+          <LogicBoard 
+            key="logic-board" 
+            isOpen={showLogicBoard} 
+            onClose={() => setShowLogicBoard(false)} 
+            tiles={tiles}
+            onSaveAll={handleSaveAllLogic}
+            scenario={scenario}
+          />
+        )}
+        {editingLogicTile && (
+          <LogicEditorModal
+            key="logic-editor"
+            isOpen={!!editingLogicTile}
+            onClose={() => setEditingLogicTile(null)}
+            tile={editingLogicTile}
+            onSave={handleSaveLogic}
+          />
+        )}
         {showMethodology && (
           <MethodologyModal 
             key="methodology-modal" 
@@ -1224,8 +1596,13 @@ export default function App() {
       <header className="mb-12 border-b-4 border-ink pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-ink text-bg px-2 py-1 text-[10px] font-black uppercase tracking-tighter rounded">Open Source Method</div>
-            <div className="text-[10px] mono opacity-40 uppercase tracking-widest">Version 1.0</div>
+            <button 
+              onClick={() => setShowMethodology(true)}
+              className="bg-ink text-bg px-2 py-1 text-[10px] font-black uppercase tracking-tighter rounded hover:bg-databoard-yellow hover:text-ink transition-colors"
+            >
+              Framework v4.0 (Logic Verified)
+            </button>
+            <div className="text-[10px] mono opacity-40 uppercase tracking-widest">Open Source Methodology</div>
           </div>
           <h1 className="text-6xl font-black uppercase tracking-tighter leading-none">
             The Data Board
@@ -1257,11 +1634,11 @@ export default function App() {
               </button>
             )}
             <button 
-              onClick={() => setShowWalkthrough(true)}
+              onClick={() => setShowLogicBoard(true)}
               className="flex items-center gap-2 px-4 py-2 border-2 border-ink font-bold uppercase text-xs tracking-widest hover:bg-ink hover:text-bg transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
             >
-              <HelpCircle className="w-4 h-4" />
-              Walkthrough
+              <Code className="w-4 h-4" />
+              YAML Logic Board
             </button>
             <button 
               id="methodology-btn"
@@ -1290,44 +1667,134 @@ export default function App() {
         
         {/* Left Column: Input & Info */}
         <div className="lg:col-span-1 flex flex-col gap-8">
-          {/* Scenario Selection */}
+          {/* Grounding & Scenario */}
           <section id="scenario-selector" className="p-6 border-2 border-ink bg-bg shadow-[8px_8px_0px_0px_rgba(20,20,20,1)]">
-            <div className="flex flex-col gap-4">
-              <label className="text-[10px] uppercase tracking-widest opacity-50 font-bold">
-                Active Scenario
-              </label>
-              <select
-                value={scenario.id}
-                onChange={(e) => {
-                  const s = scenarios.find((s) => s.id === e.target.value);
-                  if (s) {
-                    // Clear board immediately
-                    setTiles([]);
-                    setMetrics(null);
-                    setSelectedTile(null);
-                    setScenario(s);
-                    setIsExpansionAvailable(true);
-                    
-                    // Load cached data if available with a tiny delay to ensure "clean" state is rendered
-                    if (CACHED_BOARDS[s.id]) {
-                      setTimeout(() => {
-                        setTiles(CACHED_BOARDS[s.id].tiles);
-                        setMetrics(CACHED_BOARDS[s.id].metrics);
-                      }, 10);
+            <div className="flex flex-col gap-6">
+              <div>
+                <label className="text-[10px] uppercase tracking-widest opacity-50 font-bold block mb-2">
+                  Active Scenario
+                </label>
+                <select
+                  value={scenario.id}
+                  onChange={(e) => {
+                    const s = scenarios.find((s) => s.id === e.target.value);
+                    if (s) {
+                      // Clear board immediately
+                      setTiles([]);
+                      setMetrics(null);
+                      setSelectedTile(null);
+                      setScenario(s);
+                      setIsExpansionAvailable(true);
+                      
+                      // Load cached data if available with a tiny delay to ensure "clean" state is rendered
+                      if (CACHED_BOARDS[s.id]) {
+                        setTimeout(() => {
+                          setTiles(CACHED_BOARDS[s.id].tiles);
+                          setMetrics(CACHED_BOARDS[s.id].metrics);
+                        }, 10);
+                      }
                     }
-                  }
-                }}
-                className="bg-transparent border-b-2 border-ink py-2 pr-8 focus:outline-none mono text-sm cursor-pointer"
-              >
-                {scenarios.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.title}
-                  </option>
-                ))}
-              </select>
-              <p className="text-[9px] mono opacity-40 leading-tight">
-                Scenarios provide the semantic corpus for the Bayesian audit.
-              </p>
+                  }}
+                  className="w-full bg-transparent border-b-2 border-ink py-2 pr-8 focus:outline-none mono text-sm cursor-pointer font-bold"
+                >
+                  {scenarios.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-lg leading-tight font-bold">
+                  {scenario.description}
+                </p>
+                <p className="text-[11px] opacity-70 serif-italic leading-relaxed">
+                  {scenario.context}
+                </p>
+
+                {scenario.url && (
+                  <a 
+                    href={scenario.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-[10px] mono uppercase font-bold text-ink/40 hover:text-ink transition-colors"
+                  >
+                    <Globe className="w-3 h-3" />
+                    Source Data
+                  </a>
+                )}
+
+                {scenario.outcomes && scenario.outcomes.length > 0 && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {scenario.outcomes.map((outcome, i) => (
+                      <span key={i} className="px-2 py-0.5 bg-ink text-white text-[8px] mono uppercase tracking-widest">
+                        {outcome}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {tiles.length === 0 && (
+                <div className="pt-4 border-t border-ink/10 space-y-2">
+                  <p className="text-[9px] mono opacity-40 uppercase font-bold">Quick Start</p>
+                  {scenario.id === 'ai-sustainability' && (
+                    <button
+                      onClick={async () => {
+                        setIsLoading(true);
+                        const sampleTerms = ["Reasoning Models (GPT-5)", "Statistical Models (Llama-4)", "Email Writing", "Sweden Data Center", "The Green Shift"];
+                        try {
+                          const existingWords = tiles.map(t => t.word);
+                          const newTiles = await Promise.all(sampleTerms.map(term => evaluateWord(scenario, term, existingWords)));
+                          setTiles(prev => [...newTiles, ...prev]);
+                        } catch (err) { setError("Failed to load sample data."); } finally { setIsLoading(false); }
+                      }}
+                      disabled={isLoading}
+                      className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
+                    >
+                      <Zap className="w-3 h-3" />
+                      Load Research Sample
+                    </button>
+                  )}
+                  {scenario.id === 'google-search-console' && (
+                    <button
+                      onClick={async () => {
+                        setIsLoading(true);
+                        const sampleTerms = ["CRM CTR Spike", "Core Update Drop", "Mobile CTR Gap", "Zero-Click Search", "Branded Loyalty", "Page Depth Friction"];
+                        try {
+                          const existingWords = tiles.map(t => t.word);
+                          const newTiles = await Promise.all(sampleTerms.map(term => evaluateWord(scenario, term, existingWords)));
+                          setTiles(prev => [...newTiles, ...prev]);
+                        } catch (err: any) { setError(err.message || "Failed to load sample data."); } finally { setIsLoading(false); }
+                      }}
+                      disabled={isLoading}
+                      className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
+                    >
+                      <Zap className="w-3 h-3" />
+                      Load GSC Audit
+                    </button>
+                  )}
+                  {scenario.id === 'spotify-trends' && (
+                    <button
+                      onClick={async () => {
+                        setIsLoading(true);
+                        const sampleTerms = ["Intro Friction", "Discover Retention", "TikTok Virality", "Morning Commute Skip", "Editorial Retention", "Global Threshold"];
+                        try {
+                          const existingWords = tiles.map(t => t.word);
+                          const newTiles = await Promise.all(sampleTerms.map(term => evaluateWord(scenario, term, existingWords)));
+                          setTiles(prev => [...newTiles, ...prev]);
+                        } catch (err: any) { setError(err.message || "Failed to load sample data."); } finally { setIsLoading(false); }
+                      }}
+                      disabled={isLoading}
+                      className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
+                    >
+                      <Zap className="w-3 h-3" />
+                      Load Spotify Trends
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </section>
 
@@ -1363,19 +1830,10 @@ export default function App() {
                     id="ai-suggestions"
                     onClick={handleGeminiSuggest}
                     disabled={isLoading || !isExpansionAvailable}
-                    className="flex-1 py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
+                    className="w-full py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
                   >
                     <Zap className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    {!isExpansionAvailable ? "Space Fully Expanded" : tiles.length === 0 ? "The Data Board" : "Expand Deducible Space"}
-                  </button>
-                  
-                  <button 
-                    onClick={() => updateMetrics(undefined, true)}
-                    disabled={isMetricsLoading || tiles.length === 0}
-                    className="px-6 py-4 bg-ink text-bg font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    <Activity className={`w-4 h-4 ${isMetricsLoading ? 'animate-pulse' : ''}`} />
-                    Proposed Reasoning
+                    {!isExpansionAvailable ? "Space Fully Expanded" : tiles.length === 0 ? "The Data Board" : "Expand Board"}
                   </button>
                 </div>
             {error && (
@@ -1436,16 +1894,6 @@ export default function App() {
                 </button>
               </div>
               <div className="flex items-center gap-3">
-                {tiles.length > 0 && (
-                  <button 
-                    onClick={() => updateMetrics(undefined, true)}
-                    disabled={isMetricsLoading}
-                    className={`flex items-center gap-1 text-[9px] mono uppercase font-bold px-2 py-1 border border-ink/20 hover:bg-ink hover:text-bg transition-all ${isMetricsLoading ? 'animate-pulse' : ''}`}
-                  >
-                    <Zap className={`w-3 h-3 ${isMetricsLoading ? 'animate-spin' : ''}`} />
-                    {isMetricsLoading ? "Reasoning..." : "Propose Reasoning"}
-                  </button>
-                )}
                 <Activity className={`w-4 h-4 ${isMetricsLoading ? "animate-pulse text-databoard-yellow" : "opacity-20"}`} />
               </div>
             </div>
@@ -1467,64 +1915,47 @@ export default function App() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center group relative cursor-help border border-ink/10 p-3">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <p className="text-[8px] mono uppercase opacity-50">Cohesion</p>
-                      <Info className="w-2 h-2 opacity-30" />
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="group relative cursor-help border border-ink/10 p-4 bg-white/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1">
+                        <p className="text-[8px] mono uppercase font-bold opacity-50">Narrative Cohesion</p>
+                        <Info className="w-2 h-2 opacity-30" />
+                      </div>
+                      <p className="text-sm font-black">{metrics.cohesion}%</p>
                     </div>
-                    <p className="text-2xl font-black">{metrics.cohesion}%</p>
+                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${metrics.cohesion}%` }}
+                        className="h-full bg-databoard-yellow"
+                      />
+                    </div>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                      <p className="font-bold mb-1 uppercase text-databoard-yellow">Narrative Cohesion</p>
                       Measures how well the specific findings connect to form a unified argument.
                     </div>
                   </div>
-                  <div className="text-center group relative cursor-help border border-ink/10 p-3">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <p className="text-[8px] mono uppercase opacity-50">Sharpness</p>
-                      <Zap className="w-2 h-2 opacity-30" />
+
+                  <div className="group relative cursor-help border border-ink/10 p-4 bg-white/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1">
+                        <p className="text-[8px] mono uppercase font-bold opacity-50">Finding Sharpness</p>
+                        <Zap className="w-2 h-2 opacity-30" />
+                      </div>
+                      <p className="text-sm font-black">{metrics.sharpness}%</p>
                     </div>
-                    <p className="text-2xl font-black">{metrics.sharpness}%</p>
+                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${metrics.sharpness}%` }}
+                        className="h-full bg-databoard-green"
+                      />
+                    </div>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                      <p className="font-bold mb-1 uppercase text-databoard-green">Finding Sharpness</p>
                       Measures the specificity of your findings. High sharpness means data-backed observations.
                     </div>
                   </div>
                 </div>
-                
-                <div className="p-3 bg-ink text-bg text-[10px] leading-relaxed mono uppercase">
-                  {metrics.explanation}
-                </div>
-
-                <div className="space-y-3 py-4 border-y border-ink/10">
-                  <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Centrality Mix</p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[9px] mono uppercase">
-                      <span>Dominant (Major)</span>
-                      <span>{metrics.coverageBreakdown?.dominant || 0}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-databoard-green transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.dominant || 0}%` }} />
-                    </div>
-                    
-                    <div className="flex justify-between items-center text-[9px] mono uppercase">
-                      <span>Present (Secondary)</span>
-                      <span>{metrics.coverageBreakdown?.present || 0}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-databoard-yellow transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.present || 0}%` }} />
-                    </div>
- 
-                    <div className="flex justify-between items-center text-[9px] mono uppercase">
-                      <span>Edge Case (Assumption)</span>
-                      <span>{metrics.coverageBreakdown?.edgeCase || 0}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-databoard-red transition-all duration-1000" style={{ width: `${metrics.coverageBreakdown?.edgeCase || 0}%` }} />
-                    </div>
-                  </div>
-                </div>
-
                 {metrics.emergentPatterns && metrics.emergentPatterns.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Emergent Patterns</p>
@@ -1537,165 +1968,11 @@ export default function App() {
                     </div>
                   </div>
                 )}
-
-                {metrics.synthesisSuggestions && metrics.synthesisSuggestions.length > 0 && (
-                  <div className="space-y-3 pt-4 border-t border-ink/10">
-                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-50 flex items-center gap-2">
-                      <Scale className="w-3 h-3" />
-                      Synthesis Opportunities
-                    </p>
-                    <div className="space-y-3">
-                      {metrics.synthesisSuggestions.map((suggestion, i) => (
-                        <div key={i} className="p-3 bg-databoard-yellow/5 border border-ink/10 flex flex-col gap-2">
-                          <div className="flex flex-wrap gap-1">
-                            {suggestion.original.map((word, j) => (
-                              <span key={j} className="px-1.5 py-0.5 bg-ink/5 text-[8px] mono line-through opacity-50">
-                                {word}
-                              </span>
-                            ))}
-                            <ChevronRight className="w-3 h-3 opacity-30" />
-                            <span className="px-1.5 py-0.5 bg-databoard-yellow text-ink text-[8px] mono font-bold">
-                              {suggestion.replacement}
-                            </span>
-                          </div>
-                          <p className="text-[9px] mono leading-tight opacity-70 italic">
-                            {suggestion.reasoning}
-                          </p>
-                          <button
-                            onClick={() => handleApplySynthesis(suggestion.original, suggestion.replacement)}
-                            disabled={isLoading}
-                            className="text-[8px] mono uppercase font-bold text-ink hover:underline text-left flex items-center gap-1 disabled:opacity-30"
-                          >
-                            <Zap className="w-2 h-2" />
-                            Apply Synthesis
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               <div className="py-8 text-center border border-dashed border-ink/20">
                 <p className="text-[10px] mono opacity-40">Add vocabulary to see board metrics</p>
               </div>
-            )}
-          </section>
-
-          <section className="p-6 border border-ink bg-white/50 backdrop-blur-sm">
-            <h2 className="text-xs uppercase tracking-widest font-bold mb-4 opacity-50">
-              Scenario Context
-            </h2>
-            <p className="text-lg mb-4 leading-tight">
-              {scenario.description}
-            </p>
-            <p className="text-sm opacity-70 serif-italic">
-              {scenario.context}
-            </p>
-
-            {scenario.outcomes && scenario.outcomes.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {scenario.outcomes.map((outcome, i) => (
-                  <span key={i} className="px-2 py-0.5 bg-ink text-white text-[8px] mono uppercase tracking-widest">
-                    {outcome}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {scenario.id === 'ai-sustainability' && tiles.length === 0 && (
-              <button
-                onClick={async () => {
-                  setIsLoading(true);
-                  const sampleTerms = [
-                    "Reasoning Models (GPT-5)",
-                    "Statistical Models (Llama-4)",
-                    "Email Writing",
-                    "Sweden Data Center",
-                    "The Green Shift"
-                  ];
-                  try {
-                    const existingWords = tiles.map(t => t.word);
-                    const newTiles = await Promise.all(
-                      sampleTerms.map(term => evaluateWord(scenario, term, existingWords))
-                    );
-                    setTiles(prev => [...newTiles, ...prev]);
-                  } catch (err) {
-                    setError("Failed to load sample data.");
-                  } finally {
-                    setIsLoading(false);
-                  }
-                }}
-                disabled={isLoading}
-                className="mt-6 w-full py-2 border-2 border-dashed border-ink/30 hover:border-ink hover:bg-ink/5 transition-all mono text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
-              >
-                <Zap className="w-3 h-3" />
-                Load Research Sample Data
-              </button>
-            )}
-
-            {scenario.id === 'google-search-console' && tiles.length === 0 && (
-              <button
-                onClick={async () => {
-                  setIsLoading(true);
-                  const sampleTerms = [
-                    "CRM CTR Spike",
-                    "Core Update Drop",
-                    "Mobile CTR Gap",
-                    "Zero-Click Search",
-                    "Branded Loyalty",
-                    "Page Depth Friction"
-                  ];
-                  try {
-                    const existingWords = tiles.map(t => t.word);
-                    const newTiles = await Promise.all(
-                      sampleTerms.map(term => evaluateWord(scenario, term, existingWords))
-                    );
-                    setTiles(prev => [...newTiles, ...prev]);
-                  } catch (err: any) {
-                    setError(err.message || "Failed to load sample data.");
-                  } finally {
-                    setIsLoading(false);
-                  }
-                }}
-                disabled={isLoading}
-                className="mt-6 w-full py-2 border-2 border-dashed border-ink/30 hover:border-ink hover:bg-ink/5 transition-all mono text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
-              >
-                <Zap className="w-3 h-3" />
-                Load GSC Audit Findings
-              </button>
-            )}
-
-            {scenario.id === 'spotify-trends' && tiles.length === 0 && (
-              <button
-                onClick={async () => {
-                  setIsLoading(true);
-                  const sampleTerms = [
-                    "Intro Friction",
-                    "Discover Retention",
-                    "TikTok Virality",
-                    "Morning Commute Skip",
-                    "Editorial Retention",
-                    "Global Threshold"
-                  ];
-                  try {
-                    const existingWords = tiles.map(t => t.word);
-                    const newTiles = await Promise.all(
-                      sampleTerms.map(term => evaluateWord(scenario, term, existingWords))
-                    );
-                    setTiles(prev => [...newTiles, ...prev]);
-                  } catch (err: any) {
-                    setError(err.message || "Failed to load sample data.");
-                  } finally {
-                    setIsLoading(false);
-                  }
-                }}
-                disabled={isLoading}
-                className="mt-6 w-full py-2 border-2 border-dashed border-ink/30 hover:border-ink hover:bg-ink/5 transition-all mono text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
-              >
-                <Zap className="w-3 h-3" />
-                Load Spotify Trends Findings
-              </button>
             )}
           </section>
         </div>
@@ -1744,8 +2021,7 @@ export default function App() {
                   tile={tile} 
                   isSelected={selectedTile?.id === tile.id} 
                   onSelect={setSelectedTile} 
-                  onCausalAudit={handleCausalAudit}
-                  isAuditing={auditingTileId === tile.id}
+                  onEditLogic={setEditingLogicTile}
                 />
               ))}
               
@@ -1756,25 +2032,6 @@ export default function App() {
             </AnimatePresence>
           </div>
 
-          {/* Legend */}
-          <div className="flex flex-wrap gap-6 mt-4 p-4 border border-ink/10 bg-white/20 rounded">
-            <div className="flex items-center gap-2 text-[10px] mono uppercase">
-              <div className="w-2 h-2 rounded-full bg-databoard-green" />
-              <span>Dominant (Major Segment)</span>
-            </div>
-            <div className="flex items-center gap-2 text-[10px] mono uppercase">
-              <div className="w-2 h-2 rounded-full bg-databoard-yellow" />
-              <span>Present (Secondary Factor)</span>
-            </div>
-            <div className="flex items-center gap-2 text-[10px] mono uppercase">
-              <div className="w-2 h-2 rounded-full bg-databoard-red" />
-              <span>Edge Case (Outlier / Assumption)</span>
-            </div>
-            <div className="flex items-center gap-2 text-[10px] mono uppercase">
-              <Star className="w-2 h-2 fill-databoard-yellow" />
-              <span>AI Confirmed Weight</span>
-            </div>
-          </div>
           {metrics?.links && metrics.links.length > 0 && (
             <div className="mt-8">
               <div className="mb-4 p-3 border border-ink/10 bg-ink/5 flex items-start gap-3">

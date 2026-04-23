@@ -146,7 +146,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       
       THE HUMAN DOMAIN DIRECTIVE:
       - Use "Human Domain Vocabulary": descriptive segments, demographics, and clear factual categories.
-      - PSEUDO-ANTONYMS©: Identify the "Deducible Space" by finding opposing categories or variables that define the boundaries of the problem.
+      - PSEUDO-ANTONYMS©: Define the narrative foundation by finding opposing categories or variables that define the boundaries of the problem.
       - These handles should be the "Building Blocks" that ground the initial reasoning.
       - FORBIDDEN: Do NOT use abstract analytical handles (e.g., "Logistical Scarcity", "Socio-Economic Stratification", "Friction-Gravity").
       - The 'correctedWord' should be a simple, recognizable term that a human observer would use to describe a segment of data.
@@ -166,7 +166,31 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing Board: ${existingWords.join(", ")}
       
-      Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+      Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, specificityScore, logic.
+      
+      LOGIC MARKUP (A Posteriori Ontology):
+      The 'logic' field must be a Mermaid-like structured text block.
+      CRITICAL: Every field (tag) MUST start on a new line.
+      concept "[word]"
+        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
+        context: "[optional: the specific situational context for this concept]"
+        mechanism: "[the causal/structural how]"
+        evidence: "[the empirical/data grounding why]"
+        covers:
+          explains: [variables it explains]
+          aggregates: [variables it combines]
+          replaces: [statistical term it supersedes]
+        relation:
+          direction: [upstream | downstream]
+          of: "[other concept]"
+          via: "[causal mechanism]"
+        contrasts_with: "[the pseudo-antonym concept]"
+        scope: [global | regional | dataset-specific]
+        fidelity: [0.0-1.0]
+        fidelity_basis: [semantic_density | expert_judgment | empirical_test]
+        valid_when:
+          - [condition 1]
+          - [condition 2]
     `,
     {
       responseMimeType: "application/json",
@@ -179,11 +203,10 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
           dataInsight: { type: Type.STRING },
           source: { type: Type.STRING },
           category: { type: Type.STRING },
-          isAIConfirmed: { type: Type.BOOLEAN },
-          relevanceScore: { type: Type.NUMBER },
           specificityScore: { type: Type.NUMBER },
+          logic: { type: Type.STRING },
         },
-        required: ["correctedWord", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
+        required: ["correctedWord", "centrality", "explanation", "dataInsight", "source", "category", "specificityScore", "logic"],
       },
     }
   );
@@ -198,9 +221,8 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
     dataInsight: result.dataInsight || "No specific data insight available.",
     source: result.source || "General Knowledge",
     category: result.category || "General",
-    isAIConfirmed: result.isAIConfirmed ?? true,
-    relevanceScore: result.relevanceScore || 50,
     specificityScore: result.specificityScore || 50,
+    logic: result.logic,
   };
 }
 
@@ -212,11 +234,10 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       THE HUMAN DOMAIN METHOD:
       - Create a set of 5-8 handles that a human observer or data analyst would first identify as "Facts" or "Segments".
       - Use descriptive segments, demographics, and clear factual categories.
-      - PSEUDO-ANTONYMS©: Identify the "Deducible Space" by finding opposing categories or variables that define the boundaries of the problem.
+      - SEMANTIC SYNTHESIS: Your primary goal is to find the "Goldilocks" word—precise enough to reduce statistical guessing but flexible enough to enable human narration.
+      - PSEUDO-ANTONYMS©: Identify the narrative foundation by finding opposing categories or variables.
       - These handles should be the "Building Blocks" that ground the initial reasoning.
       - FORBIDDEN: Do NOT use "Smartass" analytical handles (e.g., "Logistical Scarcity", "Production-Velocity", "Inertia").
-      - Focus on "What" and "Who" before "Why".
-      - These should be the "Building Blocks" that ground the initial reasoning.
       - Focus on "What" and "Who" before "Why".
       
       THE HANDLE DIRECTIVE:
@@ -232,7 +253,31 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing: ${existingWords.join(", ")}
       
-      Return JSON array: word, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
+      Return JSON array: word, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore, logic.
+      
+      LOGIC MARKUP (A Posteriori Ontology):
+      The 'logic' field for each tile must be a Mermaid-like structured text block.
+      CRITICAL: Every field (tag) MUST start on a new line.
+      concept "[word]"
+        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
+        context: "[optional: the specific situational context for this concept]"
+        mechanism: "[the causal/structural how]"
+        evidence: "[the empirical/data grounding why]"
+        covers:
+          explains: [variables it explains]
+          aggregates: [variables it combines]
+          replaces: [statistical term it supersedes]
+        relation:
+          direction: [upstream | downstream]
+          of: "[other concept]"
+          via: "[causal mechanism]"
+        contrasts_with: "[the pseudo-antonym concept]"
+        scope: [global | regional | dataset-specific]
+        fidelity: [0.0-1.0]
+        fidelity_basis: [semantic_density | expert_judgment | empirical_test]
+        valid_when:
+          - [condition 1]
+          - [condition 2]
       
       CRITICAL: You MUST return at least 5 unique human-readable handles.
     `,
@@ -252,8 +297,9 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
             isAIConfirmed: { type: Type.BOOLEAN },
             relevanceScore: { type: Type.NUMBER },
             specificityScore: { type: Type.NUMBER },
+            logic: { type: Type.STRING },
           },
-          required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
+          required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore", "logic"],
         },
       },
     }
@@ -281,59 +327,8 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
     isAIConfirmed: result.isAIConfirmed ?? true,
     relevanceScore: result.relevanceScore || 50,
     specificityScore: result.specificityScore || 50,
+    logic: result.logic,
   }));
-}
-
-export async function auditCausalTension(scenario: Scenario, tile: Tile): Promise<Tile> {
-  const response = await callAIProxy("gemini-3-flash-preview",
-    `
-      Perform a "Causal Audit" on the handle "${tile.word}" for the subject: "${scenario.title}".
-      
-      THE SURGICAL TENSION DIRECTIVE:
-      - Identify the "Shadow" or "Pseudo-Antonym©" of this concept that defines its causal boundary.
-      - If "${tile.word}" is a driver, what is the counter-driver or the hidden cost?
-      - The goal is to create a "Tension Pair" that supercharges human deduction.
-      - Keep the "Shadow Handle" grounded and recognizable. Avoid overly abstract jargon.
-      - Example: If the tile is "First Class", the Shadow might be "Lifeboat Access" or "Proximity to Deck".
-      
-      Context: ${scenario.context}
-      Current Tile Explanation: ${tile.explanation}
-      
-      Return JSON: word (The Shadow Handle), centrality (Usually EDGE_CASE or PRESENT), explanation (The Causal Tension Evidence), dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore.
-    `,
-    {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          word: { type: Type.STRING },
-          centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
-          explanation: { type: Type.STRING },
-          dataInsight: { type: Type.STRING },
-          source: { type: Type.STRING },
-          category: { type: Type.STRING },
-          isAIConfirmed: { type: Type.BOOLEAN },
-          relevanceScore: { type: Type.NUMBER },
-          specificityScore: { type: Type.NUMBER },
-        },
-        required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore"],
-      },
-    }
-  );
-
-  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
-  return {
-    id: generateId(),
-    word: result.word,
-    centrality: result.centrality as Centrality,
-    explanation: result.explanation,
-    dataInsight: result.dataInsight,
-    source: result.source,
-    category: result.category,
-    isAIConfirmed: result.isAIConfirmed ?? true,
-    relevanceScore: result.relevanceScore || 50,
-    specificityScore: result.specificityScore || 50,
-  };
 }
 
 export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): Promise<BoardMetrics> {
@@ -351,32 +346,27 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     `
       Evaluate the "Eureka Potential" of this board for scenario: "${scenario.title}".
       
-      THE BOARD (Vocabulary):
-      ${tiles.map(t => `- [${t.word}]: ${t.explanation}`).join("\n")}
+      THE LOGIC BOARD SOURCE CODE (YAML):
+      The board is defined by the following A Posteriori Ontology (Logic Board):
+      ${tiles.map(t => `concept: "${t.word}"\n${t.logic || `  is_a: ${t.category}\n  mechanism: "${t.explanation}"`}`).join("\n---\n")}
       
-      DEDUCTION & SYNTHESIS:
-      - Use the EXACT vocabulary from the board above as much as possible.
-      - Bridge these terms using human-like logical deduction.
-      - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" between the board's terms. How does one term potentially conflict with or constrain another?
-      - Use these tensions to find non-obvious, innovative deductions that go beyond simple summaries.
-      - For 'synthesisSuggestions', identify groups of terms that naturally combine into a more powerful concept.
-      - The 'explanation' should be a grounded, logical narrative of how these factors interact.
+      DEDUCTION & SYNTHESIS DIRECTIVE:
+      - Use the EXACT "concepts" and "logic" from the board above as the formal grounding for all insights.
+      - BRIDGE: Use the "mechanism" and "evidence" fields from the YAML to bridge terms using human-like logical deduction.
+      - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" explicitly defined or implied by the "contrasts_with" and "mechanism" fields.
+      - EMERGENT PATTERNS: These should be high-level narrative "Handles" that emerge from the interaction of the board's concepts. They MUST be consistent with the logic defined in the YAML.
+      - SYNTHESIS: Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the board's vocabulary.
       
       THE SEMANTIC MAP (Links):
       - Identify 3-6 "Causal Links" between the tiles CURRENTLY ON THE BOARD.
-      - CRITICAL: The 'source' and 'target' MUST EXACTLY MATCH the [word] from the list above.
-      - If you use a word that is not in the list, the link will be broken.
+      - CRITICAL: The 'source' and 'target' MUST EXACTLY MATCH the 'concept' names from the list above.
       
       METRICS DEFINITION (0-100):
-      - COHESION: How well do these terms connect to form a unified, logical argument?
-      - COVERAGE: How well does the board cover the breadth of the scenario?
+      - COHESION: How well do these terms connect to form a unified, logical argument based on the provided YAML?
+      - COVERAGE: How well does the board cover the breadth of the scenario context?
       - SHARPNESS: How specific and grounded is the evidence for these connections?
       
-      SYNTHESIS (The Eureka Moment): 
-      - Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the board's vocabulary.
-      - It should feel like a grounded, human-like deduction.
-      
-      Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, coverageBreakdown (dominant, present, edgeCase), synthesisSuggestions.
+      Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, synthesisSuggestions.
     `,
     {
       responseMimeType: "application/json",
@@ -402,15 +392,6 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
               required: ["source", "target", "label"],
             },
           },
-          coverageBreakdown: {
-            type: Type.OBJECT,
-            properties: {
-              dominant: { type: Type.NUMBER },
-              present: { type: Type.NUMBER },
-              edgeCase: { type: Type.NUMBER },
-            },
-            required: ["dominant", "present", "edgeCase"],
-          },
           synthesisSuggestions: {
             type: Type.ARRAY,
             items: {
@@ -424,7 +405,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
             },
           },
         },
-        required: ["cohesion", "coverage", "entropy", "sharpness", "explanation", "synthesis", "emergentPatterns", "links", "coverageBreakdown", "synthesisSuggestions"],
+        required: ["cohesion", "coverage", "entropy", "sharpness", "explanation", "synthesis", "emergentPatterns", "links", "synthesisSuggestions"],
       },
     }
   );
@@ -439,7 +420,6 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     synthesis: result.synthesis,
     emergentPatterns: result.emergentPatterns || [],
     links: result.links || [],
-    coverageBreakdown: result.coverageBreakdown || { dominant: 0, present: 0, edgeCase: 0 },
     synthesisSuggestions: Array.isArray(result.synthesisSuggestions) ? result.synthesisSuggestions : [],
   };
 }
@@ -459,17 +439,39 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       1. Guess the context/scenario of the data. 
       2. Create a Scenario: title, description, context, and two primary opposing outcomes (e.g., ["Success", "Failure"]).
       3. Generate 8-12 initial "Vocabulary Tiles" (handles).
-      4. CRITICAL: The tiles should NOT be trivial (don't just use column names).
-      5. PSEUDO-ANTONYMS© & STRUCTURAL TENSIONS: Identify the "Deducible Space" by finding opposing categories or variables that define the boundaries of the problem.
-      6. Look for variables that create a "map" of the problem. If a variable exists, what is its counter-force or its opposite segment?
-      7. These "Pseudo-Antonyms©" should be the basis for your vocabulary. They create the "Deducible Space" for analysis.
-      8. For each tile, provide a word, centrality (DOMINANT, PRESENT, EDGE_CASE), and a brief explanation/dataInsight.
+      4. SEMANTIC SYNTHESIS: Your primary goal is to find the "Goldilocks" word—precise enough to reduce statistical guessing but flexible enough to enable human narration.
+      5. PSEUDO-ANTONYMS©: Identify the narrative foundation by finding opposing categories or variables.
+      6. For each tile, provide a word, centrality (DOMINANT, PRESENT, EDGE_CASE), and a brief explanation/dataInsight.
       
       Return JSON: 
       {
         "scenario": { "title": "...", "description": "...", "context": "...", "outcomes": ["...", "..."] },
-        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "category": "..." } ]
+        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "category": "...", "logic": "..." } ]
       }
+      
+      LOGIC MARKUP (A Posteriori Ontology):
+      The 'logic' field for each tile must be a Mermaid-like structured text block.
+      CRITICAL: Every field (tag) MUST start on a new line.
+      concept "[word]"
+        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
+        context: "[optional: the specific situational context for this concept]"
+        mechanism: "[the causal/structural how]"
+        evidence: "[the empirical/data grounding why]"
+        covers:
+          explains: [variables it explains]
+          aggregates: [variables it combines]
+          replaces: [statistical term it supersedes]
+        relation:
+          direction: [upstream | downstream]
+          of: "[other concept]"
+          via: "[causal mechanism]"
+        contrasts_with: "[the pseudo-antonym concept]"
+        scope: [global | regional | dataset-specific]
+        fidelity: [0.0-1.0]
+        fidelity_basis: [semantic_density | expert_judgment | empirical_test]
+        valid_when:
+          - [condition 1]
+          - [condition 2]
     `,
     {
       responseMimeType: "application/json",
@@ -495,9 +497,10 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
                 centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
                 explanation: { type: Type.STRING },
                 dataInsight: { type: Type.STRING },
-                category: { type: Type.STRING }
+                category: { type: Type.STRING },
+                logic: { type: Type.STRING }
               },
-              required: ["word", "centrality", "explanation", "dataInsight", "category"]
+              required: ["word", "centrality", "explanation", "dataInsight", "category", "logic"]
             }
           }
         },

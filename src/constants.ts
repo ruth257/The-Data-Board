@@ -5,35 +5,32 @@ export const SCENARIOS: Scenario[] = [
     id: "world-happiness-2025",
     title: "World Happiness Rating 2025",
     description: "Constructing the deducible space for global well-being and life satisfaction.",
-    context: "Global happiness data (GDP per capita, social support, healthy life expectancy, freedom, generosity, perceptions of corruption). Move beyond simple rankings to a formal vocabulary of the deducible space. Focus on structural tensions: 'Economic-Security' vs 'Social-Cohesion', 'Individual-Freedom' vs 'Institutional-Trust'. The goal is a minimal set of concepts where narrative conclusions about global well-being follow inevitably.",
+    context: "Global well-being metrics (GDP, social support, freedom). Focus on tensions: 'Economic-Security' vs 'Social-Cohesion'.",
     outcomes: ["High Life Satisfaction", "Systemic Distress"],
+    url: "https://worldhappiness.report/"
   },
   {
     id: "ai-sustainability-kaggle",
     title: "AI Sustainability- Kaggle",
     description: "Analyzing the environmental and systemic impact of large-scale AI models.",
-    context: "Kaggle dataset on AI model training costs, energy consumption, and hardware efficiency. Construct a deducible space for sustainable AI development. Focus on structural tensions: 'Compute-Intensity' vs 'Energy-Efficiency', 'Innovation-Velocity' vs 'Carbon-Constraint', 'Hardware-Lifecycle' vs 'Model-Obsolescence'. The goal is a vocabulary that makes the narrative of AI's environmental footprint deducible.",
+    context: "AI training costs and energy efficiency. Focus on: 'Compute-Intensity' vs 'Energy-Efficiency'.",
     outcomes: ["Sustainable Innovation", "Ecological Debt"],
+    url: "https://www.kaggle.com/datasets"
   },
   {
     id: "gss-life-survey",
     title: "General Social Survey (GSS) 1972-2022",
     description: "The gold standard of American social trends and life satisfaction since 1972.",
-    context: "Longitudinal survey data on happiness, health, marital status, and financial satisfaction. Construct the deducible space for the 'American Dream' vs 'Modern Isolation'. Focus on structural handles: 'Marital-Status', 'Financial-Satisfaction', 'Work-Fulfillment', 'Social-Isolation'. This data is open, public, and requires no specific attribution for analysis.",
+    context: "Longitudinal survey on happiness and financial satisfaction. Focus on: 'American Dream' vs 'Modern Isolation'.",
     outcomes: ["Life Satisfaction", "Social Fragmentation"],
-  },
-  {
-    id: "titanic",
-    title: "Titanic Survival Analysis",
-    description: "Constructing the deducible space for survival in the 1912 disaster.",
-    context: "Passenger data (pclass, sex, age, fare). Move beyond correlational anecdotes like 'women survived more' to a formal vocabulary of the deducible space. Focus on structural tension: 'Chivalry-Legacy' vs 'Class-Priority', 'Lifeboat-Scarcity' vs 'Allocation-Logic'. The goal is a minimal set of concepts where narrative conclusions follow inevitably.",
-    outcomes: ["Survival", "Death"],
+    url: "https://gss.norc.org/"
   },
   {
     id: "big-mac-index",
     title: "Economist Big Mac Index (GitHub)",
     description: "The formalization of the deducible space for global currency valuation.",
-    context: "Global price data for the Big Mac across 50+ countries. Construct the deducible space for 'Purchasing Power Parity' vs 'Currency Valuation'. Focus on structural handles: 'Local-Price-Variance', 'Exchange-Rate-Deviation', 'Cost-of-Living-Index'. The goal is a vocabulary that makes the narrative of global economic arbitrage deducible.",
+    context: "Global price data and PPP. Focus on: 'Purchasing Power Parity' vs 'Currency Valuation'.",
     outcomes: ["Currency Alignment", "Economic Arbitrage"],
+    url: "https://github.com/TheEconomist/big-mac-data"
   },
 ];
