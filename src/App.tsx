@@ -79,7 +79,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
         <div className="p-8 md:p-12">
           {/* HERO */}
           <div className="pb-12 border-b-2 border-[#141414] mb-12">
-            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-3">Open Methodology · Version 3.1</div>
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-3">Open Methodology · Version 4.1</div>
             <h1 className="text-4xl md:text-6xl font-[900] uppercase tracking-tighter leading-[0.9] mb-4">
               The Data Board
             </h1>
@@ -100,7 +100,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             <div className="flex flex-wrap gap-x-12 gap-y-4 pt-6 border-t border-[#141414]/15">
               {[
                 { label: "Author", value: "Ruth Aharon" },
-                { label: "Version", value: "3.1 · 2026" },
+                { label: "Version", value: "4.1 · 2026" },
                 { label: "License", value: "MIT · Open Source" },
                 { label: "Site", value: "thedataboard.ai" }
               ].map((m, i) => (
@@ -111,6 +111,38 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
               ))}
             </div>
           </div>
+
+          {/* QUICK START WALKTHROUGH */}
+          <section className="mb-16 p-8 bg-databoard-yellow/10 border-2 border-[#141414] shadow-[8px_8px_0_0_#141414]">
+            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#7D6608] mb-3">Quick Start Walkthrough</div>
+            <h2 className="text-2xl md:text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">
+              Getting Started with the board
+            </h2>
+            <div className="grid md:grid-cols-2 gap-10">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="bg-[#141414] text-white w-6 h-6 flex items-center justify-center font-mono text-xs font-bold font-bold">1</div>
+                  <h3 className="font-black uppercase text-xs tracking-wider">Play with Examples</h3>
+                </div>
+                <p className="text-sm opacity-80 leading-relaxed">
+                  The easiest way to start is by selecting one of our <strong>Research Scenarios</strong> from the dropdown in the left sidebar. 
+                  These scenarios (like <em>World Happiness</em> or <em>The Big Mac Index</em>) include pre-analyzed grounding data and 
+                  cached semantic boards that work instantly without an API key.
+                </p>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="bg-[#141414] text-white w-6 h-6 flex items-center justify-center font-mono text-xs font-bold">2</div>
+                  <h3 className="font-black uppercase text-xs tracking-wider">Upload & Analyze Your Own</h3>
+                </div>
+                <p className="text-sm opacity-80 leading-relaxed">
+                  Have your own dataset? Click the <strong>Upload</strong> icon (bottom-right of the dashboard) to import any CSV or JSON file. 
+                  To enable real-time AI analysis of your private data, you must provide your own <strong>Gemini API key</strong> in the 
+                  Settings menu (Shield icon in the header).
+                </p>
+              </div>
+            </div>
+          </section>
 
           {/* METHOD FLOW */}
           <section className="mb-16">
@@ -634,7 +666,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
           {/* Manual Key Entry */}
           <div>
             <div className="mb-3 p-2 bg-databoard-yellow/10 border border-databoard-yellow/30 text-[9px] mono leading-tight">
-              <strong className="text-databoard-yellow uppercase">Note:</strong> To upload and analyze your own CSV data, you <strong>must</strong> provide your own API key here.
+              <strong className="text-databoard-yellow uppercase">Note:</strong> To analyze your own custom CSV data, you <strong>must</strong> provide your own API key here. Example scenarios work without a key.
             </div>
             <label className="block text-[10px] mono uppercase font-bold mb-1">Gemini API Key</label>
             <input 
@@ -1668,6 +1700,16 @@ export default function App() {
         {/* Left Column: Input & Info */}
         <div className="lg:col-span-1 flex flex-col gap-8">
           {/* Grounding & Scenario */}
+          <section id="walkthrough-guide" className="p-4 bg-databoard-yellow/10 border-2 border-databoard-yellow/30 shadow-[4px_4px_0px_0px_rgba(20,20,20,0.1)] mb-4">
+            <h3 className="text-[10px] mono uppercase font-bold text-databoard-yellow mb-2 flex items-center gap-2">
+              <Zap className="w-3 h-3" /> Quick Start
+            </h3>
+            <div className="space-y-3 text-[11px] leading-tight opacity-80">
+              <p><strong>1. Play with Examples</strong><br/>Select a scenario below to load pre-analyzed research boards.</p>
+              <p><strong>2. Upload Your Own</strong><br/>Upload any CSV/JSON. Requires a personal API key in Settings (Shield icon).</p>
+            </div>
+          </section>
+
           <section id="scenario-selector" className="p-6 border-2 border-ink bg-bg shadow-[8px_8px_0px_0px_rgba(20,20,20,1)]">
             <div className="flex flex-col gap-6">
               <div>
@@ -1738,59 +1780,17 @@ export default function App() {
 
               {tiles.length === 0 && (
                 <div className="pt-4 border-t border-ink/10 space-y-2">
-                  <p className="text-[9px] mono opacity-40 uppercase font-bold">Quick Start</p>
-                  {scenario.id === 'ai-sustainability' && (
+                  <p className="text-[9px] mono opacity-40 uppercase font-bold">Actions</p>
+                  {CACHED_BOARDS[scenario.id] && (
                     <button
-                      onClick={async () => {
-                        setIsLoading(true);
-                        const sampleTerms = ["Reasoning Models (GPT-5)", "Statistical Models (Llama-4)", "Email Writing", "Sweden Data Center", "The Green Shift"];
-                        try {
-                          const existingWords = tiles.map(t => t.word);
-                          const newTiles = await Promise.all(sampleTerms.map(term => evaluateWord(scenario, term, existingWords)));
-                          setTiles(prev => [...newTiles, ...prev]);
-                        } catch (err) { setError("Failed to load sample data."); } finally { setIsLoading(false); }
+                      onClick={() => {
+                        setTiles(CACHED_BOARDS[scenario.id].tiles);
+                        setMetrics(CACHED_BOARDS[scenario.id].metrics);
                       }}
-                      disabled={isLoading}
                       className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
                     >
                       <Zap className="w-3 h-3" />
-                      Load Research Sample
-                    </button>
-                  )}
-                  {scenario.id === 'google-search-console' && (
-                    <button
-                      onClick={async () => {
-                        setIsLoading(true);
-                        const sampleTerms = ["CRM CTR Spike", "Core Update Drop", "Mobile CTR Gap", "Zero-Click Search", "Branded Loyalty", "Page Depth Friction"];
-                        try {
-                          const existingWords = tiles.map(t => t.word);
-                          const newTiles = await Promise.all(sampleTerms.map(term => evaluateWord(scenario, term, existingWords)));
-                          setTiles(prev => [...newTiles, ...prev]);
-                        } catch (err: any) { setError(err.message || "Failed to load sample data."); } finally { setIsLoading(false); }
-                      }}
-                      disabled={isLoading}
-                      className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
-                    >
-                      <Zap className="w-3 h-3" />
-                      Load GSC Audit
-                    </button>
-                  )}
-                  {scenario.id === 'spotify-trends' && (
-                    <button
-                      onClick={async () => {
-                        setIsLoading(true);
-                        const sampleTerms = ["Intro Friction", "Discover Retention", "TikTok Virality", "Morning Commute Skip", "Editorial Retention", "Global Threshold"];
-                        try {
-                          const existingWords = tiles.map(t => t.word);
-                          const newTiles = await Promise.all(sampleTerms.map(term => evaluateWord(scenario, term, existingWords)));
-                          setTiles(prev => [...newTiles, ...prev]);
-                        } catch (err: any) { setError(err.message || "Failed to load sample data."); } finally { setIsLoading(false); }
-                      }}
-                      disabled={isLoading}
-                      className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
-                    >
-                      <Zap className="w-3 h-3" />
-                      Load Spotify Trends
+                      Restore Sample Data
                     </button>
                   )}
                 </div>
