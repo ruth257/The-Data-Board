@@ -2,6 +2,14 @@ import { Scenario } from "./types";
 
 export const SCENARIOS: Scenario[] = [
   {
+    id: "big-mac-index",
+    title: "Economist Big Mac Index (GitHub)",
+    description: "The formalization of the deducible space for global currency valuation.",
+    context: "Global price data and PPP. Focus on: 'Purchasing Power Parity' vs 'Currency Valuation'.",
+    outcomes: ["Currency Alignment", "Economic Arbitrage"],
+    url: "https://github.com/TheEconomist/big-mac-data"
+  },
+  {
     id: "world-happiness-2025",
     title: "World Happiness Rating 2025",
     description: "Constructing the deducible space for global well-being and life satisfaction.",
@@ -24,13 +32,5 @@ export const SCENARIOS: Scenario[] = [
     context: "Longitudinal survey on happiness and financial satisfaction. Focus on: 'American Dream' vs 'Modern Isolation'.",
     outcomes: ["Life Satisfaction", "Social Fragmentation"],
     url: "https://gss.norc.org/"
-  },
-  {
-    id: "big-mac-index",
-    title: "Economist Big Mac Index (GitHub)",
-    description: "The formalization of the deducible space for global currency valuation.",
-    context: "Global price data and PPP. Focus on: 'Purchasing Power Parity' vs 'Currency Valuation'.",
-    outcomes: ["Currency Alignment", "Economic Arbitrage"],
-    url: "https://github.com/TheEconomist/big-mac-data"
   },
 ];

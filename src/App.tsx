@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight, Code, Save, Layout } from "lucide-react";
+import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight, Code, Save, Layout, Share2, Link as LinkIcon, Check } from "lucide-react";
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
 import { CACHED_BOARDS } from "./cachedData";
@@ -665,8 +665,8 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
 
           {/* Manual Key Entry */}
           <div>
-            <div className="mb-3 p-2 bg-databoard-yellow/10 border border-databoard-yellow/30 text-[9px] mono leading-tight">
-              <strong className="text-databoard-yellow uppercase">Note:</strong> To analyze your own custom CSV data, you <strong>must</strong> provide your own API key here. Example scenarios work without a key.
+            <div className="mb-3 p-2 bg-databoard-yellow/5 border border-[#D4B84A]/30 text-[9px] mono leading-tight">
+              <strong className="text-[#D4B84A] uppercase">Note:</strong> To analyze your own custom CSV data, you <strong>must</strong> provide your own API key here. Example scenarios work without a key.
             </div>
             <label className="block text-[10px] mono uppercase font-bold mb-1">Gemini API Key</label>
             <input 
@@ -845,7 +845,7 @@ const LogicBoard = ({
         <div className="p-6 border-b-4 border-ink flex justify-between items-center bg-databoard-yellow/10">
           <div>
             <h2 className="text-2xl font-black uppercase tracking-tighter">A Posteriori Ontology Board</h2>
-            <p className="text-[10px] mono uppercase opacity-50 text-databoard-yellow font-bold">Logic Board Specification (YAML Syntax)</p>
+            <p className="text-[10px] mono uppercase font-bold text-ink/40 italic">Logic Board Specification (YAML Syntax)</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-ink hover:text-bg transition-colors">
             <X className="w-6 h-6" />
@@ -866,16 +866,16 @@ const LogicBoard = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-4 bg-ink/5 border border-ink/10">
-              <h4 className="text-[10px] mono uppercase font-bold mb-2 flex items-center gap-2">
+            <div className="p-4 bg-ink text-bg border-2 border-ink shadow-[4px_4px_0px_0px_#D4B84A]">
+              <h4 className="text-[10px] mono uppercase font-bold mb-2 flex items-center gap-2 text-databoard-yellow">
                 <Info className="w-3 h-3" /> YAML Syntax Guide
               </h4>
-              <ul className="text-[9px] mono space-y-1 opacity-70">
-                <li><span className="text-databoard-yellow">- concept: "Name"</span>: Start of a concept</li>
-                <li><span className="text-databoard-yellow">is_a</span>: [driver|benchmark|risk...]</li>
-                <li><span className="text-databoard-yellow">context</span>: Situational context</li>
-                <li><span className="text-databoard-yellow">mechanism</span>: The causal "how"</li>
-                <li><span className="text-databoard-yellow">contrasts_with</span>: Pseudo-antonym</li>
+              <ul className="text-[9px] mono space-y-1 opacity-90">
+                <li><span className="text-databoard-yellow font-bold">- concept: "Name"</span>: Start of a concept</li>
+                <li><span className="text-databoard-yellow font-bold">is_a</span>: [driver|benchmark|risk...]</li>
+                <li><span className="text-databoard-yellow font-bold">context</span>: Situational context</li>
+                <li><span className="text-databoard-yellow font-bold">mechanism</span>: The causal "how"</li>
+                <li><span className="text-databoard-yellow font-bold">contrasts_with</span>: Pseudo-antonym</li>
               </ul>
             </div>
             <div className="flex flex-col justify-end gap-3">
@@ -1082,18 +1082,20 @@ const LogicEditorModal = ({
             />
           </div>
 
-          <div className="p-4 bg-ink/5 border-l-4 border-ink space-y-2">
-            <h3 className="text-[10px] mono uppercase font-bold">Syntax Guide (Each field on a new line)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[10px] mono opacity-70">
+          <div className="p-4 bg-ink text-bg border-l-4 border-databoard-yellow space-y-3">
+            <h3 className="text-[10px] mono uppercase font-bold text-databoard-yellow flex items-center gap-2">
+              <Code className="w-3 h-3" /> Syntax Guide (DBM Logic Markup)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[10px] mono opacity-90">
               <ul className="space-y-1">
-                <li><span className="font-bold">concept "name"</span>: Define the handle</li>
-                <li><span className="font-bold">is a</span>: [driver|benchmark|risk...]</li>
-                <li><span className="font-bold">context</span>: Situational context</li>
+                <li><span className="text-databoard-yellow font-bold">concept "name"</span>: Define the handle</li>
+                <li><span className="text-databoard-yellow font-bold">is a</span>: [driver|benchmark|risk...]</li>
+                <li><span className="text-databoard-yellow font-bold">context</span>: Situational context</li>
               </ul>
               <ul className="space-y-1">
-                <li><span className="font-bold">mechanism</span>: Causal "how"</li>
-                <li><span className="font-bold">evidence</span>: Data grounding "why"</li>
-                <li><span className="font-bold">contrasts_with</span>: Pseudo-antonym</li>
+                <li><span className="text-databoard-yellow font-bold">mechanism</span>: Causal "how"</li>
+                <li><span className="text-databoard-yellow font-bold">evidence</span>: Data grounding "why"</li>
+                <li><span className="text-databoard-yellow font-bold">contrasts_with</span>: Pseudo-antonym</li>
               </ul>
             </div>
           </div>
@@ -1293,6 +1295,25 @@ export default function App() {
   }, []);
 
   // Persist tiles, metrics and scenario
+  // Persistence and URL Sync
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const scenarioId = params.get("scenario") || params.get("s");
+    if (scenarioId) {
+      const found = scenarios.find(s => s.id === scenarioId);
+      if (found) {
+        setScenario(found);
+        if (CACHED_BOARDS[found.id]) {
+          setTiles(CACHED_BOARDS[found.id].tiles);
+          setMetrics(CACHED_BOARDS[found.id].metrics);
+        } else {
+          setTiles([]);
+          setMetrics(null);
+        }
+      }
+    }
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("databoard-tiles", JSON.stringify(tiles));
   }, [tiles]);
@@ -1700,13 +1721,19 @@ export default function App() {
         {/* Left Column: Input & Info */}
         <div className="lg:col-span-1 flex flex-col gap-8">
           {/* Grounding & Scenario */}
-          <section id="walkthrough-guide" className="p-4 bg-databoard-yellow/10 border-2 border-databoard-yellow/30 shadow-[4px_4px_0px_0px_rgba(20,20,20,0.1)] mb-4">
-            <h3 className="text-[10px] mono uppercase font-bold text-databoard-yellow mb-2 flex items-center gap-2">
-              <Zap className="w-3 h-3" /> Quick Start
+          <section id="walkthrough-guide" className="p-5 bg-ink border-2 border-ink shadow-[8px_8px_0px_0px_#D4B84A] mb-8">
+            <h3 className="text-[10px] mono uppercase font-black text-databoard-yellow mb-3 flex items-center gap-2">
+              <Zap className="w-3 h-3 fill-databoard-yellow" /> Quick Start Walkthrough
             </h3>
-            <div className="space-y-3 text-[11px] leading-tight opacity-80">
-              <p><strong>1. Play with Examples</strong><br/>Select a scenario below to load pre-analyzed research boards.</p>
-              <p><strong>2. Upload Your Own</strong><br/>Upload any CSV/JSON. Requires a personal API key in Settings (Shield icon).</p>
+            <div className="space-y-4 text-[11px] leading-tight text-bg/90">
+              <div className="flex gap-3 text-bg">
+                <span className="text-databoard-yellow font-bold mono">01.</span>
+                <p><strong className="text-bg uppercase tracking-wide">Play with Examples</strong><br/><span className="opacity-60 text-xs">Select a standard research scenario below to see the methodology in action.</span></p>
+              </div>
+              <div className="flex gap-3 text-bg">
+                <span className="text-databoard-yellow font-bold mono">02.</span>
+                <p><strong className="text-bg uppercase tracking-wide">Analyze Your Own</strong><br/><span className="opacity-60 text-xs">Upload CSV/JSON. Requires a Gemini API key (Setup in the top header).</span></p>
+              </div>
             </div>
           </section>
 
@@ -1716,35 +1743,61 @@ export default function App() {
                 <label className="text-[10px] uppercase tracking-widest opacity-50 font-bold block mb-2">
                   Active Scenario
                 </label>
-                <select
-                  value={scenario.id}
-                  onChange={(e) => {
-                    const s = scenarios.find((s) => s.id === e.target.value);
-                    if (s) {
-                      // Clear board immediately
-                      setTiles([]);
-                      setMetrics(null);
-                      setSelectedTile(null);
-                      setScenario(s);
-                      setIsExpansionAvailable(true);
-                      
-                      // Load cached data if available with a tiny delay to ensure "clean" state is rendered
-                      if (CACHED_BOARDS[s.id]) {
-                        setTimeout(() => {
-                          setTiles(CACHED_BOARDS[s.id].tiles);
-                          setMetrics(CACHED_BOARDS[s.id].metrics);
-                        }, 10);
+                <div className="relative flex items-center group">
+                  <select
+                    value={scenario.id}
+                    onChange={(e) => {
+                      const s = scenarios.find((s) => s.id === e.target.value);
+                      if (s) {
+                        // Clear board immediately
+                        setTiles([]);
+                        setMetrics(null);
+                        setSelectedTile(null);
+                        setScenario(s);
+                        setIsExpansionAvailable(true);
+                        
+                        // Load cached data if available with a tiny delay to ensure "clean" state is rendered
+                        if (CACHED_BOARDS[s.id]) {
+                          setTimeout(() => {
+                            setTiles(CACHED_BOARDS[s.id].tiles);
+                            setMetrics(CACHED_BOARDS[s.id].metrics);
+                          }, 10);
+                        }
                       }
-                    }
-                  }}
-                  className="w-full bg-transparent border-b-2 border-ink py-2 pr-8 focus:outline-none mono text-sm cursor-pointer font-bold"
-                >
-                  {scenarios.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.title}
-                    </option>
-                  ))}
-                </select>
+                    }}
+                    className="w-full bg-transparent border-b-2 border-ink py-2 pr-12 focus:outline-none mono text-sm cursor-pointer font-bold flex-1"
+                  >
+                    {scenarios.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.title}
+                      </option>
+                    ))}
+                  </select>
+                  <button 
+                    onClick={() => {
+                      const url = new URL(window.location.href);
+                      url.searchParams.set('scenario', scenario.id);
+                      navigator.clipboard.writeText(url.toString());
+                      
+                      // Temporary visual feedback
+                      const btn = document.getElementById('share-btn-icon');
+                      const check = document.getElementById('share-check-icon');
+                      if (btn && check) {
+                        btn.classList.add('hidden');
+                        check.classList.remove('hidden');
+                        setTimeout(() => {
+                          btn.classList.remove('hidden');
+                          check.classList.add('hidden');
+                        }, 2000);
+                      }
+                    }}
+                    title="Copy direct link to this board"
+                    className="absolute right-0 p-2 hover:text-databoard-yellow transition-colors"
+                  >
+                    <Share2 id="share-btn-icon" className="w-4 h-4" />
+                    <Check id="share-check-icon" className="w-4 h-4 text-databoard-green hidden" />
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-3">
