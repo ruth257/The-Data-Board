@@ -193,7 +193,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Each additional year of healthy life expectancy adds 0.15 to the national happiness score.",
         source: "WHO Data",
         category: "Health",
-        specificityScore: 92
+        specificityScore: 92,
+        logic: `concept "Healthy Life Expectancy"
+  is a: driver
+  context: "Biological baseline for life satisfaction"
+  mechanism: "physical health enables the exercise of freedom and social engagement"
+  evidence: "WHO HALE metrics vs Happiness scores"
+  covers:
+    explains: [life_satisfaction]
+    aggregates: [health_status]
+    replaces: "Longevity"
+  relation:
+    direction: upstream
+    of: "Economic Security"
+    via: productive_capacity
+  contrasts_with: "Systemic Distress"
+  scope: global
+  fidelity: 0.94`
       },
       {
         id: "h-exp-2",
@@ -203,7 +219,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Donations to charity correlate with higher positive affect at the individual level.",
         source: "World Giving Index",
         category: "Social",
-        specificityScore: 88
+        specificityScore: 88,
+        logic: `concept "Generosity"
+  is a: driver
+  context: "Altruism and social support"
+  mechanism: "pro-social behavior increases both the giver's and the receiver's well-being"
+  evidence: "World Giving Index correlation with happiness"
+  covers:
+    explains: [social_cohesion]
+    aggregates: [charitable_donations]
+    replaces: "Philanthropy"
+  relation:
+    direction: upstream
+    of: "Social Cohesion"
+    via: altruistic_signaling
+  contrasts_with: "Atomized Autonomy"
+  scope: global
+  fidelity: 0.88`
       },
       {
         id: "h-exp-3",
@@ -213,7 +245,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "High freedom scores in low-GDP nations often fail to translate into life satisfaction.",
         source: "Socio-Economic Audit",
         category: "Rights",
-        specificityScore: 95
+        specificityScore: 95,
+        logic: `concept "The Freedom Gap"
+  is a: tension
+  context: "Legal rights vs economic agency"
+  mechanism: "formal rights are hollow without the material resources to utilize them"
+  evidence: "Freedom scores vs income deciles in developing nations"
+  covers:
+    explains: [life_satisfaction_gap]
+    aggregates: [gdp_per_capita, freedom_score]
+    replaces: "Civil liberties"
+  relation:
+    direction: downstream
+    of: "Individual Freedom"
+    via: resource_constraint
+  contrasts_with: "Economic Security"
+  scope: regional
+  fidelity: 0.92`
       }
     ],
     metrics: {
@@ -319,7 +367,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Average GPU lifespan in high-intensity clusters is now under 3 years.",
         source: "Supply Chain Audit",
         category: "Hardware",
-        specificityScore: 94
+        specificityScore: 94,
+        logic: `concept "Hardware Lifecycle"
+  is a: constraint
+  context: "Electronic waste and depreciation"
+  mechanism: "rapid obsolescence creates a continuous stream of e-waste and high capital intensity"
+  evidence: "GPU turnover rates in hyperscalers"
+  covers:
+    explains: [environmental_impact]
+    aggregates: [gpu_lifespan]
+    replaces: "Infrastructure cost"
+  relation:
+    direction: downstream
+    of: "Innovation Velocity"
+    via: technical_debt
+  contrasts_with: "Energy Efficiency"
+  scope: global
+  fidelity: 0.90`
       },
       {
         id: "ai-exp-2",
@@ -329,7 +393,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Distilled models can retain 95% accuracy with 10x fewer parameters.",
         source: "AI Research Paper",
         category: "Software",
-        specificityScore: 91
+        specificityScore: 91,
+        logic: `concept "Model Distillation"
+  is a: lever
+  context: "Inference-side efficiency"
+  mechanism: "transferring knowledge from large teacher models to smaller student models"
+  evidence: "Parameter reduction vs accuracy benchmarks"
+  covers:
+    explains: [inference_cost]
+    aggregates: [parameter_count]
+    replaces: "Compression"
+  relation:
+    direction: downstream
+    of: "Algorithmic Efficiency"
+    via: architecture_thinning
+  contrasts_with: "Compute Intensity"
+  scope: global
+  fidelity: 0.93`
       },
       {
         id: "ai-exp-3",
@@ -339,7 +419,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Export controls on H100s have created a shadow market for compute.",
         source: "Geopolitical Report",
         category: "Policy",
-        specificityScore: 96
+        specificityScore: 96,
+        logic: `concept "Compute Sovereignty"
+  is a: risk
+  context: "National strategic compute access"
+  mechanism: "fragmentation of the global supply chain as nations secure local compute/energy"
+  evidence: "CHIPS Act and export control impacts"
+  covers:
+    explains: [market_fragmentation]
+    aggregates: [export_controls]
+    replaces: "Global supply chain"
+  relation:
+    direction: downstream
+    of: "Innovation Velocity"
+    via: supply_friction
+  contrasts_with: "Compute Intensity"
+  scope: global
+  fidelity: 0.95`
       }
     ],
     metrics: {
@@ -449,7 +545,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Degree holders report 12% higher life satisfaction than non-degree holders.",
         source: "GSS Education Module",
         category: "Education",
-        specificityScore: 93
+        specificityScore: 93,
+        logic: `concept "Educational Attainment"
+  is a: driver
+  context: "Socio-economic mobility"
+  mechanism: "higher education expands long-term optionality and economic agency"
+  evidence: "GSS degree status vs happiness deciles"
+  covers:
+    explains: [status_mobility]
+    aggregates: [degree_level]
+    replaces: "Intelligence"
+  relation:
+    direction: upstream
+    of: "Work Fulfillment"
+    via: status_signaling
+  contrasts_with: "Social Isolation"
+  scope: regional
+  fidelity: 0.94`
       },
       {
         id: "gss-exp-2",
@@ -459,7 +571,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Regular attendance at services correlates with a 10% happiness premium.",
         source: "GSS Religion Module",
         category: "Culture",
-        specificityScore: 89
+        specificityScore: 89,
+        logic: `concept "Religious Affiliation"
+  is a: pillar
+  context: "Social support and existential meaning"
+  mechanism: "shared belief systems provide a buffer against existential stress and loneliness"
+  evidence: "Attendance frequency vs happiness scores"
+  covers:
+    explains: [community_resilience]
+    aggregates: [church_attendance]
+    replaces: "Spirituality"
+  relation:
+    direction: upstream
+    of: "Marital Status"
+    via: communal_norming
+  contrasts_with: "Social Isolation"
+  scope: regional
+  fidelity: 0.89`
       },
       {
         id: "gss-exp-3",
@@ -469,7 +597,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         dataInsight: "Partisan hostility has doubled since 1994, impacting local social trust.",
         source: "Pew Research Cross-Analysis",
         category: "Politics",
-        specificityScore: 95
+        specificityScore: 95,
+        logic: `concept "Political Polarization"
+  is a: risk
+  context: "Social trust and ideological conflict"
+  mechanism: "out-group hostility erodes the foundations of interpersonal trust"
+  evidence: "Social trust scores in polarized districts"
+  covers:
+    explains: [social_erosion]
+    aggregates: [partisan_hostility]
+    replaces: "Political disagreement"
+  relation:
+    direction: downstream
+    of: "Social Isolation"
+    via: ideological_friction
+  contrasts_with: "Marital Status"
+  scope: regional
+  fidelity: 0.91`
       }
     ],
     metrics: {
@@ -713,6 +857,86 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   valid_when:
     - "capital controls in place"
     - "managed float or fixed peg"`
+      }
+    ],
+    cachedExpansion: [
+      {
+        id: "bm-exp-1",
+        word: "GDP-Adjusted PPP",
+        centrality: Centrality.DOMINANT,
+        explanation: "The sophisticated metric that accounts for a country's development level to filter out expected price differences.",
+        dataInsight: "Explains why some 'cheap' currencies are actually fairly valued relative to local productivity.",
+        source: "Advanced Methodology",
+        category: "Sophisticated Metrics",
+        specificityScore: 96,
+        logic: `concept "GDP-Adjusted PPP"
+  is a: refinement
+  context: "Development-aware price comparison"
+  mechanism: "it regresses prices against GDP per capita to define the true deviation from trend"
+  evidence: "Economist Adjusted Big Mac Index"
+  covers:
+    explains: [dollar_valuation]
+    aggregates: [gdp_per_capita, local_price]
+    replaces: "Raw Price Parity"
+  relation:
+    direction: downstream
+    of: "The Wealthy Surcharge"
+    via: statistical_normalization
+  contrasts_with: "The Emerging Discount"
+  scope: global
+  fidelity: 0.97`
+      },
+      {
+        id: "bm-exp-2",
+        word: "The Google Index",
+        centrality: Centrality.PRESENT,
+        explanation: "A modern pseudo-antonym tracking the pricing of digital goods vs. physical burgers.",
+        dataInsight: "Digital services often show near-perfect price parity, contrasting with local labor-driven burger prices.",
+        source: "Digital Parity Audit",
+        category: "Digital Trends",
+        specificityScore: 88,
+        logic: `concept "The Google Index"
+  is a: contrast
+  context: "Digital goods vs physical labor costs"
+  mechanism: "digital goods have zero marginal cost and low labor density, leading to faster price convergence"
+  evidence: "Global subscription pricing variance"
+  covers:
+    explains: [price_convergence]
+    aggregates: [digital_service_costs]
+    replaces: "Physical commodity index"
+  relation:
+    direction: downstream
+    of: "Local Labor Anchor"
+    via: digital_decoupling
+  contrasts_with: "Local Labor Anchor"
+  scope: global
+  fidelity: 0.85`
+      },
+      {
+        id: "bm-exp-3",
+        word: "Currency Pegs",
+        centrality: Centrality.EDGE_CASE,
+        explanation: "The structural edge case where policy overrides market logic entirely, fixing prices artificially.",
+        dataInsight: "Nations with pegged currencies show the highest 'deduced gaps' that never resolve via standard market lags.",
+        source: "Policy Analysis",
+        category: "Monetary Policy",
+        specificityScore: 94,
+        logic: `concept "Currency Pegs"
+  is a: block
+  context: "Fixed exchange rate regimes"
+  mechanism: "government policy prevents currency adjustment regardless of purchasing power deviations"
+  evidence: "IMF Exchange Rate Arrangement classifications"
+  covers:
+    explains: [dollar_ex]
+    aggregates: [foreign_reserves]
+    replaces: "Market exchange rates"
+  relation:
+    direction: upstream
+    of: "Policy Gap"
+    via: administrative_intervention
+  contrasts_with: "Market Lag"
+  scope: regional
+  fidelity: 0.96`
       }
     ],
     metrics: {
