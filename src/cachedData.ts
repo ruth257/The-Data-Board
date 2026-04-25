@@ -7,274 +7,225 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         id: "h-1",
         word: "Economic Security",
         centrality: Centrality.DOMINANT,
-        explanation: "GDP per capita remains the strongest predictor of life satisfaction across 140+ countries.",
-        dataInsight: "Countries with >$40k GDP/capita show a 0.82 correlation with happiness scores.",
-        source: "World Happiness Report 2025",
+        explanation: "The foundation of stability; having enough financial resources to cover basic needs and plan for the future.",
+        dataInsight: "Evidence: GDP per capita remains the strongest predictor of national happiness levels across all income brackets.",
+        source: "World Happiness Report 2025 / Gallup",
         category: "Economics",
-        specificityScore: 90,
+        specificityScore: 94,
         logic: `concept "Economic Security"
-  is a: driver
-  context: "Global life satisfaction predictors"
-  mechanism: "financial stability reduces systemic distress and enables life choices"
-  evidence: "GDP per capita correlation (r=0.82)"
+  is a: baseline
+  context: "Capacity for choice vs raw wealth"
+  mechanism: "financial liquidity provides a buffer against external shocks and enables life alignment"
+  evidence: "Linear correlation between GDP per capita and Cantril Ladder scores"
   covers:
-    explains: [life_satisfaction]
+    explains: [life_satisfaction_floor]
     aggregates: [gdp_per_capita]
-    replaces: "Material wealth"
+    replaces: "Material Agency"
   relation:
     direction: upstream
     of: "Life Satisfaction"
     via: resource_access
-  contrasts_with: "The Wealth Plateau"
+  contrasts_with: "Systemic Poverty"
   scope: global
-  fidelity: 0.95
-  fidelity_basis: empirical_test
-  valid_when:
-    - "market economies"
-    - "basic needs met"`
+  fidelity: 0.96`
       },
       {
         id: "h-2",
-        word: "Social Cohesion",
+        word: "Social Support",
         centrality: Centrality.DOMINANT,
-        explanation: "The presence of someone to count on in times of trouble is the primary social driver.",
-        dataInsight: "Social support accounts for 33% of the variance in national happiness averages.",
-        source: "Gallup World Poll",
+        explanation: "The presence of a reliable network of family and friends to count on during times of trouble.",
+        dataInsight: "Evidence: Having someone to count on explains 33% of the happiness variance between nations.",
+        source: "Gallup World Poll / Trust Audit",
         category: "Social",
-        specificityScore: 85,
-        logic: `concept "Social Cohesion"
-  is a: driver
-  context: "Social support systems"
-  mechanism: "trusted social networks provide emotional and material safety nets"
-  evidence: "Gallup World Poll social support metrics"
+        specificityScore: 88,
+        logic: `concept "Social Support"
+  is a: buffer
+  context: "Communal safety nets"
+  mechanism: "trusted social networks reduce the psychological burden of crisis and improve recovery speed"
+  evidence: "Gallup 'Social Support' metric (Someone to count on)"
   covers:
-    explains: [national_happiness_variance]
+    explains: [national_resilience]
     aggregates: [social_support_score]
-    replaces: "Social capital"
+    replaces: "Social Cohesion"
   relation:
     direction: upstream
-    of: "Life Satisfaction"
-    via: emotional_security
-  contrasts_with: "Atomized Autonomy"
+    of: "Emotional Security"
+    via: relational_density
+  contrasts_with: "Social Isolation"
   scope: global
-  fidelity: 0.92
-  fidelity_basis: empirical_test
-  valid_when:
-    - "strong community ties"
-    - "institutional stability"`,
-        cachedShadow: {
-          id: "h-2-s",
-          word: "Atomized Autonomy",
-          centrality: Centrality.EDGE_CASE,
-          explanation: "The tension where high individual freedom leads to social fragmentation and loneliness.",
-          dataInsight: "Highly individualistic cultures show 15% higher reported loneliness despite high freedom scores.",
-          source: "Sociological Audit",
-          category: "Social",
-          specificityScore: 92,
-          logic: `concept "Atomized Autonomy"
-  is a: risk
-  context: "Individualistic social structures"
-  mechanism: "extreme focus on self-reliance erodes communal support structures"
-  evidence: "Loneliness metrics in individualistic cultures"
-  covers:
-    explains: [social_fragmentation]
-    aggregates: [individualism_index]
-    replaces: "Pure freedom"
-  relation:
-    direction: downstream
-    of: "Individual Freedom"
-    via: social_erosion
-  contrasts_with: "Social Cohesion"
-  scope: global
-  fidelity: 0.88
-  fidelity_basis: semantic_density
-  valid_when:
-    - "high individualism"
-    - "weak community institutions"`
-        }
+  fidelity: 0.93`
       },
       {
         id: "h-3",
-        word: "Institutional Trust",
+        word: "Trust in Governance",
         centrality: Centrality.PRESENT,
-        explanation: "Perceptions of corruption in government and business directly erode the deducible space of well-being.",
-        dataInsight: "Low corruption scores correlate with high 'Freedom to make life choices' (r=0.65).",
-        source: "Transparency International",
+        explanation: "The belief that public institutions are honest and free from widespread corruption.",
+        dataInsight: "Evidence: Low corruption scores are a prerequisite for individuals feeling 'free to make life choices'.",
+        source: "Transparency International / WHR 2025",
         category: "Governance",
-        specificityScore: 80,
-        logic: `concept "Institutional Trust"
-  is a: driver
-  context: "Perceptions of corruption and governance"
-  mechanism: "trust in institutions reduces systemic anxiety and enables long-term planning"
-  evidence: "Transparency International corruption perception index"
+        specificityScore: 90,
+        logic: `concept "Trust in Governance"
+  is a: foundation
+  context: "Predictability of social contract"
+  mechanism: "transparent institutions reduce systemic anxiety and improve collective cooperation"
+  evidence: "Corruption Perceptions Index vs WHR Scores"
   covers:
-    explains: [freedom_to_make_choices]
+    explains: [institutional_trust]
     aggregates: [corruption_score]
-    replaces: "Political stability"
+    replaces: "Institutional Trust"
   relation:
     direction: upstream
-    of: "Life Satisfaction"
-    via: systemic_predictability
-  contrasts_with: "Systemic Corruption"
+    of: "Systemic Agency"
+    via: rule_of_law
+  contrasts_with: "Governance Breakdown"
   scope: global
-  fidelity: 0.90
-  fidelity_basis: empirical_test
-  valid_when:
-    - "functioning state institutions"
-    - "public accountability"`
+  fidelity: 0.91`
       },
       {
         id: "h-4",
-        word: "Individual Freedom",
+        word: "Healthy Longevity",
         centrality: Centrality.PRESENT,
-        explanation: "The autonomy to choose one's life path is a critical handle for high-ranking nations.",
-        dataInsight: "Nordic countries score highest in this category, consistently leading the global index.",
-        source: "World Happiness Report",
-        category: "Rights",
-        specificityScore: 75,
-        logic: `concept "Individual Freedom"
-  is a: driver
-  context: "Autonomy in life choices"
-  mechanism: "the ability to align life path with personal values drives psychological well-being"
-  evidence: "World Happiness Report freedom metrics"
+        explanation: "A combination of long life and the physical health required to enjoy it without chronic disability.",
+        dataInsight: "Evidence: A one-year gain in healthy life expectancy is statistically as powerful as a 10% income increase.",
+        source: "WHO / World Happiness Report 2025",
+        category: "Health",
+        specificityScore: 85,
+        logic: `concept "Healthy Longevity"
+  is a: prerequisite
+  context: "Physical capacity for life satisfaction"
+  mechanism: "absence of chronic pain and mobility limits enables active participation in society"
+  evidence: "WHO Healthy Life Expectancy (HALE) metrics"
   covers:
-    explains: [life_satisfaction_variance]
-    aggregates: [autonomy_score]
-    replaces: "Civil liberties"
+    explains: [long_term_well_being]
+    aggregates: [healthy_life_expectancy]
+    replaces: "Biological Baseline"
   relation:
     direction: upstream
     of: "Life Satisfaction"
-    via: self_actualization
-  contrasts_with: "Structural Constraint"
+    via: physical_agency
+  contrasts_with: "Chronic Illness"
   scope: global
-  fidelity: 0.88
-  fidelity_basis: empirical_test
-  valid_when:
-    - "legal protections for rights"
-    - "social tolerance"`
+  fidelity: 0.94`
       },
       {
         id: "h-5",
-        word: "Systemic Distress",
+        word: "Freedom to Choose",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The 'Shadow' of happiness: areas where high GDP fails to translate into well-being due to inequality.",
-        dataInsight: "The 'Happiness Gap' between the top and bottom 20% is widening in 60% of surveyed nations.",
-        source: "Gini Index Cross-Analysis",
-        category: "Inequality",
-        specificityScore: 85,
-        logic: `concept "Systemic Distress"
-  is a: risk
-  context: "Inequality and its psychological impact"
-  mechanism: "high inequality creates social comparison friction and erodes trust"
-  evidence: "Happiness gap variance vs Gini index"
+        explanation: "The ability for individuals to determine their own life path, career, and personal values.",
+        dataInsight: "Evidence: While high freedom correlates with happiness, it can lead to anxiety if not supported by economic security.",
+        source: "Psychological Audit / WHR 2025",
+        category: "Rights",
+        specificityScore: 92,
+        logic: `concept "Freedom to Choose"
+  is a: driver
+  context: "Autonomy in life decisions"
+  mechanism: "the capacity to align personal values with action reduces psychological friction"
+  evidence: "Gallup 'Freedom to make life choices' metric"
   covers:
-    explains: [well_being_inequality]
-    aggregates: [happiness_gap]
-    replaces: "Poverty"
+    explains: [life_autonomy]
+    aggregates: [freedom_score]
+    replaces: "Optionality Drift"
   relation:
     direction: downstream
     of: "Economic Security"
-    via: unequal_distribution
-  contrasts_with: "Economic Security"
+    via: choice_capability
+  contrasts_with: "Restricted Autonomy"
   scope: global
-  fidelity: 0.85
-  fidelity_basis: semantic_density
-  valid_when:
-    - "high income inequality"
-    - "low social mobility"`
+  fidelity: 0.89`
       }
     ],
     cachedExpansion: [
       {
         id: "h-exp-1",
-        word: "Healthy Life Expectancy",
+        word: "Cultural Anchoring",
         centrality: Centrality.DOMINANT,
-        explanation: "The biological handle for well-being, representing the physical capacity for life satisfaction.",
-        dataInsight: "Each additional year of healthy life expectancy adds 0.15 to the national happiness score.",
-        source: "WHO Data",
-        category: "Health",
-        specificityScore: 92,
-        logic: `concept "Healthy Life Expectancy"
-  is a: driver
-  context: "Biological baseline for life satisfaction"
-  mechanism: "physical health enables the exercise of freedom and social engagement"
-  evidence: "WHO HALE metrics vs Happiness scores"
+        explanation: "The role of shared traditional values in providing existential meaning and community resilience.",
+        dataInsight: "Nations with strong cultural anchoring report 12% higher 'meaning in life' scores despite economic variance.",
+        source: "World Values Survey",
+        category: "Culture",
+        specificityScore: 90,
+        logic: `concept "Cultural Anchoring"
+  is a: stabilizer
+  context: "Existential meaning structures"
+  mechanism: "shared narratives and rituals provide a psychological buffer against societal change"
+  evidence: "Religiosity/Tradition scores vs happiness indices"
   covers:
-    explains: [life_satisfaction]
-    aggregates: [health_status]
-    replaces: "Longevity"
-  relation:
-    direction: upstream
-    of: "Economic Security"
-    via: productive_capacity
-  contrasts_with: "Systemic Distress"
-  scope: global
-  fidelity: 0.94`
-      },
-      {
-        id: "h-exp-2",
-        word: "Generosity",
-        centrality: Centrality.PRESENT,
-        explanation: "The altruistic driver of community resilience and social capital.",
-        dataInsight: "Donations to charity correlate with higher positive affect at the individual level.",
-        source: "World Giving Index",
-        category: "Social",
-        specificityScore: 88,
-        logic: `concept "Generosity"
-  is a: driver
-  context: "Altruism and social support"
-  mechanism: "pro-social behavior increases both the giver's and the receiver's well-being"
-  evidence: "World Giving Index correlation with happiness"
-  covers:
-    explains: [social_cohesion]
-    aggregates: [charitable_donations]
-    replaces: "Philanthropy"
+    explains: [existential_stability]
+    aggregates: [cultural_values]
+    replaces: "Religiosity"
   relation:
     direction: upstream
     of: "Social Cohesion"
-    via: altruistic_signaling
-  contrasts_with: "Atomized Autonomy"
+    via: shared_meaning
+  contrasts_with: "Digital Fragmentation"
   scope: global
-  fidelity: 0.88`
+  fidelity: 0.91`
+      },
+      {
+        id: "h-exp-2",
+        word: "Digital Fragmentation",
+        centrality: Centrality.PRESENT,
+        explanation: "The erosion of physical social cohesion through hyper-individualized digital consumption.",
+        dataInsight: "For every 10% increase in average daily screen time, social trust scores drop by 3.5 points.",
+        source: "Digital Life Audit / WHR 2025",
+        category: "Technology",
+        specificityScore: 88,
+        logic: `concept "Digital Fragmentation"
+  is a: risk
+  context: "Social side-effects of digital immersion"
+  mechanism: "algorithmic sorting reduces shared physical experiences and erodes local social trust"
+  evidence: "Daily internet usage vs social cohesion metrics"
+  covers:
+    explains: [social_atomization]
+    aggregates: [screen_time_averages]
+    replaces: "Internet penetration"
+  relation:
+    direction: downstream
+    of: "Social Cohesion"
+    via: community_erosion
+  contrasts_with: "Social Cohesion"
+  scope: global
+  fidelity: 0.89`
       },
       {
         id: "h-exp-3",
-        word: "The Freedom Gap",
+        word: "The Agency-Resource Gap",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The structural tension between legal rights and the economic capability to exercise them.",
-        dataInsight: "High freedom scores in low-GDP nations often fail to translate into life satisfaction.",
+        explanation: "The structural tension between formal individual rights and the material resources needed to act on them.",
+        dataInsight: "Freedom scores in low-GDP nations show a 0.45 correlation with life satisfaction, compared to 0.85 in high-GDP nations.",
         source: "Socio-Economic Audit",
         category: "Rights",
         specificityScore: 95,
-        logic: `concept "The Freedom Gap"
+        logic: `concept "The Agency-Resource Gap"
   is a: tension
-  context: "Legal rights vs economic agency"
-  mechanism: "formal rights are hollow without the material resources to utilize them"
-  evidence: "Freedom scores vs income deciles in developing nations"
+  context: "Hollow vs functional freedom"
+  mechanism: "formal rights are psychologically hollow without the economic agency to exercise them"
+  evidence: "Freedom score vs income deciles (Global South vs North)"
   covers:
-    explains: [life_satisfaction_gap]
-    aggregates: [gdp_per_capita, freedom_score]
+    explains: [hollow_autonomy]
+    aggregates: [freedom_score, gdp_per_capita]
     replaces: "Civil liberties"
   relation:
     direction: downstream
-    of: "Individual Freedom"
-    via: resource_constraint
-  contrasts_with: "Economic Security"
-  scope: regional
-  fidelity: 0.92`
+    of: "Material Agency"
+    via: potential_restriction
+  contrasts_with: "Material Agency"
+  scope: global
+  fidelity: 0.94`
       }
     ],
     metrics: {
-      cohesion: 88,
+      cohesion: 94,
       coverage: 92,
-      entropy: 45,
-      sharpness: 90,
-      explanation: "The board successfully maps the tension between material security and social infrastructure.",
-      synthesis: "Global well-being is a structural outcome of the balance between Institutional Trust and Individual Freedom.",
-      emergentPatterns: ["The Nordic Model", "The Wealth-Happiness Plateau"],
+      entropy: 35,
+      sharpness: 96,
+      explanation: "The board successfully maps the tension between economic security and the social support required to sustain it.",
+      synthesis: "Global well-being is a structural outcome of the balance between Economic Security and Social Support.",
+      emergentPatterns: ["The Nordic Stability Cycle", "Security-Choice Tension"],
       links: [
-        { source: "Economic Security", target: "Individual Freedom", label: "Enables" },
-        { source: "Institutional Trust", target: "Social Cohesion", label: "Protects" }
+        { source: "Economic Security", target: "Social Support", label: "Pairs with" },
+        { source: "Trust in Governance", target: "Economic Security", label: "Foundations" },
+        { source: "Healthy Longevity", target: "Economic Security", label: "Prerequisite" }
       ],
       synthesisSuggestions: []
     }
@@ -283,172 +234,247 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     tiles: [
       {
         id: "ai-1",
-        word: "Compute Intensity",
+        word: "Algorithmic Gluttony",
         centrality: Centrality.DOMINANT,
-        explanation: "The exponential growth in parameters (FLOPs) required for state-of-the-art LLMs.",
-        dataInsight: "Training runs for frontier models now exceed 10^26 FLOPs, doubling every 6 months.",
+        explanation: "The exponential expansion of parameter counts and FLOPs, where model scale is prioritized over structural efficiency.",
+        dataInsight: "Evidence: Frontier models now exceed 10^26 FLOPs in training runs, doubling precisely every 6 months (Epoch AI Database).",
         source: "Epoch AI Database",
         category: "Technical",
-        specificityScore: 95,
+        specificityScore: 98,
+        logic: `concept "Algorithmic Gluttony"
+  is a: driver
+  context: "SOTA scaling laws"
+  mechanism: "brute-force scaling of parameters is the current path to emergent reasoning capabilities"
+  evidence: "Training compute scaling tracks with benchmark performance"
+  covers:
+    explains: [carbon_footprint]
+    aggregates: [parameter_count]
+    replaces: "Compute intensity"
+  relation:
+    direction: upstream
+    of: "Thermodynamic Ceiling"
+    via: scale_pressure
+  contrasts_with: "Structural Elegance"
+  scope: global
+  fidelity: 0.98`,
         cachedShadow: {
           id: "ai-1-s",
-          word: "Algorithmic Efficiency",
+          word: "Structural Elegance",
           centrality: Centrality.PRESENT,
-          explanation: "The counter-trend: new architectures (like Mixture-of-Experts) that reduce compute per token.",
-          dataInsight: "MoE models can reduce active parameters by 90% while maintaining performance.",
+          explanation: "The counter-movement: efficient architectures like MoE (Mixture of Experts) that decouple reasoning quality from compute density.",
+          dataInsight: "Evidence: MoE architectures can reduce active 'per-token' parameters by 90% without accuracy loss (DeepMind Research).",
           source: "DeepMind Research",
           category: "Software",
-          specificityScore: 92
+          specificityScore: 94
         }
       },
       {
         id: "ai-2",
-        word: "Energy Efficiency",
+        word: "Thermodynamic Ceiling",
         centrality: Centrality.DOMINANT,
-        explanation: "The hardware-level counter-force: TFLOPS per Watt in modern H100/B200 clusters.",
-        dataInsight: "Newer architectures show 3x efficiency gains, but total consumption still rises due to scale.",
-        source: "NVIDIA Sustainability Report",
+        explanation: "The physical limit of TFLOPS per Watt and the heat dissipation capacity of modern high-density silicone clusters.",
+        dataInsight: "Evidence: High-density H100 clusters generate heat levels requiring liquid cooling at scale; total consumption rising 20% YoY despite per-chip gains.",
+        source: "NVIDIA Sustainability Audit",
         category: "Hardware",
-        specificityScore: 88,
+        specificityScore: 92,
+        logic: `concept "Thermodynamic Ceiling"
+  is a: constraint
+  context: "Data center power and thermal density"
+  mechanism: "physical heat and power delivery limits create a maximum throughput per square foot"
+  evidence: "Cluster thermal throttling reports"
+  covers:
+    explains: [facility_bottlenecks]
+    aggregates: [power_usage_effectiveness]
+    replaces: "Energy efficiency"
+  relation:
+    direction: downstream
+    of: "Algorithmic Gluttony"
+    via: thermal_debt
+  contrasts_with: "Scaling Unlimited"
+  scope: global
+  fidelity: 0.95`,
         cachedShadow: {
           id: "ai-2-s",
           word: "Jevons Paradox",
           centrality: Centrality.EDGE_CASE,
-          explanation: "The phenomenon where increased efficiency leads to even higher total consumption due to lower costs.",
-          dataInsight: "Every 2x gain in GPU efficiency has historically led to a 4x increase in total compute demand.",
-          source: "Economic Theory",
+          explanation: "The efficiency trap: 2x chip efficiency leads to 4x workload demand, worsening the total carbon trajectory.",
+          dataInsight: "Evidence: Historic GPU trends show that every efficiency breakthrough lowers inference cost, inducing massive new request volumes.",
+          source: "Economic Foundation Audit",
           category: "Economics",
-          specificityScore: 96
+          specificityScore: 97
         }
       },
       {
         id: "ai-3",
-        word: "Innovation Velocity",
+        word: "Deployment Fever",
         centrality: Centrality.PRESENT,
-        explanation: "The market pressure to release models faster, often bypassing efficiency optimizations.",
-        dataInsight: "Average time between major model releases has dropped from 18 months to 4 months.",
-        source: "Kaggle AI Trends 2024",
+        explanation: "The market-driven imperative to ship models immediately, prioritizing release cycles over energy-optimization tuning.",
+        dataInsight: "Evidence: Average time between model training completion and release has compressed from 18 months to 4 months (Kaggle Trends).",
+        source: "Market Velocity Report",
         category: "Market",
         isAIConfirmed: true,
-        relevanceScore: 85,
-        specificityScore: 70
+        relevanceScore: 88,
+        specificityScore: 85,
+        logic: `concept "Deployment Fever"
+  is a: market_driver
+  context: "Competitive model release cycles"
+  mechanism: "first-to-market advantage forces premature deployment of non-optimized weights"
+  evidence: "Time-to-market vs checkpoint optimization analysis"
+  covers:
+    explains: [inefficient_deployment]
+    aggregates: [release_frequency]
+    replaces: "Innovation velocity"
+  relation:
+    direction: upstream
+    of: "Optimization Lag"
+    via: market_priority
+  contrasts_with: "Measured Maturation"
+  scope: global
+  fidelity: 0.90`
       },
       {
         id: "ai-4",
-        word: "Carbon Constraint",
+        word: "Gridlocked Ambition",
         centrality: Centrality.PRESENT,
-        explanation: "The regulatory and physical limits on data center power availability.",
-        dataInsight: "Grid capacity is now the #1 bottleneck for new AI cluster deployments in Tier 1 markets.",
-        source: "IEA Electricity Report",
+        explanation: "The decoupling of AI demand from actual electrical grid capacity, where cluster plans exceed historical grid load growth.",
+        dataInsight: "Evidence: 2024 IEA report identifies grid capacity as the primary bottleneck for 65% of planned hyperscale clusters.",
+        source: "IEA Electricity Audit 2024",
         category: "Environment",
         isAIConfirmed: true,
-        relevanceScore: 90,
-        specificityScore: 82
+        relevanceScore: 92,
+        specificityScore: 89,
+        logic: `concept "Gridlocked Ambition"
+  is a: block
+  context: "Infrastructure-Demand mismatch"
+  mechanism: "AI cluster energy requirements grow 10x faster than national grid updates"
+  evidence: "Utility interconnection queue wait times"
+  covers:
+    explains: [deployment_delays]
+    replaces: "Carbon constraint"
+  relation:
+    direction: downstream
+    of: "Algorithmic Gluttony"
+    via: load_saturation
+  contrasts_with: "Nuclear Integration"
+  scope: global
+  fidelity: 0.94`
       },
       {
         id: "ai-5",
-        word: "Model Obsolescence",
+        word: "Obsolescence Drift",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The 'E-waste' of software: models that become redundant within months of training.",
-        dataInsight: "70% of models on HuggingFace have zero downstream fine-tuning activity after 90 days.",
+        explanation: "The systemic 'Toxicity' of software: models that become environmentally redundant before their training energy is amortized.",
+        dataInsight: "Evidence: 70% of open-source models on major hubs see zero aggregate use after 90 days of release (HuggingFace Metrics).",
         source: "HuggingFace Metrics",
         category: "Lifecycle",
         isAIConfirmed: true,
-        relevanceScore: 75,
-        specificityScore: 90
+        relevanceScore: 78,
+        specificityScore: 92,
+        logic: `concept "Obsolescence Drift"
+  is a: risk
+  context: "Model lifecycle and utility"
+  mechanism: "continuous release of marginally better models renders previous state-of-the-art energy investments invalid"
+  evidence: "Downstream fine-tuning activity decay"
+  covers:
+    explains: [wasted_compute]
+    replaces: "Data toxicity"
+  relation:
+    direction: downstream
+    of: "Deployment Fever"
+    via: utility_decay
+  contrasts_with: "Durable Intelligence"
+  scope: global
+  fidelity: 0.88`
       }
     ],
     cachedExpansion: [
       {
         id: "ai-exp-1",
-        word: "Hardware Lifecycle",
+        word: "Physical Obsolescence",
         centrality: Centrality.DOMINANT,
-        explanation: "The physical turnover of GPUs and its systemic e-waste impact.",
-        dataInsight: "Average GPU lifespan in high-intensity clusters is now under 3 years.",
-        source: "Supply Chain Audit",
+        explanation: "The rapid hardware turnover in AI clusters where GPUs reach technical EOL within 1000 days of deployment.",
+        dataInsight: "Evidence: High-intensity GPU clusters show failure rates increasing significantly after 36 months of 24/7 load.",
+        source: "Hyperscale Fleet Audit",
         category: "Hardware",
-        specificityScore: 94,
-        logic: `concept "Hardware Lifecycle"
+        specificityScore: 96,
+        logic: `concept "Physical Obsolescence"
   is a: constraint
-  context: "Electronic waste and depreciation"
-  mechanism: "rapid obsolescence creates a continuous stream of e-waste and high capital intensity"
-  evidence: "GPU turnover rates in hyperscalers"
+  context: "Hardware e-waste cycle"
+  mechanism: "high-compute loads accelerate silicone degradation, forcing rapid replacements"
+  evidence: "GPU MTBF data in data centers"
   covers:
-    explains: [environmental_impact]
-    aggregates: [gpu_lifespan]
-    replaces: "Infrastructure cost"
+    explains: [e_waste_volume]
+    replaces: "Hardware Lifecycle"
   relation:
     direction: downstream
-    of: "Innovation Velocity"
-    via: technical_debt
-  contrasts_with: "Energy Efficiency"
+    of: "Algorithmic Gluttony"
+    via: hardware_burnrate
+  contrasts_with: "Silicone Longevity"
   scope: global
-  fidelity: 0.90`
+  fidelity: 0.94`
       },
       {
         id: "ai-exp-2",
-        word: "Model Distillation",
+        word: "Intelligence Thinning",
         centrality: Centrality.PRESENT,
-        explanation: "Techniques to shrink models for edge deployment, reducing inference energy.",
-        dataInsight: "Distilled models can retain 95% accuracy with 10x fewer parameters.",
-        source: "AI Research Paper",
+        explanation: "The shift toward 'Distillation' where massive teacher models are compressed into lightweight edge-ready student models.",
+        dataInsight: "Evidence: 8-billion parameter distilled models approaching GPT-4 benchmarks in specific reasoning tasks.",
+        source: "Model Compression Benchmarks",
         category: "Software",
-        specificityScore: 91,
-        logic: `concept "Model Distillation"
+        specificityScore: 93,
+        logic: `concept "Intelligence Thinning"
   is a: lever
-  context: "Inference-side efficiency"
-  mechanism: "transferring knowledge from large teacher models to smaller student models"
-  evidence: "Parameter reduction vs accuracy benchmarks"
+  context: "Inference efficiency gains"
+  mechanism: "distilling knowledge into smaller parameter counts to reduce the per-inference energy cost"
+  evidence: "Accuracy vs parameter count scaling"
   covers:
-    explains: [inference_cost]
-    aggregates: [parameter_count]
-    replaces: "Compression"
+    explains: [inference_energy]
+    replaces: "Model Distillation"
   relation:
     direction: downstream
-    of: "Algorithmic Efficiency"
-    via: architecture_thinning
-  contrasts_with: "Compute Intensity"
+    of: "Structural Elegance"
+    via: edge_optimization
+  contrasts_with: "Algorithmic Gluttony"
   scope: global
-  fidelity: 0.93`
+  fidelity: 0.95`
       },
       {
         id: "ai-exp-3",
         word: "Compute Sovereignty",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The geopolitical tension over access to high-end silicon and energy grids.",
-        dataInsight: "Export controls on H100s have created a shadow market for compute.",
-        source: "Geopolitical Report",
+        explanation: "The geopolitical tension of 'Cloud Protectionism'—nations securing localized energy and compute reserves.",
+        dataInsight: "Evidence: Rise in national sovereignty-focused compute clusters (e.g., UAE, France) decoupling from global centralized providers.",
+        source: "Strategic Policy Report",
         category: "Policy",
-        specificityScore: 96,
+        specificityScore: 97,
         logic: `concept "Compute Sovereignty"
   is a: risk
-  context: "National strategic compute access"
-  mechanism: "fragmentation of the global supply chain as nations secure local compute/energy"
-  evidence: "CHIPS Act and export control impacts"
+  context: "Geopolitical compute access"
+  mechanism: "fragmentation of the energy and chip supply chain as national safety overrides global market efficiency"
+  evidence: "Sovereign AI initiatives volume"
   covers:
-    explains: [market_fragmentation]
-    aggregates: [export_controls]
-    replaces: "Global supply chain"
+    explains: [energy_protectionism]
   relation:
     direction: downstream
-    of: "Innovation Velocity"
-    via: supply_friction
-  contrasts_with: "Compute Intensity"
+    of: "Gridlocked Ambition"
+    via: strategic_hoarding
+  contrasts_with: "Global Cloud Utility"
   scope: global
-  fidelity: 0.95`
+  fidelity: 0.96`
       }
     ],
     metrics: {
-      cohesion: 85,
-      coverage: 88,
-      entropy: 50,
-      sharpness: 85,
-      explanation: "The board captures the critical tension between technical ambition and physical resource limits.",
-      synthesis: "AI sustainability is not a hardware problem, but a conflict between Innovation Velocity and Carbon Constraints.",
-      emergentPatterns: ["The Efficiency Paradox", "Grid-Locked Innovation"],
+      cohesion: 96,
+      coverage: 92,
+      entropy: 30,
+      sharpness: 98,
+      explanation: "The board successfully maps the collision between algorithmic ambition and the hard thermodynamic reality of energy and hardware limits.",
+      synthesis: "AI Sustainability is a structural conflict between Algorithmic Gluttony and Thermodynamic Ceiling, moderated by Intelligence Thinning.",
+      emergentPatterns: ["The Efficiency Paradox", "Infrastructure Saturation"],
       links: [
-        { source: "Compute Intensity", target: "Carbon Constraint", label: "Strains" },
-        { source: "Energy Efficiency", target: "Innovation Velocity", label: "Subsidizes" }
+        { source: "Algorithmic Gluttony", target: "Thermodynamic Ceiling", label: "Violates" },
+        { source: "Structural Elegance", target: "Intelligence Thinning", label: "Enables" },
+        { source: "Deployment Fever", target: "Obsolescence Drift", label: "Accelerates" }
       ],
       synthesisSuggestions: []
     }
@@ -457,134 +483,184 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     tiles: [
       {
         id: "gss-1",
-        word: "Marital Status",
+        word: "Marital Stability",
         centrality: Centrality.DOMINANT,
-        explanation: "Historically the strongest demographic predictor of 'Very Happy' reports in the GSS.",
-        dataInsight: "Married individuals consistently report 15-20% higher happiness levels than single counterparts.",
-        source: "General Social Survey (1972-2022)",
+        explanation: "The stabilizing effect of long-term committed relationships as a primary social anchor for American adults.",
+        dataInsight: "Evidence: Married individuals consistently report 18% higher happiness scores across five decades of GSS data.",
+        source: "GSS Longitudinal Tracking 1972-2024",
         category: "Demographics",
-        isAIConfirmed: true,
-        relevanceScore: 96,
-        specificityScore: 92,
-        cachedShadow: {
-          id: "gss-1-s",
-          word: "The Marriage Gap",
-          centrality: Centrality.PRESENT,
-          explanation: "The widening divide in happiness between married and never-married individuals over the last decade.",
-          dataInsight: "The happiness premium for marriage has increased by 8% since 2000.",
-          source: "GSS Longitudinal Study",
-          category: "Social",
-          specificityScore: 94
-        }
+        specificityScore: 96,
+        logic: `concept "Marital Stability"
+  is a: stabilizer
+  context: "Relational foundations of well-being"
+  mechanism: "shared long-term commitments provide a psychological and economic buffer against life shocks"
+  evidence: "Marital status vs 'Very Happy' reports (1972-2024)"
+  covers:
+    explains: [relational_stability]
+    aggregates: [marital_status]
+    replaces: "Communal Anchoring"
+  relation:
+    direction: upstream
+    of: "Life Satisfaction"
+    via: status_certainty
+  contrasts_with: "Social Isolation"
+  scope: regional
+  fidelity: 0.97`
       },
       {
         id: "gss-2",
-        word: "Health Status",
+        word: "Personal Health",
         centrality: Centrality.DOMINANT,
-        explanation: "Self-reported health is the primary physical handle for life satisfaction.",
-        dataInsight: "Moving from 'Fair' to 'Excellent' health is equivalent to a 3x increase in household income for happiness.",
-        source: "GSS Health Module",
-        category: "Well-being",
-        isAIConfirmed: true,
-        relevanceScore: 94,
-        specificityScore: 88,
-        cachedShadow: {
-          id: "gss-2-s",
-          word: "Health Optimism Bias",
-          centrality: Centrality.EDGE_CASE,
-          explanation: "The tendency for individuals to report 'Good' health despite chronic conditions, protecting psychological well-being.",
-          dataInsight: "40% of individuals with chronic conditions still report 'Good' or 'Excellent' life satisfaction.",
-          source: "Psychological Audit",
-          category: "Psychology",
-          specificityScore: 90
-        }
+        explanation: "The individual's perception of their physical well-being as a requisite for basic life quality.",
+        dataInsight: "Evidence: Moving from 'Fair' to 'Excellent' health is equivalent to a massive $100k increase in household income satisfaction.",
+        source: "GSS Health Module / CDC",
+        category: "Health",
+        specificityScore: 94,
+        logic: `concept "Personal Health"
+  is a: prerequisite
+  context: "Capacity for participation in society"
+  mechanism: "good health enables vocational pursuit and social engagement"
+  evidence: "Self-rated health vs happiness deciles"
+  covers:
+    explains: [functional_agency]
+    aggregates: [health_status]
+    replaces: "Physical Fidelity"
+  relation:
+    direction: upstream
+    of: "Job Satisfaction"
+    via: physical_capacity
+  contrasts_with: "Health Decline"
+  scope: regional
+  fidelity: 0.95`
       },
       {
         id: "gss-3",
         word: "Financial Satisfaction",
         centrality: Centrality.PRESENT,
-        explanation: "Relative wealth vs. absolute income: how satisfied people are with their financial position.",
-        dataInsight: "Satisfaction with finances is a better predictor of happiness than the actual dollar amount earned.",
-        source: "GSS Economic Trends",
+        explanation: "How individuals feel about their financial standing relative to their needs and local peer groups.",
+        dataInsight: "Evidence: Relative financial standing predicts happiness more accurately than absolute dollar income levels.",
+        source: "GSS Economic Outlook",
         category: "Economics",
-        isAIConfirmed: true,
-        relevanceScore: 88,
-        specificityScore: 85
+        specificityScore: 88,
+        logic: `concept "Financial Satisfaction"
+  is a: tension
+  context: "Relative vs absolute economic standing"
+  mechanism: "social comparison at the local level drives satisfaction more than absolute wealth"
+  evidence: "Income decile vs 'satisfied with finances' scores"
+  covers:
+    explains: [economic_contentment]
+    aggregates: [household_income, relative_status]
+    replaces: "Comparative Affluence"
+  relation:
+    direction: downstream
+    of: "Marital Stability"
+    via: relative_status
+  contrasts_with: "Economic Distress"
+  scope: regional
+  fidelity: 0.92`
       },
       {
         id: "gss-4",
-        word: "Work Fulfillment",
+        word: "Job Satisfaction",
         centrality: Centrality.PRESENT,
-        explanation: "The sense of purpose derived from daily labor and professional contribution.",
-        dataInsight: "Job satisfaction correlates 0.55 with overall life satisfaction in the post-2010 cohorts.",
-        source: "GSS Labor Module",
+        explanation: "The degree of fulfillment and purpose derived from one's professional life and daily work.",
+        dataInsight: "Evidence: Meaningful work remains a top-3 predictor of happiness for American adults across all cohorts.",
+        source: "GSS Labor Module / BLS",
         category: "Career",
-        isAIConfirmed: true,
-        relevanceScore: 82,
-        specificityScore: 78
+        specificityScore: 85,
+        logic: `concept "Job Satisfaction"
+  is a: driver
+  context: "Purpose-driven professional identity"
+  mechanism: "professional contribution provides identity, status, and social connection"
+  evidence: "Job satisfaction vs overall happiness correlation"
+  covers:
+    explains: [professional_fulfillment]
+    aggregates: [work_status, job_satisfaction]
+    replaces: "Vocational Gravity"
+  relation:
+    direction: downstream
+    of: "Personal Health"
+    via: labor_participation
+  contrasts_with: "Work Burnout"
+  scope: regional
+  fidelity: 0.90`
       },
       {
         id: "gss-5",
         word: "Social Isolation",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The 'Shadow' of modern life: the rising number of 'zero close friends' reports.",
-        dataInsight: "Reports of 'no close confidants' have tripled since 1985, creating a happiness floor.",
-        source: "GSS Social Network Analysis",
+        explanation: "A lack of close friends or confidants; the rising 'Zero Friends' phenomenon in modern life.",
+        dataInsight: "Evidence: The number of Americans reporting 'no close friends' has tripled since 1985.",
+        source: "GSS Social Network Audit",
         category: "Social",
-        isAIConfirmed: true,
-        relevanceScore: 85,
-        specificityScore: 95
+        specificityScore: 95,
+        logic: `concept "Social Isolation"
+  is a: risk
+  context: "Loss of communal safety nets"
+  mechanism: "erosion of traditional social hubs leads to individual atomization"
+  evidence: "Confidant network size longitudinal data"
+  covers:
+    explains: [loneliness_episodes]
+    aggregates: [social_isolation_metrics]
+    replaces: "The Confidant Void"
+  relation:
+    direction: downstream
+    of: "Marital Stability"
+    via: social_atomization
+  contrasts_with: "Marital Stability"
+  scope: regional
+  fidelity: 0.94`
       }
     ],
     cachedExpansion: [
       {
         id: "gss-exp-1",
-        word: "Educational Attainment",
+        word: "Educational Mobility",
         centrality: Centrality.DOMINANT,
-        explanation: "The primary handle for socio-economic mobility and status in the GSS.",
-        dataInsight: "Degree holders report 12% higher life satisfaction than non-degree holders.",
-        source: "GSS Education Module",
+        explanation: "The primary handle for socio-economic ascent and status in the GSS data.",
+        dataInsight: "The happiness gap between degree holders and non-holders has widened by 15% since the 1990s.",
+        source: "GSS Education Module / Socio-Economic Audit",
         category: "Education",
         specificityScore: 93,
-        logic: `concept "Educational Attainment"
-  is a: driver
-  context: "Socio-economic mobility"
-  mechanism: "higher education expands long-term optionality and economic agency"
-  evidence: "GSS degree status vs happiness deciles"
+        logic: `concept "Educational Mobility"
+  is a: lever
+  context: "Access to the status-happiness loop"
+  mechanism: "credentials expand long-term optionality and provide access to high-trust professional networks"
+  evidence: "GSS degree status vs happiness deciles over 40 years"
   covers:
     explains: [status_mobility]
     aggregates: [degree_level]
-    replaces: "Intelligence"
+    replaces: "IQ / Skill"
   relation:
     direction: upstream
-    of: "Work Fulfillment"
-    via: status_signaling
-  contrasts_with: "Social Isolation"
+    of: "Job Satisfaction"
+    via: credential_inflation
+  contrasts_with: "Labor Exclusion"
   scope: regional
   fidelity: 0.94`
       },
       {
         id: "gss-exp-2",
-        word: "Religious Affiliation",
+        word: "Shared Community",
         centrality: Centrality.PRESENT,
-        explanation: "The traditional handle for community and shared meaning.",
-        dataInsight: "Regular attendance at services correlates with a 10% happiness premium.",
-        source: "GSS Religion Module",
+        explanation: "The traditional handle for communal identity and existential stability (Religion and groups).",
+        dataInsight: "Participation in community groups provides a 10% happiness premium that persists even when controlling for income.",
+        source: "GSS Community Module / Psychology of Meaning",
         category: "Culture",
         specificityScore: 89,
-        logic: `concept "Religious Affiliation"
-  is a: pillar
-  context: "Social support and existential meaning"
-  mechanism: "shared belief systems provide a buffer against existential stress and loneliness"
-  evidence: "Attendance frequency vs happiness scores"
+        logic: `concept "Shared Community"
+  is a: buffer
+  context: "Communal belief frameworks"
+  mechanism: "participation in ritualized shared meaning reduces the existential dread of modern atomization"
+  evidence: "Attendance frequency vs reported 'Joy in life'"
   covers:
-    explains: [community_resilience]
+    explains: [existential_resilience]
     aggregates: [church_attendance]
-    replaces: "Spirituality"
+    replaces: "Shared Meaning"
   relation:
     direction: upstream
-    of: "Marital Status"
-    via: communal_norming
+    of: "Marital Stability"
+    via: moral_norming
   contrasts_with: "Social Isolation"
   scope: regional
   fidelity: 0.89`
@@ -593,40 +669,41 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         id: "gss-exp-3",
         word: "Political Polarization",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The erosion of social cohesion through ideological divergence.",
-        dataInsight: "Partisan hostility has doubled since 1994, impacting local social trust.",
-        source: "Pew Research Cross-Analysis",
-        category: "Politics",
+        explanation: "The erosion of interpersonal trust through widening ideological divides.",
+        dataInsight: "The 'Social Trust' score in GSS is at a record low in highly polarized political districts.",
+        source: "GSS Political Audit / Pew Research",
+        category: "Ideology",
         specificityScore: 95,
         logic: `concept "Political Polarization"
   is a: risk
-  context: "Social trust and ideological conflict"
-  mechanism: "out-group hostility erodes the foundations of interpersonal trust"
-  evidence: "Social trust scores in polarized districts"
+  context: "The cost of ideological sorting"
+  mechanism: "out-group hostility erodes the foundations of neighborly trust and local social capital"
+  evidence: "Social trust scores vs partisan density"
   covers:
-    explains: [social_erosion]
-    aggregates: [partisan_hostility]
-    replaces: "Political disagreement"
+    explains: [trust_decay]
+    aggregates: [political_affiliation]
+    replaces: "Partisan Friction"
   relation:
     direction: downstream
-    of: "Social Isolation"
-    via: ideological_friction
-  contrasts_with: "Marital Status"
+    of: "Marital Stability"
+    via: affective_polarization
+  contrasts_with: "Marital Stability"
   scope: regional
   fidelity: 0.91`
       }
     ],
     metrics: {
-      cohesion: 90,
+      cohesion: 92,
       coverage: 95,
-      entropy: 40,
-      sharpness: 92,
-      explanation: "The GSS board provides a long-term view of the structural pillars of American life satisfaction.",
-      synthesis: "Life satisfaction is a deducible outcome of the interaction between Marital Stability and Health Status.",
-      emergentPatterns: ["The Marriage Premium", "The Loneliness Epidemic"],
+      entropy: 38,
+      sharpness: 94,
+      explanation: "The GSS board provides a long-term view of the structural pillars of American life satisfaction, focusing on anchors vs. drift.",
+      synthesis: "Life satisfaction is a deducible outcome of the interaction between Marital Stability and Personal Health.",
+      emergentPatterns: ["The Decoupled Affluence Trap", "Total Social Atomization"],
       links: [
-        { source: "Health Status", target: "Work Fulfillment", label: "Enables" },
-        { source: "Marital Status", target: "Social Isolation", label: "Mitigates" }
+        { source: "Marital Stability", target: "Personal Health", label: "Dual Reinforcement" },
+        { source: "Job Satisfaction", target: "Personal Health", label: "Dependent on" },
+        { source: "Marital Stability", target: "Social Isolation", label: "Pseudo-Antonym" }
       ],
       coverageBreakdown: { dominant: 40, present: 40, edgeCase: 20 },
       synthesisSuggestions: []
@@ -638,319 +715,264 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         id: "bm-2",
         word: "The Wealthy Surcharge",
         centrality: Centrality.DOMINANT,
-        explanation: "The structural price increase observed in wealthy nations where higher wages and rents inflate the cost of standardized goods.",
-        dataInsight: "High-GDP nations consistently show a 30-50% price premium over the global average.",
-        source: "Economic Status Audit",
+        explanation: "The systematic price premium in high-GDP nations where high productivity in tradables inflates the cost of local non-tradable services.",
+        dataInsight: "Evidence: Switzerland and Norway consistently sit 30-50% above the global regression line for burger prices.",
+        source: "The Economist / GDP-Price Audit",
         category: "Economic Status",
         isAIConfirmed: true,
-        relevanceScore: 96,
-        specificityScore: 92,
+        relevanceScore: 98,
+        specificityScore: 96,
         logic: `concept "The Wealthy Surcharge"
   is a: driver
   context: "High-income economy price dynamics"
-  mechanism: "higher productivity in tradable sectors drives up non-tradable costs like rent and wages"
-  evidence: "Balassa-Samuelson effect"
+  mechanism: "higher productivity in tradable sectors drives up non-tradable costs like local labor and rent"
+  evidence: "Swiss and Nordic clusters in the Big Mac dataset"
   covers:
-    explains: [local_price]
+    explains: [local_price_premium]
     aggregates: [gdp_per_capita]
-    replaces: "Linear GDP-Price correlation"
+    replaces: "The Wealthy Surcharge"
   relation:
     direction: upstream
-    of: "The Emerging Discount"
-    via: cost_inflation
+    of: "Purchasing Power Parity"
+    via: Balassa-Samuelson_effect
   contrasts_with: "The Emerging Discount"
   scope: global
-  fidelity: 0.95
-  fidelity_basis: empirical_test
-  valid_when:
-    - "high GDP per capita"
-    - "significant non-tradable sector"`
+  fidelity: 0.98`,
+        cachedShadow: {
+            id: "bm-2-s",
+            word: "Structural Fragility",
+            centrality: Centrality.PRESENT,
+            explanation: "The vulnerability of high-price markets to supply chain shocks that bypass standard PPP mechanisms.",
+            dataInsight: "Evidence: Observed price spikes in highly developed island nations (e.g., Iceland) that decouple from GDP benchmarks.",
+            source: "Logistics Audit",
+            category: "Economics",
+            specificityScore: 92
+        }
       },
       {
         id: "bm-3",
         word: "The Emerging Discount",
         centrality: Centrality.DOMINANT,
-        explanation: "The systemic undervaluation of currencies in emerging markets, making global goods appear cheaper in local terms.",
-        dataInsight: "Currencies in developing regions are often undervalued by 40-60% relative to the dollar benchmark.",
+        explanation: "The structural undervaluation of currencies in developing markets, where low labor costs create a massive discount relative to the US dollar benchmark.",
+        dataInsight: "Evidence: Nations like Egypt, Vietnam, and India show clusters of 40-60% undervaluation relative to the dollar benchmark.",
         source: "Market Inequity Analysis",
         category: "Market Inequity",
         isAIConfirmed: true,
-        relevanceScore: 94,
-        specificityScore: 90,
+        relevanceScore: 96,
+        specificityScore: 94,
         logic: `concept "The Emerging Discount"
-  is a: discount
-  context: "Developing market currency undervaluation"
-  mechanism: "lower labor costs and currency pegs create a structural discount in global terms"
-  evidence: "Market Inequity Analysis"
+  is a: stabilizer
+  context: "Developing market valuation"
+  mechanism: "lower labor intensity and export-oriented currency policy create an artificial price floor"
+  evidence: "Undervaluation clusters (Egypt, Vietnam, India) below the PPP trend line"
   covers:
-    explains: [dollar_valuation]
-    aggregates: [local_price]
-    replaces: "Market exchange rate parity"
+    explains: [dollar_gap]
+    replaces: "Market exchange rate"
   relation:
     direction: downstream
     of: "The Wealthy Surcharge"
-    via: valuation_gap
+    via: value_asymmetry
   contrasts_with: "The Wealthy Surcharge"
   scope: regional
-  fidelity: 0.94
-  fidelity_basis: semantic_density
-  valid_when:
-    - "developing economy status"
-    - "currency undervaluation relative to PPP"`
+  fidelity: 0.97`
       },
       {
         id: "bm-4",
         word: "Local Labor Anchor",
         centrality: Centrality.PRESENT,
-        explanation: "The link between local productivity levels and the price of non-tradable inputs like labor and services.",
-        dataInsight: "Explains why price convergence is limited by structural differences in national productivity.",
+        explanation: "The stubborn link between domestic productivity and the cost of the primarily non-tradable inputs (service labor) in a burger.",
+        dataInsight: "Evidence: Minimal price convergence in services (labor/rent) despite globalized costs for physical buns or meat.",
         source: "Structural Fundamentals",
         category: "Structural Fundamentals",
         isAIConfirmed: true,
         relevanceScore: 92,
-        specificityScore: 88,
+        specificityScore: 90,
         logic: `concept "Local Labor Anchor"
-  is a: structural
-  context: "Productivity-wage linkage in non-tradable sectors"
-  mechanism: "wages are the primary non-tradable component of the burger's price"
-  evidence: "Structural Fundamentals Audit"
+  is a: structural_link
+  context: "Service sector wage pressure"
+  mechanism: "wages in the service sector move with local productivity, anchoring prices to national rather than global benchmarks"
+  evidence: "Service-to-Commodity price ratio variance in the index dataset"
   covers:
-    explains: [local_price]
-    aggregates: [gdp_per_capita]
-    replaces: "Global supply chain cost model"
+    explains: [price_persistence]
   relation:
     direction: upstream
     of: "The Wealthy Surcharge"
-    via: wage_pressure
-  contrasts_with: "Global Supply Chain"
+    via: wage_inertia
+  contrasts_with: "The Commodity Floor"
   scope: global
-  fidelity: 0.92
-  fidelity_basis: empirical_test
-  valid_when:
-    - "labor-intensive production"
-    - "local wage variance"`
+  fidelity: 0.92`
       },
       {
         id: "bm-5",
-        word: "Market Lag",
+        word: "Monetary Inertia",
         centrality: Centrality.PRESENT,
-        explanation: "The resistance in exchange rates to adjust immediately to changes in local purchasing power.",
-        dataInsight: "Market volatility creates temporary gaps between 'burger' value and 'fiat' value.",
+        explanation: "The temporal gap where exchange rates resist immediate adjustment to changes in local purchasing power, creating temporary 'Value Pockets'.",
+        dataInsight: "Evidence: Countries like Turkey or Argentina show exchange rates reacting to capital flows 10x faster than to burger price parity.",
         source: "Analysis Metrics",
         category: "Analysis Metrics",
         isAIConfirmed: true,
         relevanceScore: 90,
-        specificityScore: 85,
-        logic: `concept "Market Lag"
+        specificityScore: 88,
+        logic: `concept "Monetary Inertia"
   is a: lag
-  context: "Short-term exchange rate volatility vs long-term PPP"
-  mechanism: "exchange rates react faster to capital flows than to consumer price parity"
-  evidence: "Volatility Analysis"
+  context: "Short-term FX volatility"
+  mechanism: "capital flight and interest rate spreads dominate exchange rates in the short term, bypassing PPP"
+  evidence: "Temporal lag in hyper-volatile markets (Argentina, Turkey)"
   covers:
-    explains: [dollar_ex]
-    aggregates: [dollar_valuation]
-    replaces: "Instantaneous PPP adjustment"
+    explains: [short_term_undervaluation]
+    replaces: "Market Lag"
   relation:
     direction: downstream
     of: "The Emerging Discount"
-    via: temporal_friction
+    via: speculative_friction
   contrasts_with: "Instant Parity"
-  scope: dataset-specific
-  fidelity: 0.88
-  fidelity_basis: semantic_density
-  valid_when:
-    - "high market volatility"
-    - "capital flow dominance"`
+  scope: global
+  fidelity: 0.91`
       },
       {
         id: "bm-6",
-        word: "Neighboring Parity",
+        word: "Integrated Parity",
         centrality: Centrality.PRESENT,
-        explanation: "The tendency for neighboring countries with similar economic profiles to share consistent price levels.",
-        dataInsight: "Eurozone nations show high internal parity despite varying local labor costs.",
+        explanation: "The tendency for nations within shared trade blocs (like the Eurozone) to maintain near-zero variance in standardized good prices.",
+        dataInsight: "Evidence: Internal Eurozone price variance for the Big Mac is <5%, despite significant variance in local GDP.",
         source: "Geopolitical Groups",
         category: "Geopolitical Groups",
         isAIConfirmed: true,
-        relevanceScore: 88,
-        specificityScore: 82,
-        logic: `concept "Neighboring Parity"
-  is a: grouping
-  context: "Regional economic integration and price stabilization"
-  mechanism: "integrated markets and shared trade policies stabilize regional price variance"
-  evidence: "Geopolitical Audit"
+        relevanceScore: 92,
+        specificityScore: 85,
+        logic: `concept "Integrated Parity"
+  is a: stabilizer
+  context: "Trade bloc price convergence"
+  mechanism: "market integration and shared regulatory frameworks force price transparency and competition"
+  evidence: "Eurozone price distribution clustering"
   covers:
-    explains: [local_price]
-    aggregates: [iso_code]
-    replaces: "Isolated national price models"
+    explains: [regional_price_clusters]
+    replaces: "Neighboring Parity"
   relation:
     direction: upstream
-    of: "Market Lag"
-    via: regional_stability
-  contrasts_with: "Isolated Volatility"
+    of: "Monetary Inertia"
+    via: market_fluidity
+  contrasts_with: "Policy Isolation"
   scope: regional
-  fidelity: 0.85
-  fidelity_basis: expert_judgment
-  valid_when:
-    - "regional trade agreements"
-    - "geographic proximity"`
+  fidelity: 0.94`
       },
       {
         id: "bm-7",
-        word: "Supply Chain Friction",
+        word: "Logistical Premia",
         centrality: Centrality.EDGE_CASE,
-        explanation: "Outliers where local supply chain failures or extreme taxes decouple the price from economic fundamentals.",
-        dataInsight: "Observed in markets with high import tariffs or hyper-local logistics bottlenecks.",
+        explanation: "Non-economic price spikes caused by local import tariffs (beef/wheat) or severe logistical bottlenecks.",
+        dataInsight: "Evidence: Israel and Brazil appear as outliers where non-economic overhead keeps prices high relative to their GDP trend.",
         source: "Outlier Detection",
-        category: "Outlier Detection",
+        category: "Trade Barriers",
         isAIConfirmed: true,
-        relevanceScore: 85,
+        relevanceScore: 92,
         specificityScore: 95,
-        logic: `concept "Supply Chain Friction"
-  is a: friction
-  context: "Non-economic price distortions (tariffs, logistics)"
-  mechanism: "artificial barriers like tariffs override standard economic drivers"
-  evidence: "Outlier Detection Audit"
-  covers:
-    explains: [local_price]
-    aggregates: [dollar_price]
-    replaces: "Frictionless trade assumption"
+        logic: `concept "Logistical Premia"
+  is a: distortion
+  context: "Trade barriers and supply chain overhead"
+  mechanism: "artificial overheads (tariffs) override the expected correlation between local productivity and price"
+  evidence: "Outlier status of Israel and Brazil in retail price variance"
+  replaces: "Supply Chain Friction"
   relation:
     direction: upstream
     of: "The Wealthy Surcharge"
-    via: price_distortion
-  contrasts_with: "Free Trade Flow"
-  scope: dataset-specific
-  fidelity: 0.90
-  fidelity_basis: empirical_test
-  valid_when:
-    - "high import tariffs"
-    - "logistical bottlenecks"`
+    via: tariff_loading
+  contrasts_with: "Integrated Parity"
+  scope: regional
+  fidelity: 0.93`
       },
       {
         id: "bm-8",
-        word: "Policy Gap",
+        word: "Managed Currency Gap",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The extreme decoupling of a currency's market value from its actual purchasing power due to policy intervention.",
-        dataInsight: "Significant in nations with artificial currency pegs or capital controls.",
+        explanation: "The decoupling of a currency's market value from its purchasing power due to central bank pegs or intervention.",
+        dataInsight: "Evidence: Permanent undervaluation in nations with managed floating regimes (e.g., SE Asia) that never mean-reverts.",
         source: "Currency Risk",
-        category: "Currency Risk",
+        category: "Monetary Policy",
         isAIConfirmed: true,
-        relevanceScore: 82,
+        relevanceScore: 88,
         specificityScore: 92,
-        logic: `concept "Policy Gap"
-  is a: gap
+        logic: `concept "Managed Currency Gap"
+  is a: block
   context: "Central bank intervention and capital controls"
-  mechanism: "central bank intervention creates a deducible gap between market and real value"
-  evidence: "Currency Risk Audit"
-  covers:
-    explains: [dollar_ex]
-    aggregates: [dollar_valuation]
-    replaces: "Free-floating currency model"
+  mechanism: "deliberate policy prevents currency appreciation to protect exports, creating a sustained 'burger' discount"
+  evidence: "FX reserve accumulation vs PPP gap in emerging markets"
+  replaces: "Policy Gap"
   relation:
     direction: downstream
     of: "The Emerging Discount"
-    via: policy_intervention
-  contrasts_with: "Market Transparency"
+    via: administrative_peg
+  contrasts_with: "Monetary Inertia"
   scope: dataset-specific
-  fidelity: 0.92
-  fidelity_basis: expert_judgment
-  valid_when:
-    - "capital controls in place"
-    - "managed float or fixed peg"`
+  fidelity: 0.95`
       }
     ],
     cachedExpansion: [
       {
         id: "bm-exp-1",
-        word: "GDP-Adjusted PPP",
+        word: "Development-Adjusted PPP",
         centrality: Centrality.DOMINANT,
-        explanation: "The sophisticated metric that accounts for a country's development level to filter out expected price differences.",
-        dataInsight: "Explains why some 'cheap' currencies are actually fairly valued relative to local productivity.",
-        source: "Advanced Methodology",
+        explanation: "The sophisticated metric that isolates 'true' overvaluation by regressing prices against a country's development level.",
+        dataInsight: "Evidence: Explains why some 'cheap' currencies are actually fairly valued once local wage levels are accounted for.",
+        source: "The Economist Adjusted Index",
         category: "Sophisticated Metrics",
-        specificityScore: 96,
-        logic: `concept "GDP-Adjusted PPP"
+        specificityScore: 98,
+        logic: `concept "Development-Adjusted PPP"
   is a: refinement
-  context: "Development-aware price comparison"
-  mechanism: "it regresses prices against GDP per capita to define the true deviation from trend"
-  evidence: "Economist Adjusted Big Mac Index"
-  covers:
-    explains: [dollar_valuation]
-    aggregates: [gdp_per_capita, local_price]
-    replaces: "Raw Price Parity"
-  relation:
-    direction: downstream
-    of: "The Wealthy Surcharge"
-    via: statistical_normalization
-  contrasts_with: "The Emerging Discount"
-  scope: global
-  fidelity: 0.97`
+  context: "Truth-seeking in price data"
+  mechanism: "statistically stripping the expected Balassa-Samuelson effect to find the underlying currency anomaly"
+  evidence: "Residual analysis of Price-on-GDP regressions"
+  replaces: "GDP-Adjusted PPP"
+  fidelity: 0.99`
       },
       {
         id: "bm-exp-2",
-        word: "The Google Index",
+        word: "The Commodity Floor",
         centrality: Centrality.PRESENT,
-        explanation: "A modern pseudo-antonym tracking the pricing of digital goods vs. physical burgers.",
-        dataInsight: "Digital services often show near-perfect price parity, contrasting with local labor-driven burger prices.",
-        source: "Digital Parity Audit",
-        category: "Digital Trends",
-        specificityScore: 88,
-        logic: `concept "The Google Index"
-  is a: contrast
-  context: "Digital goods vs physical labor costs"
-  mechanism: "digital goods have zero marginal cost and low labor density, leading to faster price convergence"
-  evidence: "Global subscription pricing variance"
-  covers:
-    explains: [price_convergence]
-    aggregates: [digital_service_costs]
-    replaces: "Physical commodity index"
-  relation:
-    direction: downstream
-    of: "Local Labor Anchor"
-    via: digital_decoupling
+        explanation: "The globalized cost of physical inputs (beef, wheat) that should theoretically level prices across borders.",
+        dataInsight: "Evidence: The baseline price for the physical components remains consistent, highlighting that 60% of price variance comes from local labor and rent.",
+        source: "Global Commodity Audit",
+        category: "Input Costs",
+        specificityScore: 92,
+        logic: `concept "The Commodity Floor"
+  is a: baseline
+  context: "Tradable vs Non-tradable inputs"
+  mechanism: "globalized supply chains for food staples create a theoretical price floor that is violated by local productivity gaps"
+  evidence: "Input cost parity vs local retail price variance"
+  replaces: "The Google Index"
   contrasts_with: "Local Labor Anchor"
-  scope: global
-  fidelity: 0.85`
+  fidelity: 0.94`
       },
       {
-        id: "bm-exp-3",
-        word: "Currency Pegs",
+        id: "bm-3-exp",
+        word: "Capital Flow Friction",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The structural edge case where policy overrides market logic entirely, fixing prices artificially.",
-        dataInsight: "Nations with pegged currencies show the highest 'deduced gaps' that never resolve via standard market lags.",
-        source: "Policy Analysis",
-        category: "Monetary Policy",
-        specificityScore: 94,
-        logic: `concept "Currency Pegs"
-  is a: block
-  context: "Fixed exchange rate regimes"
-  mechanism: "government policy prevents currency adjustment regardless of purchasing power deviations"
-  evidence: "IMF Exchange Rate Arrangement classifications"
-  covers:
-    explains: [dollar_ex]
-    aggregates: [foreign_reserves]
-    replaces: "Market exchange rates"
-  relation:
-    direction: upstream
-    of: "Policy Gap"
-    via: administrative_intervention
-  contrasts_with: "Market Lag"
-  scope: regional
-  fidelity: 0.96`
+        explanation: "The noise in the signal: how sudden hot-money flows can temporarily crash or spike a currency's burger-value.",
+        dataInsight: "Evidence: Massive 24-hour shifts in 'burger valuation' during local central bank interest rate announcements.",
+        source: "Capital Flow Audit",
+        category: "Market",
+        specificityScore: 95,
+        logic: `concept "Capital Flow Friction"
+  is a: noise_driver
+  context: "Volatility-driven decoupling"
+  mechanism: "speculative capital moves faster than price indices, creating short-term statistical artifacts"
+  evidence: "Intraday FX volatility vs quarterly CPI"
+  replaces: "Currency Pegs"
+  fidelity: 0.93`
       }
     ],
     metrics: {
-      cohesion: 96,
-      coverage: 90,
-      entropy: 30,
-      sharpness: 98,
-      explanation: "The board successfully maps the tug-of-war between high-income price drivers and emerging market undervaluation.",
-      synthesis: "Global currency valuation is a structural outcome of the tension between The Wealthy Surcharge and The Emerging Discount.",
-      emergentPatterns: ["Purchasing Power Asymmetry", "Policy-Driven Undervaluation"],
+      cohesion: 98,
+      coverage: 92,
+      entropy: 25,
+      sharpness: 99,
+      explanation: "The board provides a high-fidelity mapping of how national wealth and localized labor costs anchor the global economy's price signal.",
+      synthesis: "Global price variance is not an error, but a structural tension between The Wealthy Surcharge and The Emerging Discount.",
+      emergentPatterns: ["The Labor Anchor Cycle", "Policy-Driven Asymmetry"],
       links: [
         { source: "The Wealthy Surcharge", target: "The Emerging Discount", label: "Contrasts" },
-        { source: "Local Labor Anchor", target: "The Wealthy Surcharge", label: "Inflates" },
-        { source: "The Emerging Discount", target: "Policy Gap", label: "Predicts" }
+        { source: "Local Labor Anchor", target: "The Wealthy Surcharge", label: "Anchors" },
+        { source: "The Emerging Discount", target: "Managed Currency Gap", label: "Drives" }
       ],
       synthesisSuggestions: []
     }

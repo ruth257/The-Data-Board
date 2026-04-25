@@ -1314,6 +1314,25 @@ export default function App() {
     }
   }, []);
 
+  // Persistence and URL Sync
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const scenarioId = params.get("scenario") || params.get("s");
+    if (scenarioId) {
+      const found = scenarios.find(s => s.id === scenarioId);
+      if (found) {
+        setScenario(found);
+        if (CACHED_BOARDS[found.id]) {
+          setTiles(CACHED_BOARDS[found.id].tiles);
+          setMetrics(CACHED_BOARDS[found.id].metrics);
+        } else {
+          setTiles([]);
+          setMetrics(null);
+        }
+      }
+    }
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("databoard-tiles", JSON.stringify(tiles));
   }, [tiles]);
