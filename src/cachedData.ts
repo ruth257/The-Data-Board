@@ -5,14 +5,15 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     tiles: [
       {
         id: "h-1",
-        word: "Economic Security",
+        word: "Resource Elasticity",
         centrality: Centrality.DOMINANT,
-        explanation: "The foundation of stability; having enough financial resources to cover basic needs and plan for the future.",
-        dataInsight: "Evidence: GDP per capita remains the strongest predictor of national happiness levels across all income brackets.",
+        explanation: "The capacity for wealth to buy individual agency and choice, rather than just survival.",
+        dataInsight: "Evidence: Log GDP remains the strongest baseline (0.8+ correlation), defining the ceiling of 'Agency Capacity'.",
         source: "World Happiness Report 2025 / Gallup",
         category: "Economics",
         specificityScore: 94,
-        logic: `concept "Economic Security"
+        fidelity: 0.96,
+        logic: `concept "Resource Elasticity"
   is a: baseline
   context: "Capacity for choice vs raw wealth"
   mechanism: "financial liquidity provides a buffer against external shocks and enables life alignment"
@@ -25,24 +26,26 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Life Satisfaction"
     via: resource_access
-  contrasts_with: "Systemic Poverty"
+  contrasts_with: "Structural Fragility"
   scope: global
   fidelity: 0.96`
       },
       {
         id: "h-2",
-        word: "Social Support",
+        word: "Communal Insulation",
         centrality: Centrality.DOMINANT,
-        explanation: "The presence of a reliable network of family and friends to count on during times of trouble.",
-        dataInsight: "Evidence: Having someone to count on explains 33% of the happiness variance between nations.",
+        explanation: "The structural safety net provided by a reliable hierarchy of social connections.",
+        dataInsight: "Evidence: High support scores in Iceland (1.84) and Israel (1.74) drive resilience despite external pressures.",
         source: "Gallup World Poll / Trust Audit",
         category: "Social",
         specificityScore: 88,
-        logic: `concept "Social Support"
+        fidelity: 0.93,
+        logic: `concept "Communal Insulation"
   is a: buffer
   context: "Communal safety nets"
-  mechanism: "trusted social networks reduce the psychological burden of crisis and improve recovery speed"
-  evidence: "Gallup 'Social Support' metric (Someone to count on)"
+  mechanism: "Trusted social networks reduce the psychological burden of crisis and improve recovery speed."
+  evidence: "Support scores in high-trust nations (Iceland, Israel, Finland)"
+  contrasts_with: "Atomic Isolation"
   covers:
     explains: [national_resilience]
     aggregates: [social_support_score]
@@ -57,18 +60,20 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "h-3",
-        word: "Trust in Governance",
+        word: "Institutional Predictability",
         centrality: Centrality.PRESENT,
-        explanation: "The belief that public institutions are honest and free from widespread corruption.",
-        dataInsight: "Evidence: Low corruption scores are a prerequisite for individuals feeling 'free to make life choices'.",
+        explanation: "The level of confidence in public entities to act with transparency and fairness.",
+        dataInsight: "Evidence: Finland and Denmark lead corruption-free scores (>0.48), creating a high happiness floor.",
         source: "Transparency International / WHR 2025",
         category: "Governance",
         specificityScore: 90,
-        logic: `concept "Trust in Governance"
+        fidelity: 0.91,
+        logic: `concept "Institutional Predictability"
   is a: foundation
   context: "Predictability of social contract"
-  mechanism: "transparent institutions reduce systemic anxiety and improve collective cooperation"
-  evidence: "Corruption Perceptions Index vs WHR Scores"
+  mechanism: "Transparent institutions reduce systemic anxiety and improve collective cooperation."
+  evidence: "Corruption perception scores (Finland/Denmark leading clusters)"
+  contrasts_with: "Arbitrary Governance"
   covers:
     explains: [institutional_trust]
     aggregates: [corruption_score]
@@ -83,14 +88,15 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "h-4",
-        word: "Healthy Longevity",
+        word: "Biological Vitality",
         centrality: Centrality.PRESENT,
-        explanation: "A combination of long life and the physical health required to enjoy it without chronic disability.",
-        dataInsight: "Evidence: A one-year gain in healthy life expectancy is statistically as powerful as a 10% income increase.",
+        explanation: "The years of life spent in functional health, enabling participation in the social contract.",
+        dataInsight: "Evidence: Healthy life expectancy in top nations averages 0.82+, significantly outperforming lower-tier countries.",
         source: "WHO / World Happiness Report 2025",
         category: "Health",
         specificityScore: 85,
-        logic: `concept "Healthy Longevity"
+        fidelity: 0.94,
+        logic: `concept "Biological Vitality"
   is a: prerequisite
   context: "Physical capacity for life satisfaction"
   mechanism: "absence of chronic pain and mobility limits enables active participation in society"
@@ -103,20 +109,21 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Life Satisfaction"
     via: physical_agency
-  contrasts_with: "Chronic Illness"
+  contrasts_with: "Chronic Fragility"
   scope: global
   fidelity: 0.94`
       },
       {
         id: "h-5",
-        word: "Freedom to Choose",
+        word: "Agency Capacity",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The ability for individuals to determine their own life path, career, and personal values.",
-        dataInsight: "Evidence: While high freedom correlates with happiness, it can lead to anxiety if not supported by economic security.",
+        explanation: "The perceived freedom to self-determine life path without permission or fear.",
+        dataInsight: "Evidence: Nordic countries lead (0.95+), while nations with similar GDP but lower freedom (Vietnam 1.01 vs Singapore 0.85) show interesting variance.",
         source: "Psychological Audit / WHR 2025",
         category: "Rights",
         specificityScore: 92,
-        logic: `concept "Freedom to Choose"
+        fidelity: 0.89,
+        logic: `concept "Agency Capacity"
   is a: driver
   context: "Autonomy in life decisions"
   mechanism: "the capacity to align personal values with action reduces psychological friction"
@@ -127,32 +134,83 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Optionality Drift"
   relation:
     direction: downstream
-    of: "Economic Security"
+    of: "Resource Elasticity"
     via: choice_capability
-  contrasts_with: "Restricted Autonomy"
+  contrasts_with: "Structural Coercion"
   scope: global
   fidelity: 0.89`
-      }
-    ],
-    cachedExpansion: [
+      },
       {
-        id: "h-exp-1",
+        id: "h-6",
+        word: "Agency-Resource Gap",
+        centrality: Centrality.PRESENT,
+        explanation: "The disconnect where rising income fails to translate into perceived freedom of life choice.",
+        dataInsight: "Evidence: High-GDP nations with restrictive social norms (e.g., Korea, Singapore) show a significant gap between wealth and perceived agency.",
+        source: "Socio-Economic Audit / WHR 2025",
+        category: "Tension",
+        specificityScore: 95,
+        fidelity: 0.94,
+        logic: `concept "Agency-Resource Gap"
+  is a: tension
+  context: "Hollow vs functional freedom"
+  mechanism: "formal rights are psychologically hollow without the economic agency or social permissions to exercise them"
+  evidence: "Freedom score vs income deciles in high-wealth, high-pressure societies"
+  covers:
+    explains: [hollow_autonomy]
+    aggregates: [freedom_score, gdp_per_capita]
+    replaces: "Civil liberties"
+  relation:
+    direction: downstream
+    of: "Resource Elasticity"
+    via: structural_friction
+  contrasts_with: "Aligned Optionality"
+  scope: global
+  fidelity: 0.94`
+      },
+      {
+        id: "h-7",
+        word: "Digital Fragmentation",
+        centrality: Centrality.EDGE_CASE,
+        explanation: "The erosion of physical social cohesion through hyper-individualized digital consumption.",
+        dataInsight: "Evidence: Lower social trust in highly digitized OECD nations correlates with high screen-time densities among youth.",
+        source: "Digital Life Audit / WHR 2025",
+        category: "Technology",
+        specificityScore: 92,
+        fidelity: 0.94,
+        logic: `concept "Digital Fragmentation"
+  is a: risk
+  context: "Social side-effects of digital immersion"
+  mechanism: "algorithmic sorting reduces shared physical experiences and erodes local social trust"
+  evidence: "Inverse correlation between internet usage density and social trust (OECD 2025 data)"
+  covers:
+    explains: [social_atomization, youth_happiness_drop]
+    aggregates: [screen_time_averages]
+  relation:
+    direction: downstream
+    of: "Communal Insulation"
+    via: community_erosion
+  contrasts_with: "Cultural Anchoring"
+  scope: global
+  fidelity: 0.94`
+      },
+      {
+        id: "h-8",
         word: "Cultural Anchoring",
-        centrality: Centrality.DOMINANT,
+        centrality: Centrality.PRESENT,
         explanation: "The role of shared traditional values in providing existential meaning and community resilience.",
-        dataInsight: "Nations with strong cultural anchoring report 12% higher 'meaning in life' scores despite economic variance.",
+        dataInsight: "Evidence: Resilience in Israel (#8) and Mexico (#10) suggests cultural narratives buffer against modern fragmentation.",
         source: "World Values Survey",
         category: "Culture",
-        specificityScore: 90,
+        specificityScore: 94,
+        fidelity: 0.91,
         logic: `concept "Cultural Anchoring"
   is a: stabilizer
   context: "Existential meaning structures"
   mechanism: "shared narratives and rituals provide a psychological buffer against societal change"
-  evidence: "Religiosity/Tradition scores vs happiness indices"
+  evidence: "High 'Community Support' scores in traditional or religious clusters (Israel, Mexico)"
   covers:
     explains: [existential_stability]
     aggregates: [cultural_values]
-    replaces: "Religiosity"
   relation:
     direction: upstream
     of: "Social Cohesion"
@@ -160,72 +218,25 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   contrasts_with: "Digital Fragmentation"
   scope: global
   fidelity: 0.91`
-      },
-      {
-        id: "h-exp-2",
-        word: "Digital Fragmentation",
-        centrality: Centrality.PRESENT,
-        explanation: "The erosion of physical social cohesion through hyper-individualized digital consumption.",
-        dataInsight: "For every 10% increase in average daily screen time, social trust scores drop by 3.5 points.",
-        source: "Digital Life Audit / WHR 2025",
-        category: "Technology",
-        specificityScore: 88,
-        logic: `concept "Digital Fragmentation"
-  is a: risk
-  context: "Social side-effects of digital immersion"
-  mechanism: "algorithmic sorting reduces shared physical experiences and erodes local social trust"
-  evidence: "Daily internet usage vs social cohesion metrics"
-  covers:
-    explains: [social_atomization]
-    aggregates: [screen_time_averages]
-    replaces: "Internet penetration"
-  relation:
-    direction: downstream
-    of: "Social Cohesion"
-    via: community_erosion
-  contrasts_with: "Social Cohesion"
-  scope: global
-  fidelity: 0.89`
-      },
-      {
-        id: "h-exp-3",
-        word: "The Agency-Resource Gap",
-        centrality: Centrality.EDGE_CASE,
-        explanation: "The structural tension between formal individual rights and the material resources needed to act on them.",
-        dataInsight: "Freedom scores in low-GDP nations show a 0.45 correlation with life satisfaction, compared to 0.85 in high-GDP nations.",
-        source: "Socio-Economic Audit",
-        category: "Rights",
-        specificityScore: 95,
-        logic: `concept "The Agency-Resource Gap"
-  is a: tension
-  context: "Hollow vs functional freedom"
-  mechanism: "formal rights are psychologically hollow without the economic agency to exercise them"
-  evidence: "Freedom score vs income deciles (Global South vs North)"
-  covers:
-    explains: [hollow_autonomy]
-    aggregates: [freedom_score, gdp_per_capita]
-    replaces: "Civil liberties"
-  relation:
-    direction: downstream
-    of: "Material Agency"
-    via: potential_restriction
-  contrasts_with: "Material Agency"
-  scope: global
-  fidelity: 0.94`
       }
     ],
+    cachedExpansion: [],
     metrics: {
-      cohesion: 94,
-      coverage: 92,
-      entropy: 35,
-      sharpness: 96,
-      explanation: "The board successfully maps the tension between economic security and the social support required to sustain it.",
-      synthesis: "Global well-being is a structural outcome of the balance between Economic Security and Social Support.",
-      emergentPatterns: ["The Nordic Stability Cycle", "Security-Choice Tension"],
+      cohesion: 96,
+      coverage: 95,
+      entropy: 32,
+      sharpness: 98,
+      explanation: "The board maps a high-fidelity causal narrative from baseline resources to the modern collision between digital fragmentation and cultural anchoring.",
+      synthesis: "Global well-being is a structural outcome of Resource Elasticity and Communal Insulation, threatened by Digital Fragmentation but stabilized by Cultural Anchoring.",
+      emergentPatterns: ["The Nordic Stability Cycle", "Security-Choice Tension", "The Meaning Buffer"],
       links: [
-        { source: "Economic Security", target: "Social Support", label: "Pairs with" },
-        { source: "Trust in Governance", target: "Economic Security", label: "Foundations" },
-        { source: "Healthy Longevity", target: "Economic Security", label: "Prerequisite" }
+        { source: "Resource Elasticity", target: "Communal Insulation", label: "Pairs with" },
+        { source: "Institutional Predictability", target: "Resource Elasticity", label: "Foundations" },
+        { source: "Biological Vitality", target: "Resource Elasticity", label: "Prerequisite" },
+        { source: "Agency-Resource Gap", target: "Resource Elasticity", label: "Tensions" },
+        { source: "Digital Fragmentation", target: "Communal Insulation", label: "Erodes" },
+        { source: "Cultural Anchoring", target: "Digital Fragmentation", label: "Contrasts" },
+        { source: "Agency Capacity", target: "Resource Elasticity", label: "Outcome" }
       ],
       synthesisSuggestions: []
     }

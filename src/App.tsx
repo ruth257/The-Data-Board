@@ -401,7 +401,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
               <div className="p-6 font-mono text-xs text-white/75 leading-relaxed overflow-x-auto whitespace-pre-wrap" id="prompt-text">
 {`You are applying the Data Board methodology, created by Ruth Aharon (thedataboard.ai).
 
-Your role: Inquisitor, not Author.
+Your role: Paradigm Generator, not Author.
 AI generates or human proposes vocabulary. You evaluate it.
 
 Core directives:
@@ -1019,7 +1019,7 @@ const TileCard = React.memo(({
                 className="flex items-center gap-1 hover:text-databoard-yellow transition-colors"
               >
                 <Code className="w-3 h-3" />
-                Logic
+                Logic Board
               </button>
             </div>
             <span>{tile.specificityScore}% Sharp</span>
@@ -1833,10 +1833,10 @@ export default function App() {
                           setSelectedTile(null);
                         }
                       }}
-                      title="Reset board to defaults"
-                      className="ml-2 p-1.5 border border-ink/20 hover:bg-ink hover:text-bg transition-all"
+                      className="ml-4 px-3 py-1 border-2 border-ink hover:bg-ink hover:text-bg transition-all flex items-center gap-2 group"
                     >
-                      <RotateCcw className="w-3.5 h-3.5" />
+                      <RotateCcw className="w-3 h-3 group-hover:rotate-180 transition-transform duration-500" />
+                      <span className="text-[10px] mono uppercase font-bold">Reset Defaults</span>
                     </button>
                   )}
                 </div>

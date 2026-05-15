@@ -15,6 +15,7 @@ export interface Tile {
   isAIConfirmed?: boolean;
   relevanceScore?: number;
   specificityScore: number; // 0-100
+  fidelity?: number; // 0.0-1.0, extracted from logic or set by AI
   logic?: string; // The "A Posteriori Ontology" markup (Mermaid-like code)
   cachedShadow?: Tile; // Pre-generated causal audit (shadow tile)
 }

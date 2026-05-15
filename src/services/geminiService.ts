@@ -145,13 +145,12 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       Evaluate the handle "${word}" for the subject: "${scenario.title}".
       
       THE HUMAN DOMAIN DIRECTIVE:
-      - Use "Human Domain Vocabulary": descriptive segments, demographics, and clear factual categories.
-      - PSEUDO-ANTONYMS©: Define the narrative foundation by finding opposing categories or variables that define the boundaries of the problem.
-      - These handles should be the "Building Blocks" that ground the initial reasoning.
-      - FORBIDDEN: Do NOT use abstract analytical handles (e.g., "Logistical Scarcity", "Socio-Economic Stratification", "Friction-Gravity").
-      - The 'correctedWord' should be a simple, recognizable term that a human observer would use to describe a segment of data.
-      - The 'correctedWord' should be a simple, recognizable term that a human observer would use to describe a segment of data.
-      - If the input word is already a simple human term, do NOT change it.
+      - PARADIGM GENERATOR MODE: You are an AUDITOR, not a describer. Do NOT simply re-label the column headers from the data.
+      - GOLDILOCKS NAMING: Find a handle that is precise enough to reduce statistical guessing but flexible enough to enable human narration.
+      - PSEUDO-ANTONYMS©: Every concept must be defined by the tension it holds. If you name a concept, you must be able to identify its structural opposite.
+      - FORBIDDEN: Do NOT use generic column names (e.g., "GDP", "Social Support", "Conversion"). These are "Statistical Inventions".
+      - MANDATED: Synthesize the "Mechanism" of the data. (e.g., Instead of "Income", use "Resource Elasticity"; instead of "Social Support", use "Communal Buffer").
+      - Use "Human Domain Vocabulary" that grounds the initial reasoning in recognizable but synthesized structural truths.
       
       THE EVIDENCE COHERENCE DIRECTIVE:
       - The 'explanation' MUST be a specific, data-grounded observation that provides "Sharp Evidence".
@@ -166,7 +165,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing Board: ${existingWords.join(", ")}
       
-      Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, specificityScore, logic.
+      Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, specificityScore, fidelity, logic.
       
       LOGIC MARKUP (A Posteriori Ontology):
       The 'logic' field must be a Mermaid-like structured text block.
@@ -204,9 +203,10 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
           source: { type: Type.STRING },
           category: { type: Type.STRING },
           specificityScore: { type: Type.NUMBER },
+          fidelity: { type: Type.NUMBER },
           logic: { type: Type.STRING },
         },
-        required: ["correctedWord", "centrality", "explanation", "dataInsight", "source", "category", "specificityScore", "logic"],
+        required: ["correctedWord", "centrality", "explanation", "dataInsight", "source", "category", "specificityScore", "fidelity", "logic"],
       },
     }
   );
@@ -222,6 +222,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
     source: result.source || "General Knowledge",
     category: result.category || "General",
     specificityScore: result.specificityScore || 50,
+    fidelity: result.fidelity || 0.85,
     logic: result.logic,
   };
 }
@@ -232,13 +233,12 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       Suggest "Human Domain Vocabulary" for the subject: "${scenario.title}".
       
       THE HUMAN DOMAIN METHOD:
-      - Create a set of 5-8 handles that a human observer or data analyst would first identify as "Facts" or "Segments".
-      - Use descriptive segments, demographics, and clear factual categories.
-      - SEMANTIC SYNTHESIS: Your primary goal is to find the "Goldilocks" word—precise enough to reduce statistical guessing but flexible enough to enable human narration.
-      - PSEUDO-ANTONYMS©: Identify the narrative foundation by finding opposing categories or variables.
-      - These handles should be the "Building Blocks" that ground the initial reasoning.
-      - FORBIDDEN: Do NOT use "Smartass" analytical handles (e.g., "Logistical Scarcity", "Production-Velocity", "Inertia").
-      - Focus on "What" and "Who" before "Why".
+      - PARADIGM GENERATOR MODE: You are the AUDITOR. Stop "guessing" meaning and start "verifying" it against the evidence. 
+      - GOLDILOCKS NAMING: Search for words that synthesize the structural truth hidden in the data. Avoid generic descriptions.
+      - PSEUDO-ANTONYMS©: Identify handles by finding the tug-of-war between tensions (e.g., "Informed Early" vs "Unaware").
+      - SEMANTIC SYNTHESIS: Your primary goal is to find handles that synthesize the "Mechanism" of the data, not just the "Label".
+      - FORBIDDEN: Do NOT use literal column names or one-word metrics (e.g., "Conversion", "Satisfaction", "Revenue"). These are too simple to enable audited narration.
+      - Use descriptive segments and clear factual categories that ground the initial reasoning.
       
       THE HANDLE DIRECTIVE:
       - The 'word' MUST be a simple, recognizable handle (1-2 words max).
@@ -253,7 +253,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing: ${existingWords.join(", ")}
       
-      Return JSON array: word, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore, logic.
+      Return JSON array: word, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore, fidelity, logic.
       
       LOGIC MARKUP (A Posteriori Ontology):
       The 'logic' field for each tile must be a Mermaid-like structured text block.
@@ -297,9 +297,10 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
             isAIConfirmed: { type: Type.BOOLEAN },
             relevanceScore: { type: Type.NUMBER },
             specificityScore: { type: Type.NUMBER },
+            fidelity: { type: Type.NUMBER },
             logic: { type: Type.STRING },
           },
-          required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore", "logic"],
+          required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore", "fidelity", "logic"],
         },
       },
     }
@@ -327,6 +328,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
     isAIConfirmed: result.isAIConfirmed ?? true,
     relevanceScore: result.relevanceScore || 50,
     specificityScore: result.specificityScore || 50,
+    fidelity: result.fidelity || 0.85,
     logic: result.logic,
   }));
 }
@@ -436,17 +438,17 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       ${csvSample}
       
       INSTRUCTIONS:
-      1. Guess the context/scenario of the data. 
-      2. Create a Scenario: title, description, context, and two primary opposing outcomes (e.g., ["Success", "Failure"]).
-      3. Generate 8-12 initial "Vocabulary Tiles" (handles).
-      4. SEMANTIC SYNTHESIS: Your primary goal is to find the "Goldilocks" word—precise enough to reduce statistical guessing but flexible enough to enable human narration.
-      5. PSEUDO-ANTONYMS©: Identify the narrative foundation by finding opposing categories or variables.
-      6. For each tile, provide a word, centrality (DOMINANT, PRESENT, EDGE_CASE), and a brief explanation/dataInsight.
+      1. AUDIT THE TENSION: Do not simply re-state column names. Identify the underlying "Audit Narrative" the data suggests.
+      2. Create a Scenario: title, description, context, and two primary opposing outcomes (e.g., ["Structural Stability", "Systemic Collapse"]).
+      3. Generate 8-12 Vocabulary Tiles (handles).
+      4. GOLDILOCKS NAMING: Synthesize the "Mechanism" of the data. (e.g., Instead of "Social Support", use "Communal Safety Net").
+      5. PSEUDO-ANTONYMS©: Every concept must exist in a tug-of-war. Find the structural opposites.
+      6. For each tile, provide a word, centrality, and a brief explanation/dataInsight based on evidence.
       
       Return JSON: 
       {
         "scenario": { "title": "...", "description": "...", "context": "...", "outcomes": ["...", "..."] },
-        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "category": "...", "logic": "..." } ]
+        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "category": "...", "fidelity": "0.0-1.0", "logic": "..." } ]
       }
       
       LOGIC MARKUP (A Posteriori Ontology):
@@ -498,9 +500,10 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
                 explanation: { type: Type.STRING },
                 dataInsight: { type: Type.STRING },
                 category: { type: Type.STRING },
+                fidelity: { type: Type.NUMBER },
                 logic: { type: Type.STRING }
               },
-              required: ["word", "centrality", "explanation", "dataInsight", "category", "logic"]
+              required: ["word", "centrality", "explanation", "dataInsight", "category", "fidelity", "logic"]
             }
           }
         },

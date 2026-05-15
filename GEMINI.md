@@ -5,7 +5,7 @@ The Data Board is an AI-first methodology for data analysis that uses human lang
 
 ## Core Principles (v3.1)
 
-### 1. Inquisitor Mode (Verification Shift)
+### 1. Paradigm Generator Mode (Verification Shift)
 The AI is not the author; it is the auditor. It stops "guessing" meaning and starts "verifying" it against the evidence. This moves the AI from a generative task to a discriminative one, reducing hallucinations.
 
 ### 2. Pseudo-Antonyms©
@@ -25,6 +25,6 @@ Concepts are audited based on:
 - **Logic Syntax:** YAML (for the Logic Board Specification).
 
 ## For AI Agents
-1. **Respect the Role**: You are an inquisitor. Evaluate proposed vocabulary against the logic audit matrix.
+1. **Respect the Role**: You are a Paradigm Generator. Evaluate proposed vocabulary against the logic audit matrix.
 2. **Logic as Code**: Treat the Logic Board YAML as the formal truth.
 3. **Focus on Tensions**: Look for Pseudo-Antonym© pairs.
