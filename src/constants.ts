@@ -26,6 +26,14 @@ export const SCENARIOS: Scenario[] = [
     url: "https://www.kaggle.com/datasets"
   },
   {
+    id: "gpts-are-gpts",
+    title: "GPTs are GPTs (OpenAI/Penn)",
+    description: "The structural auditing of AI exposure across 923 US occupations based on human and model ratings.",
+    context: "Structural exposure of cognitive and manual labor. Focus on tensions: 'Syntactic Sandbox' vs 'Physical Anchor'. Base study: Eloundou et al. (arXiv, 2023).",
+    outcomes: ["Cognitive Automation", "Embodied & Relational Retention"],
+    url: "https://arxiv.org/abs/2303.10130"
+  },
+  {
     id: "gss-life-survey",
     title: "General Social Survey (GSS) 1972-2022",
     description: "The gold standard of American social trends and life satisfaction since 1972.",

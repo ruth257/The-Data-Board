@@ -987,5 +987,243 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       ],
       synthesisSuggestions: []
     }
+  },
+  "gpts-are-gpts": {
+    tiles: [
+      {
+        id: "gg-1",
+        word: "Syntactic Sandbox",
+        centrality: Centrality.DOMINANT,
+        explanation: "High AI exposure within purely symbolic, alphanumeric routines that lack physical/motor constraints.",
+        dataInsight: "Evidence: Alphanumeric clerks (Correspondence Clerks, Proofreaders) have nearly 100% human-rated and model-rated exposure scores.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Cognitive",
+        specificityScore: 98,
+        fidelity: 0.98,
+        logic: `concept "Syntactic Sandbox"
+  is a: driver
+  context: "Alphanumeric cognitive workflows"
+  mechanism: "purely symbolic data processing has zero mechanical inertia and can be fully ingested by LLMs"
+  evidence: "100% mid/high exposure ratings for Correspondence Clerks and Proofreaders in both human and model metrics"
+  covers:
+    explains: [automation_vulnerability]
+    aggregates: [AI_Exposure_Human_High, AI_Exposure_Model_High]
+    replaces: "Administrative tasks"
+  relation:
+    direction: upstream
+    of: "Semantic Automation"
+    via: syntactic_transference
+  contrasts_with: "Physical Anchor"
+  scope: global
+  fidelity: 0.98`
+      },
+      {
+        id: "gg-2",
+        word: "Physical Anchor",
+        centrality: Centrality.DOMINANT,
+        explanation: "The structural safety of jobs bound to the physical configuration of spatial reality or biological objects.",
+        dataInsight: "Evidence: Low AI exposure ratings for Concierges, Animal/Soil/Plant Scientists, and hands-on maintenance workers.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Physical",
+        specificityScore: 95,
+        fidelity: 0.96,
+        logic: `concept "Physical Anchor"
+  is a: barrier
+  context: "Manual and physical labor routines"
+  mechanism: "embodied actions require expensive mechanical robotics and spatial navigation that cannot be simulated purely by text models"
+  evidence: "Low AI exposure ratings for Concierges, Animal/Soil/Plant Scientists, and hands-on maintenance workers"
+  covers:
+    explains: [employment_resilience]
+    aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
+    replaces: "Manual labor"
+  relation:
+    direction: downstream
+    of: "Syntactic Sandbox"
+    via: spatial_shielding
+  contrasts_with: "Syntactic Sandbox"
+  scope: global
+  fidelity: 0.96`
+      },
+      {
+        id: "gg-3",
+        word: "Projection Gap",
+        centrality: Centrality.PRESENT,
+        explanation: "The systemic discrepancy between human self-assessments of work complexity and AI models' projection of their own capabilities.",
+        dataInsight: "Evidence: Survey Researchers show a 0.50 score gap in low exposure between human raters and model raters.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Cognitive",
+        specificityScore: 92,
+        fidelity: 0.92,
+        logic: `concept "Projection Gap"
+  is a: tension
+  context: "Human self-rating vs model capability-rating"
+  mechanism: "humans underestimate the promptable codification of specialized fields, whereas models assume fully structured workflows"
+  evidence: "Survey Researchers show a significant score gap in perceived low exposure between Human and Model raters"
+  covers:
+    explains: [automation_surprise]
+    aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
+    replaces: "Confidence variance"
+  relation:
+    direction: upstream
+    of: "Transition Friction"
+    via: cognitive_dissonance
+  contrasts_with: "Cognitive Alignment"
+  scope: global
+  fidelity: 0.92`
+      },
+      {
+        id: "gg-4",
+        word: "Relational Shield",
+        centrality: Centrality.PRESENT,
+        explanation: "The retention of human authority in workflows where trust, legal responsibility, or social empathy can never be delegated.",
+        dataInsight: "Evidence: Interpreters and PR Specialists show high base exposure but remain anchored in human-centric service categories.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Trust",
+        specificityScore: 90,
+        fidelity: 0.91,
+        logic: `concept "Relational Shield"
+  is a: constraint
+  context: "High-exposure interpersonal domains"
+  mechanism: "societal expectations for responsibility and raw empathy limit the actual adoption rate of model substitution"
+  evidence: "Interpreters and Public Relations Specialists show high base exposure but remain anchored in human-centric service categories"
+  covers:
+    explains: [retention_index]
+    aggregates: [AI_Exposure_Human_Mid]
+    replaces: "Soft skills"
+  relation:
+    direction: upstream
+    of: "Automation Ceiling"
+    via: legal_responsibility
+  contrasts_with: "Syntactic Sandbox"
+  scope: global
+  fidelity: 0.91`
+      },
+      {
+        id: "gg-5",
+        word: "Epistemic Hubris",
+        centrality: Centrality.EDGE_CASE,
+        explanation: "The model's tendency to rate creative or highly subjective semantic tasks as fully exposed, projecting complete capability.",
+        dataInsight: "Evidence: AI models rate Poets, Lyricists and Creative Writers at 0.889 flat mid/high exposure, projecting generic mastery of authorship.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Creative",
+        specificityScore: 94,
+        fidelity: 0.89,
+        logic: `concept "Epistemic Hubris"
+  is a: risk
+  context: "Creative and artistic outputs"
+  mechanism: "lossy statistical patterns are mistranslated by reinforcement loops as equivalent to original human cultural creation"
+  evidence: "Poets, Lyricists and Creative Writers showing flat 0.889 exposure on all high-level model columns"
+  covers:
+    explains: [artistic_dilution]
+    aggregates: [AI_Exposure_Model_High]
+    replaces: "Creative automation"
+  relation:
+    direction: upstream
+    of: "Cultural Commoditization"
+    via: stylistic_imitation
+  contrasts_with: "Generative Integrity"
+  scope: global
+  fidelity: 0.89`
+      },
+      {
+        id: "gg-6",
+        word: "Bio-Centric Cushion",
+        centrality: Centrality.PRESENT,
+        explanation: "The mechanical resilience of life science research that requires chemical testing, field sampling, and organic execution.",
+        dataInsight: "Evidence: Low-to-moderate exposure metrics for Animal, Soil, and Plant Scientists compared to pure Environmental Economists.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Physical",
+        specificityScore: 88,
+        fidelity: 0.90,
+        logic: `concept "Bio-Centric Cushion"
+  is a: stabilizer
+  context: "Life sciences and laboratory sciences"
+  mechanism: "the unpredictability of organic materials and field studies requires somatic, iterative physical labor"
+  evidence: "Low-to-moderate AI exposure metrics for Soil and Plant Scientists compared to Environmental Economists"
+  covers:
+    explains: [field_resilience]
+    aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
+    replaces: "Scientific isolation"
+  relation:
+    direction: downstream
+    of: "Physical Anchor"
+    via: biological_friction
+  contrasts_with: "Digital Twin Simulation"
+  scope: global
+  fidelity: 0.90`
+      },
+      {
+        id: "gg-7",
+        word: "The Codified Ceil",
+        centrality: Centrality.PRESENT,
+        explanation: "Computer programmers and designers are highly exposed because they operate in formal, mathematically consistent syntax.",
+        dataInsight: "Evidence: Web Designers and Computer Programmers average above 0.68 mid/high exposure in human and model scores.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Cognitive",
+        specificityScore: 95,
+        fidelity: 0.94,
+        logic: `concept "The Codified Ceil"
+  is a: driver
+  context: "Formal logic and programming sandboxes"
+  mechanism: "languages with rigid compilation rules offer infinite programmatic validation loops, speeding up AI auto-correction"
+  evidence: "Web Designers and Computer Programmers showing high-frequency cognitive automation in both human and model columns"
+  covers:
+    explains: [developer_leverage]
+    aggregates: [AI_Exposure_Model_High]
+    replaces: "Software engineering baseline"
+  relation:
+    direction: upstream
+    of: "Syntactic Sandbox"
+    via: sandbox_loops
+  contrasts_with: "Unstructured Intuition"
+  scope: global
+  fidelity: 0.94`
+      },
+      {
+        id: "gg-8",
+        word: "Semantic Transference",
+        centrality: Centrality.EDGE_CASE,
+        explanation: "The process where translation, pure editing, and technical text structures are fully absorbed into transformer neural pipelines.",
+        dataInsight: "Evidence: Interpreters, Translators, and Correspondence Clerks scoring above 0.80 exposure on both Human and Model scales.",
+        source: "arXiv (Eloundou et al., 2023)",
+        category: "Translate",
+        specificityScore: 91,
+        fidelity: 0.91,
+        logic: `concept "Semantic Transference"
+  is a: risk
+  context: "Information translation and structure"
+  mechanism: "pure semantic conversion of pre-existing documents requires no real-world agency, matching LLM's core transformers"
+  evidence: "Interpreters and Translators scoring above 0.80 exposure on both Human and Model scales"
+  covers:
+    explains: [translation_displacement]
+    aggregates: [AI_Exposure_Human_High]
+    replaces: "Bilingual translation"
+  relation:
+    direction: upstream
+    of: "Syntactic Sandbox"
+    via: direct_mapping
+  contrasts_with: "Cultural Nuance"
+  scope: global
+  fidelity: 0.91`
+      }
+    ],
+    cachedExpansion: [],
+    metrics: {
+      cohesion: 95,
+      coverage: 94,
+      entropy: 28,
+      sharpness: 96,
+      explanation: "The board successfully maps the collision between alphanumeric cognitive labor and the spatial / biological reality that anchors human work.",
+      synthesis: "AI exposure is not a linear function of job complexity, but a structural split between the Syntactic Sandbox and the Physical Anchor.",
+      emergentPatterns: ["The Embodied Retention Frontier", "The Syntactic Coding Ceiling", "Epistemic Bias in Creativity"],
+      links: [
+        { source: "Syntactic Sandbox", target: "Physical Anchor", label: "Contrasts" },
+        { source: "The Codified Ceil", target: "Syntactic Sandbox", label: "Accelerates" },
+        { source: "Semantic Transference", target: "Syntactic Sandbox", label: "Aggregates" },
+        { source: "Bio-Centric Cushion", target: "Physical Anchor", label: "Anchors" },
+        { source: "Projection Gap", target: "Syntactic Sandbox", label: "Tensions" }
+      ],
+      synthesisSuggestions: []
+    }
   }
 };
