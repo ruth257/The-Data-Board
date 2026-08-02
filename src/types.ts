@@ -37,6 +37,7 @@ export interface NarrativeThread {
   synthesis: string; // 1-sentence narrative using only this thread's concepts
   coheres: "yes" | "partial" | "no"; // does the current membership actually hold together as one story
   missingLink?: string; // if not fully coherent, what's missing to make it one
+  isResidual?: boolean; // true only for the one special "Unaddressed" entry — not a concept cluster, the Completeness Check naming what the board's accepted concepts don't explain
 }
 
 export interface BoardMetrics {

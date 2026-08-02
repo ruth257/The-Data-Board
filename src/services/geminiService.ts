@@ -559,42 +559,70 @@ export async function clusterIntoThreads(scenario: Scenario, tiles: Tile[]): Pro
         using only those concepts.
       - Every thread you propose should already cohere as one story — that's what makes it a thread.
 
+      COMPLETENESS CHECK (do this too, separately from the threads):
+      - Name, in one honest sentence, what this board's accepted concepts do NOT explain about "${scenario.title}" —
+        a real gap, not a vague disclaimer like "more research is needed." If a concept on the board only partially
+        explains its claim (e.g. a moderate correlation, an unverified mechanism), that's fair game to name here too.
+      - This is the same job a residual/unexplained-variance term does in a statistical model: it doesn't need to be
+        exhaustive, it just needs to be honest that the board is not the whole picture.
+
       Context: ${scenario.context}
 
-      Return JSON array: title, conceptWords, synthesis.
+      Return JSON: { "threads": [{ "title": ..., "conceptWords": [...], "synthesis": ... }], "unaddressed": "..." }
     `,
     {
       responseMimeType: "application/json",
       responseSchema: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            conceptWords: { type: Type.ARRAY, items: { type: Type.STRING } },
-            synthesis: { type: Type.STRING },
+        type: Type.OBJECT,
+        properties: {
+          threads: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                title: { type: Type.STRING },
+                conceptWords: { type: Type.ARRAY, items: { type: Type.STRING } },
+                synthesis: { type: Type.STRING },
+              },
+              required: ["title", "conceptWords", "synthesis"],
+            },
           },
-          required: ["title", "conceptWords", "synthesis"],
+          unaddressed: { type: Type.STRING },
         },
+        required: ["threads", "unaddressed"],
       },
     }
   );
 
-  let results: any[];
+  let result: any;
   try {
-    results = JSON.parse(cleanJsonResponse(response.text || "[]"));
+    result = JSON.parse(cleanJsonResponse(response.text || "{}"));
   } catch (e) {
     console.error("Failed to parse thread clustering response:", e);
-    results = [];
+    result = {};
   }
 
-  return (Array.isArray(results) ? results : []).map((r: any) => ({
+  const threadResults = Array.isArray(result.threads) ? result.threads : [];
+  const threads: NarrativeThread[] = threadResults.map((r: any) => ({
     id: generateThreadId(),
     title: r.title || "Untitled Thread",
     conceptWords: Array.isArray(r.conceptWords) ? r.conceptWords : [],
     synthesis: r.synthesis || "",
     coheres: "yes" as const,
   }));
+
+  if (result.unaddressed) {
+    threads.push({
+      id: generateThreadId(),
+      title: "Unaddressed",
+      conceptWords: [],
+      synthesis: result.unaddressed,
+      coheres: "no",
+      isResidual: true,
+    });
+  }
+
+  return threads;
 }
 
 /**

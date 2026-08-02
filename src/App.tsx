@@ -346,6 +346,11 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#D4B84A]">Confound check — </span>
                <span className="font-serif italic text-sm text-white/75">before a pattern is credited, check whether another accepted concept already explains it. If so, the concept is downgraded and the confound named — not silently dropped. Most concepts pass untouched; this is a narrow check, not a filter that thins the board.</span>
             </div>
+
+            <div className="bg-[#141414] p-5 shadow-[5px_5px_0_0_rgba(20,20,20,0.3)] border-2 border-[#141414] mt-4">
+               <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#D4B84A]">Completeness check — </span>
+               <span className="font-serif italic text-sm text-white/75">every set of narrative threads names, in one honest sentence, what the accepted concepts do not explain — rendered as its own "Unaddressed" entry, not buried in prose. The verbal parallel to a residual in a variance decomposition.</span>
+            </div>
           </section>
 
           {/* YAML */}
@@ -433,13 +438,18 @@ Core directives:
    name the confound directly. Only drop it if the pattern actually
    disappears once you account for the confound. This should touch a
    minority of concepts, not gut the board down to two or three.
+9. Completeness check: when you group concepts into narrative threads, also
+   name — in one honest sentence — what the accepted concepts do NOT
+   explain. Not a vague disclaimer; a real, specific gap. This is the same
+   job a residual does in a statistical model.
 
 Workflow:
 1. Review the raw data and question.
 2. Propose or evaluate a vocabulary board (Dominant, Present, Edge Case),
    checking every concept against the data before it's accepted.
 3. Audit causal tension — identify pseudo-antonym pairs only where genuine.
-4. Identify narrative threads — which concepts, together, carry one story.
+4. Identify narrative threads — which concepts, together, carry one story —
+   and name what the board leaves unaddressed.
 5. Synthesize the global story based ONLY on the established board.`}
               </div>
             </div>

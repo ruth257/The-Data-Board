@@ -20,6 +20,7 @@ A concept doesn't earn the board by sounding analytical. It earns the board by s
 4. **Pair, conditionally** — a Pseudo-Antonym only if a real opposite survives the same check. Most concepts have none, and that's correct.
 5. **Assemble** — the board forms from what's accepted.
 6. **Thread** — independent of weight, which concepts carry one story together? That's a Narrative Thread, and that's where the deduction lives.
+7. **Name the gap** — every set of threads ships with one honest sentence naming what the accepted concepts don't explain. Not a disclaimer — the same job a residual does in a variance decomposition.
 
 ```mermaid
 flowchart TD
@@ -36,6 +37,7 @@ flowchart TD
     I --> K["Board"]
     J --> K["Board"]
     K --> L["Narrative Threads"]
+    L --> N["Unaddressed<br/>Name what the accepted<br/>concepts don't explain"]
     L --> M["Synthesis"]
 ```
 
@@ -79,6 +81,8 @@ Every concept lives at one of three levels. Confusing them is the most common fa
 
 **Narrative Thread** — which concepts, together, actually carry one story, independent of how any single one is weighted. A concept can belong to more than one thread.
 
+**Completeness Check** — every set of narrative threads includes one honest sentence naming what the accepted concepts do NOT explain. The verbal analogue of a residual in a variance decomposition: not exhaustive, just an explicit acknowledgment that the board isn't the whole picture. Rendered as a distinct, always-visible "Unaddressed" entry, not buried in prose.
+
 ---
 
 ## EVALUATION MATRIX
@@ -121,13 +125,18 @@ Core directives:
    name the confound directly. Only drop it if the pattern actually
    disappears once you account for the confound. This should touch a
    minority of concepts, not gut the board down to two or three.
+9. Completeness check: when you group concepts into narrative threads, also
+   name — in one honest sentence — what the accepted concepts do NOT
+   explain. Not a vague disclaimer; a real, specific gap. This is the same
+   job a residual does in a statistical model.
 
 Workflow:
 1. Review the raw data and question.
 2. Propose or evaluate a vocabulary board (Dominant, Present, Edge Case),
    checking every concept against the data before it's accepted.
 3. Audit causal tension — identify pseudo-antonym pairs only where genuine.
-4. Identify narrative threads — which concepts, together, carry one story.
+4. Identify narrative threads — which concepts, together, carry one story —
+   and name what the board leaves unaddressed.
 5. Synthesize the global story based ONLY on the established board.
 ```
 
@@ -140,6 +149,7 @@ Workflow:
 * **Barsalou, L. (1983).** "Ad hoc categories." — Useful categories get built on the fly because they're goal-relevant, not because they're natural kinds. "Travel Destinations" is exactly this.
 * **Lipton, P. (1990).** "Contrastive explanation." — An explanation satisfies only when the alternative it rules out is real and checkable, not invented. Why a pseudo-antonym must be independently grounded, not just antonym-shaped.
 * **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. This method addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model — and the Confound Check directive operationalises the specific move of conditioning on a suspected common cause before crediting an association.
+* **Fisher, R.A. (1925).** *Statistical Methods for Research Workers.* — Introduced analysis of variance: total variation splits exactly into what a named factor explains and what's left over (the residual), and the residual is always reported, never allowed to go unstated. The Completeness Check is the language-native version of that same discipline — a board must name what it leaves unexplained, not just what it covers.
 * **Glaser, B. & Strauss, A. (1967).** *The Discovery of Grounded Theory.* — Open and axial coding, the qualitative precedent this method operationalises computationally.
 
 ---

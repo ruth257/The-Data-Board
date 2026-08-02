@@ -3,7 +3,7 @@ import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 // Bump this whenever CACHED_BOARDS content changes meaningfully. The app
 // clears any locally-saved board that predates this version, so returning
 // visitors see fresh cached data instead of a permanently stale local copy.
-export const CACHED_DATA_VERSION = "3";
+export const CACHED_DATA_VERSION = "4";
 
 export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
@@ -247,6 +247,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         conceptWords: ["Communal Insulation", "Digital Fragmentation", "Cultural Anchoring"],
         synthesis: "Traditional social bonds buffer people against hardship, but digital fragmentation is eroding those bonds — cultural anchoring is what still holds some societies together against that drift.",
         coheres: "yes",
+      },
+      {
+        id: "wh-thread-unaddressed",
+        title: "Unaddressed",
+        conceptWords: [],
+        synthesis: "This board explains structural correlates of the happiness score, not why otherwise-similar-wealth countries diverge sharply: Costa Rica (GDP rank 58 of 147) outranks the United States (GDP rank 6) in overall happiness, and Communal Insulation is only a partial answer. Generosity, the sixth WHR factor, barely correlates with happiness at all (r=0.042) and has no concept representing it here.",
+        coheres: "no",
+        isResidual: true,
       },
     ],
     metrics: {
@@ -511,6 +519,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         synthesis: "Competitive pressure to ship fast means each model is superseded before its training energy is ever recouped — a treadmill of waste driven by market timing, not technical need.",
         coheres: "yes",
       },
+      {
+        id: "ai-thread-unaddressed",
+        title: "Unaddressed",
+        conceptWords: [],
+        synthesis: "Unlike the Big Mac, World Happiness, and GPTs-are-GPTs boards, none of these tiles have been checked against a real downloaded dataset yet — every dataInsight here draws on named reports (IEA, Epoch AI, NVIDIA) rather than a verified sample, so the biggest unaddressed gap is verification itself, not a substantive finding within an already-checked board.",
+        coheres: "no",
+        isResidual: true,
+      },
     ],
     metrics: {
       cohesion: 96,
@@ -750,6 +766,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         synthesis: "How satisfied people feel with their finances depends on comparison to peers, not absolute income — and as social networks shrink, that comparison itself gets harder to make.",
         coheres: "partial",
         missingLink: "The causal link between financial comparison and social isolation is plausible but not directly evidenced in this dataset — worth testing before treating as settled.",
+      },
+      {
+        id: "gss-thread-unaddressed",
+        title: "Unaddressed",
+        conceptWords: [],
+        synthesis: "This board hasn't been checked against a real GSS extract yet, unlike the Big Mac, World Happiness, and GPTs-are-GPTs boards — so the most honest unaddressed item is that every claim here is illustrative of the methodology, not independently verified evidence.",
+        coheres: "no",
+        isResidual: true,
       },
     ],
     metrics: {
@@ -1048,6 +1072,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         synthesis: "Beyond the core wealth/labor mechanism, three separate frictions distort prices further — exchange-rate lag, tariffs, and deliberate currency management each break the clean PPP prediction in their own way.",
         coheres: "yes",
       },
+      {
+        id: "bm-thread-unaddressed",
+        title: "Unaddressed",
+        conceptWords: [],
+        synthesis: "Local Labor Anchor's own dataInsight admits GDP per capita correlates only moderately with Big Mac price (r≈0.29) across the 52-country panel — meaning most of the country-to-country price variance isn't attributable to any single concept on this board, wealth-premium and labor-anchor included.",
+        coheres: "no",
+        isResidual: true,
+      },
     ],
     metrics: {
       cohesion: 98,
@@ -1309,6 +1341,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         synthesis: "Both concepts claim a domain is protected from automation, but only one survives a confound check: Relational Shield holds because model and human raters independently agree (Judges, Physician Assistants both near-zero exposure); Life Sciences Buffer doesn't, because the model's low rating for Animal Scientists is directly contradicted by a high human rating for the same occupation — a real disagreement, not a resolved buffer.",
         coheres: "partial",
         missingLink: "One concept is confirmed by rater agreement, the other is an open disagreement between raters — they belong on the board for different reasons, not the same one.",
+      },
+      {
+        id: "gg-thread-unaddressed",
+        title: "Unaddressed",
+        conceptWords: [],
+        synthesis: "This board explains which occupations are rated as exposed to AI capability, based on task-level ratings from 2023 — it says nothing about actual employment or wage outcomes. The dataset measures perceived exposure, not real-world displacement, which hasn't played out at the scale the ratings alone would predict.",
+        coheres: "no",
+        isResidual: true,
       },
     ],
     metrics: {

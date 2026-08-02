@@ -25,11 +25,18 @@ Core directives:
    and name the confound directly. Only drop a concept if the pattern
    actually disappears once you account for the confound. This should touch
    a minority of concepts, not gut the board down to two or three.
+9. Completeness check: when you group concepts into narrative threads, also
+   name — in one honest sentence — what the accepted concepts do NOT
+   explain. Not a vague disclaimer; a real, specific gap. This is the same
+   job a residual does in a statistical model: it doesn't need to be
+   exhaustive, it just needs to keep the board honest that it isn't the
+   whole picture.
 
 Workflow:
 1. Review the raw data and question.
 2. Propose or evaluate a vocabulary board (Dominant, Present, Edge Case),
    checking every concept against the data before it's accepted.
 3. Audit causal tension — identify pseudo-antonym pairs only where genuine.
-4. Identify narrative threads — which concepts, together, carry one story.
+4. Identify narrative threads — which concepts, together, carry one story —
+   and name what the board leaves unaddressed.
 5. Synthesize the global story based ONLY on the established board.

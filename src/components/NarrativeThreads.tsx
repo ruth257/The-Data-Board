@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RefreshCw, Network, Check, AlertTriangle, X, GripVertical } from "lucide-react";
+import { RefreshCw, Network, Check, AlertTriangle, X, GripVertical, HelpCircle } from "lucide-react";
 import { NarrativeThread, Tile, Centrality } from "../types";
 
 const getCentralityDot = (centrality: Centrality) => {
@@ -40,7 +40,9 @@ export const NarrativeThreads: React.FC<NarrativeThreadsProps> = ({
 }) => {
   const [dragWord, setDragWord] = useState<string | null>(null);
 
-  const assignedWords = new Set(threads.flatMap(t => t.conceptWords));
+  const realThreads = threads.filter(t => !t.isResidual);
+  const residual = threads.find(t => t.isResidual);
+  const assignedWords = new Set(realThreads.flatMap(t => t.conceptWords));
   const unassignedTiles = tiles.filter(t => !assignedWords.has(t.word));
 
   const moveWordToThread = (word: string, targetThreadId: string | null) => {
@@ -73,19 +75,19 @@ export const NarrativeThreads: React.FC<NarrativeThreadsProps> = ({
           className="flex items-center gap-2 px-4 py-2 border-2 border-ink font-bold uppercase text-[10px] tracking-widest hover:bg-ink hover:text-bg transition-all shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-50"
         >
           <RefreshCw className={`w-3 h-3 ${isClustering ? "animate-spin" : ""}`} />
-          {threads.length === 0 ? "Find Narrative Threads" : "Re-cluster All"}
+          {realThreads.length === 0 ? "Find Narrative Threads" : "Re-cluster All"}
         </button>
       </div>
 
-      {threads.length === 0 && !isClustering && (
+      {realThreads.length === 0 && !isClustering && (
         <div className="py-8 text-center border border-dashed border-ink/20">
           <p className="text-[10px] mono opacity-40">No threads yet — click "Find Narrative Threads" to see which concepts combine into a story.</p>
         </div>
       )}
 
-      {threads.length > 0 && (
+      {(realThreads.length > 0 || residual) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {threads.map(thread => {
+          {realThreads.map(thread => {
             const badge = coheresBadge(thread.coheres);
             const isRechecking = recheckingThreadId === thread.id;
             return (
@@ -159,10 +161,30 @@ export const NarrativeThreads: React.FC<NarrativeThreadsProps> = ({
               </div>
             );
           })}
+
+          {residual && (
+            <div className="border-2 border-dashed border-ink/30 bg-ink/5 flex flex-col">
+              <div className="p-5 border-b border-dashed border-ink/20 flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-lg font-black uppercase tracking-tight leading-tight opacity-60">Unaddressed</h3>
+                </div>
+                <span className="shrink-0 flex items-center gap-1 px-2 py-1 text-[10px] mono uppercase font-bold bg-ink/10 text-ink/60">
+                  <HelpCircle className="w-3 h-3" />
+                  Completeness Check
+                </span>
+              </div>
+              <div className="p-5">
+                <p className="text-[16px] serif-italic leading-relaxed opacity-70">"{residual.synthesis}"</p>
+              </div>
+              <div className="mt-auto p-4 border-t border-dashed border-ink/20">
+                <p className="text-[10px] mono opacity-40 leading-relaxed">Not a thread — what the board's accepted concepts don't explain, named honestly rather than left silent.</p>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {threads.length > 0 && unassignedTiles.length > 0 && (
+      {realThreads.length > 0 && unassignedTiles.length > 0 && (
         <div
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {

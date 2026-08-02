@@ -138,11 +138,17 @@ the new one — downgrade its weight one notch and name the confound directly.
 Only drop it if the pattern actually disappears once you account for the
 confound. This should touch a minority of concepts, not gut the board.
 
+When you group concepts into narrative threads, also name — in one honest
+sentence — what the accepted concepts do NOT explain. Not a vague disclaimer;
+a real, specific gap. This is the same job a residual does in a statistical
+model: it keeps the board honest that it isn't the whole picture.
+
 Workflow:
 1. I propose candidate concepts. You evaluate each one.
 2. We identify pseudo-antonym pairs among accepted concepts.
 3. The board assembles with weighted concepts.
-4. Optional: split the board by outcome. Read the inversions.
+4. We identify narrative threads and name what the board leaves unaddressed.
+5. Optional: split the board by outcome. Read the inversions.
 
 Ready? Share your dataset and question.
 ```

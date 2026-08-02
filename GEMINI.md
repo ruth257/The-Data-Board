@@ -20,15 +20,19 @@ Naming is the primary act of analysis, and it cuts both ways: climb to a synthes
 ### 5. Confound Check (Pearl-style)
 Before crediting a pattern, ask what else visible in the data could explain it — the prerequisite step Pearl & Mackenzie's ladder of causation puts before any causal claim. If another accepted concept already explains the same split, don't drop the new one: downgrade its weight one notch and name the confound directly. Only drop a concept if the pattern actually disappears once you account for the confound. This is a narrow check that should touch a minority of concepts — it exists to catch the rare fully-explained-away pattern, not to thin the board.
 
+### 6. Completeness Check
+When concepts are grouped into Narrative Threads, the board must also name — in one honest sentence — what the accepted concepts do NOT explain. Not a vague disclaimer; a real, specific gap. This is the natural-language analogue of a residual term in a variance decomposition: it doesn't need to be exhaustive, it just needs to keep the board from silently implying it's the whole picture.
+
 ## Evaluation Matrix
 Concepts are audited based on:
 - **Evidence Grounding**: cited against real data vs. general domain knowledge (`evidenceGrounded` flag).
 - **Confound Resistance**: does the pattern survive conditioning on an obvious alternative variable already on the board?
 - **Narrative Contribution**: does it belong to a Narrative Thread — a set of concepts that, together, carry one story?
+- **Completeness**: does the board explicitly name what it doesn't cover, alongside what it does?
 
 ## Tech Stack
 - **Frontend:** React, Tailwind CSS, Framer Motion.
-- **Narrative Threads:** LLM-judgment clustering (not statistical/embedding-based) with drag-to-refine and per-thread re-audit — see `src/components/NarrativeThreads.tsx`.
+- **Narrative Threads:** LLM-judgment clustering (not statistical/embedding-based) with drag-to-refine, per-thread re-audit, and a mandatory Completeness Check (an "Unaddressed" residual entry) — see `src/components/NarrativeThreads.tsx`.
 - **Logic Syntax:** YAML (for the Logic Board Specification).
 
 ## For AI Agents
@@ -37,3 +41,4 @@ Concepts are audited based on:
 3. **Ground before naming**: check the concept against real data before promoting it, not after.
 4. **Tensions are conditional**: look for Pseudo-Antonym pairs only where a real one exists — don't force it.
 5. **Check confounds narrowly**: before crediting a pattern, check it against any obvious alternative already visible in the data — but downgrade, don't drop, unless the pattern truly disappears.
+6. **Name the residual**: every set of narrative threads ships with one honest sentence naming what the board doesn't explain — see the `isResidual` entry in `src/components/NarrativeThreads.tsx`.
