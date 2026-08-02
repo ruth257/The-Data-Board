@@ -164,7 +164,7 @@ The Data Board uses this to build **on-the-fly minimal ontologies** — the smal
 
 **Pseudo-Antonyms** — concept pairs occupying opposite ends of the same analytical dimension. Not logical opposites — structurally opposing concepts within a shared domain. The mechanism that makes deductions inevitable rather than inferred. Conditional, not mandatory — most concepts have no natural opposite.
 
-**Goldilocks Handle** — a concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from. "The Wealthy Surcharge" is a Goldilocks handle — it names a mechanism (systematic price premium driven by the Balassa-Samuelson effect), compresses a pattern across 50+ countries into a single reasoned-about type, and creates structural tension against its pseudo-antonym. "Countries that are rich" is not — it describes membership in a category, implies no mechanism, and generates no analytical direction.
+**Calibrated Handle** — a concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from. "The Wealthy Surcharge" is a calibrated handle — it names a mechanism (systematic price premium driven by the Balassa-Samuelson effect), compresses a pattern across 50+ countries into a single reasoned-about type, and creates structural tension against its pseudo-antonym. "Countries that are rich" is not — it describes membership in a category, implies no mechanism, and generates no analytical direction.
 
 **Verification Shift** — when human vocabulary is supplied, the AI moves from invention to verification: checking whether concepts are grounded, coherent, and descriptive rather than generating them freely.
 

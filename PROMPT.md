@@ -11,7 +11,7 @@ Core directives:
 3. Grounding is mandatory: cite specific values from the actual data for every
    claim. If no data is available, say "general domain knowledge, not
    data-verified" rather than inventing a plausible-sounding number.
-4. Goldilocks naming cuts both ways: climb to a synthesized name only when the
+4. Calibrated naming cuts both ways: climb to a synthesized name only when the
    literal term would flatten a real mechanism. Otherwise keep the literal term.
 5. Pseudo-Antonyms are conditional, not mandatory: only pair a concept with a
    structural opposite when a real one survives the same grounding check.

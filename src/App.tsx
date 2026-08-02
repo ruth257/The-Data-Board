@@ -45,7 +45,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       subtitle: "Naming as Analysis",
       icon: <Zap className="w-7 h-7" />,
       color: "bg-ink text-bg",
-      description: "We select a 'Goldilocks' word: precise enough to be data-driven, yet flexible enough to be narratable. Finding the right name is the primary analytical act that creates a new 'type' for reasoning."
+      description: "We select a calibrated word: precise enough to be data-driven, yet flexible enough to be narratable. Finding the right name is the primary analytical act that creates a new 'type' for reasoning."
     },
     {
       title: "Verification Shift",
@@ -236,12 +236,12 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                 { name: "Deducible Space", body: "The minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably. Not a list of variables — the conceptual foundation that makes reasoning possible and narrative non-arbitrary." },
                 { name: "Pseudo-Antonyms", body: "Concept pairs occupying opposite ends of the same analytical dimension — not lexical opposites, but two independently-grounded findings pulling in opposite directions on the same real axis. Conditional, not mandatory: most concepts have no natural opposite, and forcing one onto every concept is exactly the failure mode this framework exists to catch. A pseudo-antonym only earns its place when both sides survive the same grounding check." },
                 {
-                  name: "Goldilocks Handle",
+                  name: "Calibrated Handle",
                   body: (
                     <>
                       A concept at the right level of abstraction — and this cuts both ways.{" "}
                       <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">The Wealthy Surcharge</code> names a mechanism (systematic price premium driven by the Balassa-Samuelson effect) that the literal term "rich countries" would flatten.{" "}
-                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">Healthy Life Expectancy</code> is also a Goldilocks handle — it's already the clearest term, so climbing to a synthesized name would only add jargon. The skill is knowing which situation you're in, not always reaching for the fancier word.
+                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">Healthy Life Expectancy</code> is also a calibrated handle — it's already the clearest term, so climbing to a synthesized name would only add jargon. The skill is knowing which situation you're in, not always reaching for the fancier word.
                     </>
                   )
                 },
@@ -414,7 +414,7 @@ Core directives:
 3. Grounding is mandatory: cite specific values from the actual data for every
    claim. If no data is available, say "general domain knowledge, not
    data-verified" rather than inventing a plausible-sounding number.
-4. Goldilocks naming cuts both ways: climb to a synthesized name only when the
+4. Calibrated naming cuts both ways: climb to a synthesized name only when the
    literal term would flatten a real mechanism. Otherwise keep the literal term.
 5. Pseudo-Antonyms are conditional, not mandatory: only pair a concept with a
    structural opposite when a real one survives the same grounding check.

@@ -51,7 +51,7 @@ Every concept lives at one of three levels. Confusing them is the most common fa
 | **2 — Finding** | Signal + a real, checkable gap. Still just a fact. | "CTR is higher for travel-destination content" |
 | **3 — Handle → Concept** | A *Handle* is the proposed name — not yet earned. It becomes a *Concept* once it survives the check: a mechanism that means more than the number that grounded it. | "Travel Destinations" |
 
-**Goldilocks naming cuts both ways.** Climb to a synthesized name only when the literal term would flatten a real mechanism — otherwise keep it. "Healthy Life Expectancy" needs no synthesis. "Resource Elasticity" earns its keep over "Income" because it names the gap between raw wealth and the freedom it buys. Jargon that explains nothing new is worse than the plain term it replaced.
+**Calibrated naming cuts both ways.** Climb to a synthesized name only when the literal term would flatten a real mechanism — otherwise keep it. "Healthy Life Expectancy" needs no synthesis. "Resource Elasticity" earns its keep over "Income" because it names the gap between raw wealth and the freedom it buys. Jargon that explains nothing new is worse than the plain term it replaced.
 
 ---
 
@@ -107,7 +107,7 @@ Core directives:
 3. Grounding is mandatory: cite specific values from the actual data for every
    claim. If no data is available, say "general domain knowledge, not
    data-verified" rather than inventing a plausible-sounding number.
-4. Goldilocks naming cuts both ways: climb to a synthesized name only when the
+4. Calibrated naming cuts both ways: climb to a synthesized name only when the
    literal term would flatten a real mechanism. Otherwise keep the literal term.
 5. Pseudo-Antonyms are conditional, not mandatory: only pair a concept with a
    structural opposite when a real one survives the same grounding check.

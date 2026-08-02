@@ -14,7 +14,7 @@ Propose the way an analyst actually thinks — a hypothesis drawn from domain kn
 ### 3. Pseudo-Antonyms
 Structural opposites — conditional, not mandatory. A pseudo-antonym only earns its place when a real, independently-grounded opposite survives the same check. Most concepts have no natural opposite; forcing one onto every concept is the failure mode this framework exists to catch, not the goal.
 
-### 4. Goldilocks Naming
+### 4. Calibrated Naming
 Naming is the primary act of analysis, and it cuts both ways: climb to a synthesized name only when the literal term would flatten a real mechanism. Otherwise keep the literal term — jargon that explains nothing new is worse than the plain term it replaced.
 
 ## Evaluation Matrix
