@@ -237,14 +237,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     tiles: [
       {
         id: "ai-1",
-        word: "Algorithmic Gluttony",
+        word: "Brute-Force Scaling",
         centrality: Centrality.DOMINANT,
         explanation: "The exponential expansion of parameter counts and FLOPs, where model scale is prioritized over structural efficiency.",
         dataInsight: "Evidence: Frontier models now exceed 10^26 FLOPs in training runs, doubling precisely every 6 months (Epoch AI Database).",
         source: "Epoch AI Database",
         category: "Technical",
         specificityScore: 98,
-        logic: `concept "Algorithmic Gluttony"
+        logic: `concept "Brute-Force Scaling"
   is a: driver
   context: "SOTA scaling laws"
   mechanism: "brute-force scaling of parameters is the current path to emergent reasoning capabilities"
@@ -257,12 +257,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Thermodynamic Ceiling"
     via: scale_pressure
-  contrasts_with: "Structural Elegance"
+  contrasts_with: "Efficient Architecture"
   scope: global
   fidelity: 0.98`,
         cachedShadow: {
           id: "ai-1-s",
-          word: "Structural Elegance",
+          word: "Efficient Architecture",
           centrality: Centrality.PRESENT,
           explanation: "The counter-movement: efficient architectures like MoE (Mixture of Experts) that decouple reasoning quality from compute density.",
           dataInsight: "Evidence: MoE architectures can reduce active 'per-token' parameters by 90% without accuracy loss (DeepMind Research).",
@@ -291,7 +291,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Energy efficiency"
   relation:
     direction: downstream
-    of: "Algorithmic Gluttony"
+    of: "Brute-Force Scaling"
     via: thermal_debt
   scope: global
   fidelity: 0.95`,
@@ -308,7 +308,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "ai-3",
-        word: "Deployment Fever",
+        word: "Rushed Deployment",
         centrality: Centrality.PRESENT,
         explanation: "The market-driven imperative to ship models immediately, prioritizing release cycles over energy-optimization tuning.",
         dataInsight: "Evidence: Average time between model training completion and release has compressed from 18 months to 4 months (Kaggle Trends).",
@@ -317,7 +317,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         isAIConfirmed: true,
         relevanceScore: 88,
         specificityScore: 85,
-        logic: `concept "Deployment Fever"
+        logic: `concept "Rushed Deployment"
   is a: market_driver
   context: "Competitive model release cycles"
   mechanism: "first-to-market advantage forces premature deployment of non-optimized weights"
@@ -335,7 +335,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "ai-4",
-        word: "Gridlocked Ambition",
+        word: "Grid Capacity Bottleneck",
         centrality: Centrality.PRESENT,
         explanation: "The decoupling of AI demand from actual electrical grid capacity, where cluster plans exceed historical grid load growth.",
         dataInsight: "Evidence: 2024 IEA report identifies grid capacity as the primary bottleneck for 65% of planned hyperscale clusters.",
@@ -344,7 +344,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         isAIConfirmed: true,
         relevanceScore: 92,
         specificityScore: 89,
-        logic: `concept "Gridlocked Ambition"
+        logic: `concept "Grid Capacity Bottleneck"
   is a: block
   context: "Infrastructure-Demand mismatch"
   mechanism: "AI cluster energy requirements grow 10x faster than national grid updates"
@@ -354,14 +354,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Carbon constraint"
   relation:
     direction: downstream
-    of: "Algorithmic Gluttony"
+    of: "Brute-Force Scaling"
     via: load_saturation
   scope: global
   fidelity: 0.94`
       },
       {
         id: "ai-5",
-        word: "Obsolescence Drift",
+        word: "Model Obsolescence",
         centrality: Centrality.EDGE_CASE,
         explanation: "The systemic 'Toxicity' of software: models that become environmentally redundant before their training energy is amortized.",
         dataInsight: "Evidence: 70% of open-source models on major hubs see zero aggregate use after 90 days of release (HuggingFace Metrics).",
@@ -370,7 +370,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         isAIConfirmed: true,
         relevanceScore: 78,
         specificityScore: 92,
-        logic: `concept "Obsolescence Drift"
+        logic: `concept "Model Obsolescence"
   is a: risk
   context: "Model lifecycle and utility"
   mechanism: "continuous release of marginally better models renders previous state-of-the-art energy investments invalid"
@@ -380,7 +380,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Data toxicity"
   relation:
     direction: downstream
-    of: "Deployment Fever"
+    of: "Rushed Deployment"
     via: utility_decay
   scope: global
   fidelity: 0.88`
@@ -406,21 +406,21 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Hardware Lifecycle"
   relation:
     direction: downstream
-    of: "Algorithmic Gluttony"
+    of: "Brute-Force Scaling"
     via: hardware_burnrate
   scope: global
   fidelity: 0.94`
       },
       {
         id: "ai-exp-2",
-        word: "Intelligence Thinning",
+        word: "Model Distillation",
         centrality: Centrality.PRESENT,
         explanation: "The shift toward 'Distillation' where massive teacher models are compressed into lightweight edge-ready student models.",
         dataInsight: "Evidence: 8-billion parameter distilled models approaching GPT-4 benchmarks in specific reasoning tasks.",
         source: "Model Compression Benchmarks",
         category: "Software",
         specificityScore: 93,
-        logic: `concept "Intelligence Thinning"
+        logic: `concept "Model Distillation"
   is a: lever
   context: "Inference efficiency gains"
   mechanism: "distilling knowledge into smaller parameter counts to reduce the per-inference energy cost"
@@ -430,9 +430,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Model Distillation"
   relation:
     direction: downstream
-    of: "Structural Elegance"
+    of: "Efficient Architecture"
     via: edge_optimization
-  contrasts_with: "Algorithmic Gluttony"
+  contrasts_with: "Brute-Force Scaling"
   scope: global
   fidelity: 0.95`
       },
@@ -454,7 +454,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     explains: [energy_protectionism]
   relation:
     direction: downstream
-    of: "Gridlocked Ambition"
+    of: "Grid Capacity Bottleneck"
     via: strategic_hoarding
   scope: global
   fidelity: 0.96`
@@ -466,12 +466,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       entropy: 30,
       sharpness: 98,
       explanation: "The board successfully maps the collision between algorithmic ambition and the hard thermodynamic reality of energy and hardware limits.",
-      synthesis: "AI Sustainability is a structural conflict between Algorithmic Gluttony and Thermodynamic Ceiling, moderated by Intelligence Thinning.",
+      synthesis: "AI Sustainability is a structural conflict between Brute-Force Scaling and Thermodynamic Ceiling, moderated by Model Distillation.",
       emergentPatterns: ["The Efficiency Paradox", "Infrastructure Saturation"],
       links: [
-        { source: "Algorithmic Gluttony", target: "Thermodynamic Ceiling", label: "Violates" },
-        { source: "Structural Elegance", target: "Intelligence Thinning", label: "Enables" },
-        { source: "Deployment Fever", target: "Obsolescence Drift", label: "Accelerates" }
+        { source: "Brute-Force Scaling", target: "Thermodynamic Ceiling", label: "Violates" },
+        { source: "Efficient Architecture", target: "Model Distillation", label: "Enables" },
+        { source: "Rushed Deployment", target: "Model Obsolescence", label: "Accelerates" }
       ],
       synthesisSuggestions: []
     }
@@ -1076,7 +1076,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "gg-5",
-        word: "Epistemic Hubris",
+        word: "AI Overconfidence",
         centrality: Centrality.EDGE_CASE,
         explanation: "The model's tendency to rate creative or highly subjective semantic tasks as fully exposed, projecting complete capability.",
         dataInsight: "Evidence: AI models rate Poets, Lyricists and Creative Writers at 0.889 flat mid/high exposure, projecting generic mastery of authorship.",
@@ -1084,7 +1084,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Creative",
         specificityScore: 94,
         fidelity: 0.89,
-        logic: `concept "Epistemic Hubris"
+        logic: `concept "AI Overconfidence"
   is a: risk
   context: "Creative and artistic outputs"
   mechanism: "lossy statistical patterns are mistranslated by reinforcement loops as equivalent to original human cultural creation"
@@ -1102,7 +1102,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "gg-6",
-        word: "Bio-Centric Cushion",
+        word: "Life Sciences Buffer",
         centrality: Centrality.PRESENT,
         explanation: "The mechanical resilience of life science research that requires chemical testing, field sampling, and organic execution.",
         dataInsight: "Evidence: Low-to-moderate exposure metrics for Animal, Soil, and Plant Scientists compared to pure Environmental Economists.",
@@ -1110,7 +1110,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Physical",
         specificityScore: 88,
         fidelity: 0.90,
-        logic: `concept "Bio-Centric Cushion"
+        logic: `concept "Life Sciences Buffer"
   is a: stabilizer
   context: "Life sciences and laboratory sciences"
   mechanism: "the unpredictability of organic materials and field studies requires somatic, iterative physical labor"
@@ -1128,7 +1128,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "gg-7",
-        word: "The Codified Ceil",
+        word: "Programming Exposure",
         centrality: Centrality.PRESENT,
         explanation: "Computer programmers and designers are highly exposed because they operate in formal, mathematically consistent syntax.",
         dataInsight: "Evidence: Web Designers and Computer Programmers average above 0.68 mid/high exposure in human and model scores.",
@@ -1136,7 +1136,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         category: "Cognitive",
         specificityScore: 95,
         fidelity: 0.94,
-        logic: `concept "The Codified Ceil"
+        logic: `concept "Programming Exposure"
   is a: driver
   context: "Formal logic and programming sandboxes"
   mechanism: "languages with rigid compilation rules offer infinite programmatic validation loops, speeding up AI auto-correction"
@@ -1190,9 +1190,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       emergentPatterns: ["The Embodied Retention Frontier", "The Syntactic Coding Ceiling", "Epistemic Bias in Creativity"],
       links: [
         { source: "Syntactic Sandbox", target: "Physical Anchor", label: "Contrasts" },
-        { source: "The Codified Ceil", target: "Syntactic Sandbox", label: "Accelerates" },
+        { source: "Programming Exposure", target: "Syntactic Sandbox", label: "Accelerates" },
         { source: "Semantic Transference", target: "Syntactic Sandbox", label: "Aggregates" },
-        { source: "Bio-Centric Cushion", target: "Physical Anchor", label: "Anchors" },
+        { source: "Life Sciences Buffer", target: "Physical Anchor", label: "Anchors" },
         { source: "Projection Gap", target: "Syntactic Sandbox", label: "Tensions" }
       ],
       synthesisSuggestions: []
