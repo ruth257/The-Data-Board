@@ -1233,7 +1233,6 @@ export default function App() {
   const [isSystemKeyActive, setIsSystemKeyActive] = useState(false);
   const [systemStatus, setSystemStatus] = useState<{ source: string, maskedKey: string | null } | null>(null);
   const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
-  const [isExpansionAvailable, setIsExpansionAvailable] = useState(true);
 
   // Handle retry countdown
   useEffect(() => {
@@ -1582,18 +1581,16 @@ export default function App() {
       const suggestions = await generateBestVocabulary(scenario, existingWords, datasetSample || undefined);
       
       if (!suggestions || suggestions.length === 0) {
-        setIsExpansionAvailable(false);
         setError("The AI didn't return any new vocabulary. Try a different scenario.");
         return;
       }
 
       // Filter out suggestions that are already on the board (case-insensitive)
-      const newSuggestions = suggestions.filter(s => 
+      const newSuggestions = suggestions.filter(s =>
         !existingWords.some(ew => ew.toLowerCase() === s.word.toLowerCase())
       );
 
       if (newSuggestions.length === 0) {
-        setIsExpansionAvailable(false);
         setError("No more unique concepts found for this deducible space.");
         return;
       }
@@ -1882,8 +1879,7 @@ export default function App() {
                         setDatasetSample(null);
                         setSelectedTile(null);
                         setScenario(s);
-                        setIsExpansionAvailable(true);
-                        
+
                         // Load cached data if available with a tiny delay to ensure "clean" state is rendered
                         if (CACHED_BOARDS[s.id]) {
                           setTimeout(() => {
@@ -2028,17 +2024,19 @@ export default function App() {
                 )}
               </button>
             </form>
-                <div className="flex gap-2">
-                  <button 
-                    id="ai-suggestions"
-                    onClick={handleGeminiSuggest}
-                    disabled={isLoading || !isExpansionAvailable}
-                    className="w-full py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
-                  >
-                    <Zap className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    {!isExpansionAvailable ? "Space Fully Expanded" : tiles.length === 0 ? "The Data Board" : "Expand Board"}
-                  </button>
-                </div>
+                {tiles.length === 0 && (
+                  <div className="flex gap-2">
+                    <button
+                      id="ai-suggestions"
+                      onClick={handleGeminiSuggest}
+                      disabled={isLoading}
+                      className="w-full py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
+                    >
+                      <Zap className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                      The Data Board
+                    </button>
+                  </div>
+                )}
             {error && (
               <div className="flex flex-col gap-2 p-4 bg-red-500/10 border-l-4 border-red-500">
                 <div className="flex items-center gap-2 text-red-600 text-xs mono font-bold">
