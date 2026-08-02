@@ -1,6 +1,11 @@
-import { Tile, Centrality, BoardMetrics } from "./types";
+import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 
-export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[] }> = {
+// Bump this whenever CACHED_BOARDS content changes meaningfully. The app
+// clears any locally-saved board that predates this version, so returning
+// visitors see fresh cached data instead of a permanently stale local copy.
+export const CACHED_DATA_VERSION = "2";
+
+export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
     tiles: [
       {
@@ -213,6 +218,29 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       }
     ],
     cachedExpansion: [],
+    threads: [
+      {
+        id: "wh-thread-1",
+        title: "The Security Foundation",
+        conceptWords: ["Resource Elasticity", "Institutional Predictability", "Biological Vitality"],
+        synthesis: "Economic resources, predictable institutions, and physical health together set the floor beneath national well-being — the baseline conditions that make everything else possible.",
+        coheres: "yes",
+      },
+      {
+        id: "wh-thread-2",
+        title: "The Freedom Paradox",
+        conceptWords: ["Agency Capacity", "Agency-Resource Gap"],
+        synthesis: "Freedom to choose only becomes real happiness when economic resources back it up — without them, formal freedom is just a gap between what's legal and what's livable.",
+        coheres: "yes",
+      },
+      {
+        id: "wh-thread-3",
+        title: "The Connection Collapse",
+        conceptWords: ["Communal Insulation", "Digital Fragmentation", "Cultural Anchoring"],
+        synthesis: "Traditional social bonds buffer people against hardship, but digital fragmentation is eroding those bonds — cultural anchoring is what still holds some societies together against that drift.",
+        coheres: "yes",
+      },
+    ],
     metrics: {
       cohesion: 96,
       coverage: 95,
@@ -460,6 +488,22 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   fidelity: 0.96`
       }
     ],
+    threads: [
+      {
+        id: "ai-thread-1",
+        title: "The Scaling Collision",
+        conceptWords: ["Brute-Force Scaling", "Thermodynamic Ceiling", "Grid Capacity Bottleneck"],
+        synthesis: "The race to scale model size runs directly into physical limits — heat dissipation and grid capacity, not clever algorithms, are what actually caps how big models can get.",
+        coheres: "yes",
+      },
+      {
+        id: "ai-thread-2",
+        title: "The Deployment Treadmill",
+        conceptWords: ["Rushed Deployment", "Model Obsolescence"],
+        synthesis: "Competitive pressure to ship fast means each model is superseded before its training energy is ever recouped — a treadmill of waste driven by market timing, not technical need.",
+        coheres: "yes",
+      },
+    ],
     metrics: {
       cohesion: 96,
       coverage: 92,
@@ -682,6 +726,23 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   scope: regional
   fidelity: 0.91`
       }
+    ],
+    threads: [
+      {
+        id: "gss-thread-1",
+        title: "The Committed Life",
+        conceptWords: ["Marital Stability", "Personal Health", "Job Satisfaction"],
+        synthesis: "Stable marriage, good health, and meaningful work reinforce each other — three anchors of the traditional American path to life satisfaction.",
+        coheres: "yes",
+      },
+      {
+        id: "gss-thread-2",
+        title: "The Relative Standing Problem",
+        conceptWords: ["Financial Satisfaction", "Social Isolation"],
+        synthesis: "How satisfied people feel with their finances depends on comparison to peers, not absolute income — and as social networks shrink, that comparison itself gets harder to make.",
+        coheres: "partial",
+        missingLink: "The causal link between financial comparison and social isolation is plausible but not directly evidenced in this dataset — worth testing before treating as settled.",
+      },
     ],
     metrics: {
       cohesion: 92,
@@ -950,6 +1011,29 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   fidelity: 0.93`
       }
     ],
+    threads: [
+      {
+        id: "bm-thread-1",
+        title: "The Two-Sided Price Gap",
+        conceptWords: ["The Wealthy Surcharge", "The Emerging Discount"],
+        synthesis: "Global burger price variance isn't noise — it's the structural outcome of the same mechanism pulling in opposite directions: rich-country labor costs push prices up, emerging-market labor costs pull them down.",
+        coheres: "yes",
+      },
+      {
+        id: "bm-thread-2",
+        title: "The Labor Cost Mechanism",
+        conceptWords: ["Local Labor Anchor", "The Wealthy Surcharge"],
+        synthesis: "The wealthy surcharge isn't abstract — it's mechanically produced by local labor costs anchoring service-sector prices to domestic productivity.",
+        coheres: "yes",
+      },
+      {
+        id: "bm-thread-3",
+        title: "The Friction Layer",
+        conceptWords: ["Monetary Inertia", "Logistical Premia", "Managed Currency Gap"],
+        synthesis: "Beyond the core wealth/labor mechanism, three separate frictions distort prices further — exchange-rate lag, tariffs, and deliberate currency management each break the clean PPP prediction in their own way.",
+        coheres: "yes",
+      },
+    ],
     metrics: {
       cohesion: 98,
       coverage: 92,
@@ -1180,6 +1264,30 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       }
     ],
     cachedExpansion: [],
+    threads: [
+      {
+        id: "gg-thread-1",
+        title: "The Syntax vs. Substance Divide",
+        conceptWords: ["Syntactic Sandbox", "Physical Anchor"],
+        synthesis: "AI exposure splits cleanly along one axis: work that's pure symbol manipulation is highly exposed, work bound to physical or biological reality is not.",
+        coheres: "yes",
+      },
+      {
+        id: "gg-thread-2",
+        title: "The Overconfidence Risk",
+        conceptWords: ["AI Overconfidence", "Semantic Transference"],
+        synthesis: "Models rate their own creative and semantic capabilities as fully mastered — both in translation-style tasks and creative authorship — which is exactly the overconfidence pattern worth flagging before trusting model self-assessment.",
+        coheres: "yes",
+      },
+      {
+        id: "gg-thread-3",
+        title: "The Human-Bound Exceptions",
+        conceptWords: ["Relational Shield", "Life Sciences Buffer"],
+        synthesis: "Two very different domains — interpersonal trust work and physical lab science — both resist automation, but for reasons that have nothing to do with symbolic complexity: one needs social permission, the other needs a body in the room.",
+        coheres: "partial",
+        missingLink: "These are two separate mechanisms (trust vs. physical reality) bundled into one thread because both resist automation — a real pattern, but not literally the same causal story.",
+      },
+    ],
     metrics: {
       cohesion: 95,
       coverage: 94,

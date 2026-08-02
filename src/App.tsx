@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users, Upload, Activity, ShieldCheck, Zap, X, HelpCircle, BookOpen, Scale, Globe, FileText, Cpu, Database, Network, ArrowRight, Code, Save, Layout, Share2, Link as LinkIcon, Check, RotateCcw } from "lucide-react";
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
-import { CACHED_BOARDS } from "./cachedData";
+import { CACHED_BOARDS, CACHED_DATA_VERSION } from "./cachedData";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "./types";
 import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread } from "./services/geminiService";
 import { NarrativeThreads } from "./components/NarrativeThreads";
@@ -1139,9 +1139,18 @@ export default function App() {
     return scenarios[0];
   });
   const [tiles, setTiles] = useState<Tile[]>(() => {
+    // Invalidate locally-saved boards from before this version of CACHED_BOARDS,
+    // otherwise a returning visitor's browser permanently shadows any content fix.
+    if (localStorage.getItem("databoard-data-version") !== CACHED_DATA_VERSION) {
+      localStorage.removeItem("databoard-tiles");
+      localStorage.removeItem("databoard-metrics");
+      localStorage.removeItem("databoard-threads");
+      localStorage.setItem("databoard-data-version", CACHED_DATA_VERSION);
+    }
+
     const saved = localStorage.getItem("databoard-tiles");
     if (saved) return JSON.parse(saved);
-    
+
     // Fallback to cached data for the initial scenario
     if (CACHED_BOARDS[scenario.id]) {
       return CACHED_BOARDS[scenario.id].tiles;
@@ -1167,7 +1176,24 @@ export default function App() {
     return null;
   });
   const [isMetricsLoading, setIsMetricsLoading] = useState(false);
-  const [threads, setThreads] = useState<NarrativeThread[]>([]);
+  const [threads, setThreads] = useState<NarrativeThread[]>(() => {
+    const savedThreads = localStorage.getItem("databoard-threads");
+    if (savedThreads) {
+      try {
+        return JSON.parse(savedThreads);
+      } catch (e) {
+        console.error("Failed to parse saved threads", e);
+      }
+    }
+
+    const savedTiles = localStorage.getItem("databoard-tiles");
+    if (savedTiles) return []; // custom/imported board — no cached threads for it
+
+    if (CACHED_BOARDS[scenario.id]) {
+      return CACHED_BOARDS[scenario.id].threads || [];
+    }
+    return [];
+  });
   const [isClusteringThreads, setIsClusteringThreads] = useState(false);
   const [recheckingThreadId, setRecheckingThreadId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
@@ -1306,13 +1332,14 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
-        setThreads([]);
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
+          setThreads(CACHED_BOARDS[found.id].threads || []);
         } else {
           setTiles([]);
           setMetrics(null);
+          setThreads([]);
         }
       }
     }
@@ -1326,13 +1353,14 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
-        setThreads([]);
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
+          setThreads(CACHED_BOARDS[found.id].threads || []);
         } else {
           setTiles([]);
           setMetrics(null);
+          setThreads([]);
         }
       }
     }
@@ -1349,6 +1377,14 @@ export default function App() {
       localStorage.removeItem("databoard-metrics");
     }
   }, [metrics]);
+
+  useEffect(() => {
+    if (threads.length > 0) {
+      localStorage.setItem("databoard-threads", JSON.stringify(threads));
+    } else {
+      localStorage.removeItem("databoard-threads");
+    }
+  }, [threads]);
 
   useEffect(() => {
     localStorage.setItem("databoard-scenario", scenario.id);
@@ -1840,6 +1876,7 @@ export default function App() {
                           setTimeout(() => {
                             setTiles(CACHED_BOARDS[s.id].tiles);
                             setMetrics(CACHED_BOARDS[s.id].metrics);
+                            setThreads(CACHED_BOARDS[s.id].threads || []);
                           }, 10);
                         }
                       }
@@ -1890,7 +1927,7 @@ export default function App() {
                         if (confirm("Reset this board to original research defaults? Your custom changes to this board will be lost.")) {
                           setTiles(CACHED_BOARDS[scenario.id].tiles);
                           setMetrics(CACHED_BOARDS[scenario.id].metrics);
-                          setThreads([]);
+                          setThreads(CACHED_BOARDS[scenario.id].threads || []);
                           setSelectedTile(null);
                         }
                       }}
@@ -1936,7 +1973,7 @@ export default function App() {
                       onClick={() => {
                         setTiles(CACHED_BOARDS[scenario.id].tiles);
                         setMetrics(CACHED_BOARDS[scenario.id].metrics);
-                        setThreads([]);
+                        setThreads(CACHED_BOARDS[scenario.id].threads || []);
                       }}
                       className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
                     >
