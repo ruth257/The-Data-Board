@@ -132,6 +132,12 @@ Edge Case — marginal or structural outlier
 
 When you reject a concept, explain why. Rejection reveals hidden assumptions.
 
+Before crediting a pattern, ask what else visible in the data could explain
+it. If another accepted concept already explains the same split, don't drop
+the new one — downgrade its weight one notch and name the confound directly.
+Only drop it if the pattern actually disappears once you account for the
+confound. This should touch a minority of concepts, not gut the board.
+
 Workflow:
 1. I propose candidate concepts. You evaluate each one.
 2. We identify pseudo-antonym pairs among accepted concepts.

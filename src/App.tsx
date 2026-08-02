@@ -341,6 +341,11 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#D4B84A]">Rejection is insight — </span>
                <span className="font-serif italic text-sm text-white/75">a concept that fails any test is not discarded silently. The failure names the assumption the analyst was making without knowing it.</span>
             </div>
+
+            <div className="bg-[#141414] p-5 shadow-[5px_5px_0_0_rgba(20,20,20,0.3)] border-2 border-[#141414] mt-4">
+               <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#D4B84A]">Confound check — </span>
+               <span className="font-serif italic text-sm text-white/75">before a pattern is credited, check whether another accepted concept already explains it. If so, the concept is downgraded and the confound named — not silently dropped. Most concepts pass untouched; this is a narrow check, not a filter that thins the board.</span>
+            </div>
           </section>
 
           {/* YAML */}
@@ -381,7 +386,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             
             <div className="bg-[#141414] border-2 border-[#141414] shadow-[6px_6px_0_0_#141414] overflow-hidden">
               <div className="px-5 py-3 border-b border-white/10 flex items-center justify-between">
-                <span className="font-mono text-[9px] font-bold text-[#D4B84A] uppercase tracking-widest">Data Board System Prompt · v3.1</span>
+                <span className="font-mono text-[9px] font-bold text-[#D4B84A] uppercase tracking-widest">Data Board System Prompt · v4.0</span>
                 <button 
                   onClick={(e) => {
                     const el = document.getElementById('prompt-text');
@@ -422,6 +427,12 @@ Core directives:
 6. Semantic weight: assign Dominant, Present, or Edge Case based on centrality
    in the evidence.
 7. Rejection is insight: when you reject a concept, explain why.
+8. Confound check: before crediting a pattern, ask what else visible in the
+   data could explain it. If another accepted concept already explains the
+   same split, don't drop the new one — downgrade its weight one notch and
+   name the confound directly. Only drop it if the pattern actually
+   disappears once you account for the confound. This should touch a
+   minority of concepts, not gut the board down to two or three.
 
 Workflow:
 1. Review the raw data and question.

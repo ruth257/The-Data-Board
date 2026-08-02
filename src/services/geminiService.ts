@@ -148,6 +148,12 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       GROUNDING RULE — READ THIS FIRST:
       - "dataInsight" MUST cite specific values, rows, or a specific comparison found in THE DATASET above. Quote or closely paraphrase the actual numbers/categories you're pointing at.
       - Set "evidenceGrounded" to true only if you actually did this. If the dataset above does not support this concept, set "evidenceGrounded" to false and say in "dataInsight" what's missing — do not invent a plausible-sounding number.
+
+      CONFOUND CHECK (Pearl-style: before locking in centrality, ask "what else could explain this split?"):
+      - Only run this check when an obvious alternative variable is actually visible in THE DATASET sample or in the Existing Board below — never speculate about a confound you have no rows to test.
+      - Most concepts pass this cleanly with no change. This is a narrow check for the specific case where a pattern is fully explained by something else already on the board — it is not a reason to doubt every concept or drop ones you can't fully rule out.
+      - If a visible alternative variable explains the same split just as well: keep the concept, but downgrade centrality one notch (e.g. DOMINANT to PRESENT) and name the confound directly in "dataInsight" (e.g. "this mostly tracks X, not an independent effect").
+      - Only set "evidenceGrounded" to false or drop the concept if the association actually disappears or reverses once you account for the confound — not merely because a plausible alternative exists.
     `
     : `
       GROUNDING RULE — READ THIS FIRST:
@@ -250,6 +256,12 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       GROUNDING RULE — READ THIS FIRST:
       - For every tile, "dataInsight" MUST cite specific values, rows, or a specific comparison found in THE DATASET above. Quote or closely paraphrase the actual numbers/categories you're pointing at — do not describe a plausible-sounding trend you didn't check.
       - Set "evidenceGrounded" to true only for tiles where you actually did this. If a candidate concept isn't supported by the dataset above, either drop it or set "evidenceGrounded" to false and say in "dataInsight" what's missing.
+
+      CONFOUND CHECK (Pearl-style: before locking in centrality, ask "what else could explain this split?"):
+      - Only run this check when an obvious alternative variable is actually visible in THE DATASET sample or among the other tiles you're proposing — never speculate about a confound you have no rows to test.
+      - Most tiles pass this cleanly with no change. This is a narrow check for the specific case where one tile's pattern is fully explained by another — it is not a reason to thin out the board or leave only 2-3 tiles.
+      - If a visible alternative variable explains the same split just as well: keep the tile, but downgrade centrality one notch (e.g. DOMINANT to PRESENT) and name the confound directly in "dataInsight" (e.g. "this mostly tracks X, not an independent effect").
+      - Only set "evidenceGrounded" to false or drop a tile if the association actually disappears or reverses once you account for the confound — not merely because a plausible alternative exists.
     `
     : `
       GROUNDING RULE — READ THIS FIRST:
@@ -427,6 +439,7 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       5. PSEUDO-ANTONYMS ARE CONDITIONAL: across the WHOLE 8-12 tile board, expect only a small number of genuine tension pairs (typically 1-2) that represent a real structural fault line running through the whole dataset — not a single direction in it. Most tiles should have no pseudo-antonym at all. Only pair concepts when a domain expert would recognize the opposition as real; do not force a tug-of-war onto every concept.
       6. For each tile, provide a word, centrality, and a brief explanation/dataInsight based on evidence.
       7. GROUNDING RULE: "dataInsight" MUST cite specific values, rows, or a specific comparison you can actually see in the CSV DATA SAMPLE above — quote or closely paraphrase the real numbers/categories, don't describe a plausible-sounding trend you didn't check. Set "evidenceGrounded" to true only when you did this; if a candidate concept isn't really supported by the sample, either drop it or set "evidenceGrounded" to false and say what's missing in "dataInsight".
+      8. CONFOUND CHECK (Pearl-style: before locking in centrality, ask "what else could explain this split?"): only when another column or another tile you're proposing visibly explains the same pattern, keep the tile but downgrade centrality one notch and name the confound in "dataInsight" (e.g. "this mostly tracks X, not an independent effect") instead of dropping it. Only drop a tile if the pattern actually disappears or reverses once you account for the confound. This check should change a small minority of tiles, not most of them — do not let it shrink the 8-12 tile board down to a handful.
 
       Return JSON:
       {

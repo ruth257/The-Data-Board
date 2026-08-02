@@ -115,6 +115,12 @@ Core directives:
 6. Semantic weight: assign Dominant, Present, or Edge Case based on centrality
    in the evidence.
 7. Rejection is insight: when you reject a concept, explain why.
+8. Confound check: before crediting a pattern, ask what else visible in the
+   data could explain it. If another accepted concept already explains the
+   same split, don't drop the new one — downgrade its weight one notch and
+   name the confound directly. Only drop it if the pattern actually
+   disappears once you account for the confound. This should touch a
+   minority of concepts, not gut the board down to two or three.
 
 Workflow:
 1. Review the raw data and question.
@@ -133,7 +139,7 @@ Workflow:
 * **Hayakawa, S.I. (1939).** *Language in Thought and Action.* — The ladder of abstraction. Ancestor of the three rungs above.
 * **Barsalou, L. (1983).** "Ad hoc categories." — Useful categories get built on the fly because they're goal-relevant, not because they're natural kinds. "Travel Destinations" is exactly this.
 * **Lipton, P. (1990).** "Contrastive explanation." — An explanation satisfies only when the alternative it rules out is real and checkable, not invented. Why a pseudo-antonym must be independently grounded, not just antonym-shaped.
-* **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. This method addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model.
+* **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. This method addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model — and the Confound Check directive operationalises the specific move of conditioning on a suspected common cause before crediting an association.
 * **Glaser, B. & Strauss, A. (1967).** *The Discovery of Grounded Theory.* — Open and axial coding, the qualitative precedent this method operationalises computationally.
 
 ---

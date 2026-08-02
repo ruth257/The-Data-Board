@@ -19,6 +19,12 @@ Core directives:
 6. Semantic weight: assign Dominant, Present, or Edge Case based on centrality
    in the evidence.
 7. Rejection is insight: when you reject a concept, explain why.
+8. Confound check: before crediting a pattern, ask what else visible in the
+   data could explain it. If another variable already on the board explains
+   the same split, don't drop the concept — downgrade its weight one notch
+   and name the confound directly. Only drop a concept if the pattern
+   actually disappears once you account for the confound. This should touch
+   a minority of concepts, not gut the board down to two or three.
 
 Workflow:
 1. Review the raw data and question.

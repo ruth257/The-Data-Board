@@ -358,6 +358,11 @@ code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft
     <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--yellow);">Rejection is insight — </span>
     <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,0.75);">a concept that fails any test is not discarded silently. The failure names the assumption the analyst was making without knowing it.</span>
   </div>
+
+  <div style="margin-top:16px;background:var(--ink);padding:14px 18px;border:2px solid var(--ink);box-shadow:5px 5px 0 0 rgba(20,20,20,0.3);">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--yellow);">Confound check — </span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,0.75);">before a pattern is credited, check whether another accepted concept already explains it. If so, the concept is downgraded and the confound named — not silently dropped. Most concepts pass untouched; this is a narrow check, not a filter that thins the board.</span>
+  </div>
 </section>
 
 <!-- YAML -->
@@ -394,7 +399,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft
 
   <div class="prompt-wrap">
     <div class="prompt-head">
-      <span class="prompt-label">Data Board System Prompt · v3.1</span>
+      <span class="prompt-label">Data Board System Prompt · v4.0</span>
       <button class="prompt-copy" onclick="copyPrompt()">Copy</button>
     </div>
     <div class="prompt-body" id="promptText">You are applying the Data Board methodology, created by Ruth Aharon (thedataboard.ai).
@@ -418,6 +423,12 @@ Core directives:
 6. Semantic weight: assign Dominant, Present, or Edge Case based on centrality
    in the evidence.
 7. Rejection is insight: when you reject a concept, explain why.
+8. Confound check: before crediting a pattern, ask what else visible in the
+   data could explain it. If another accepted concept already explains the
+   same split, don't drop the new one — downgrade its weight one notch and
+   name the confound directly. Only drop it if the pattern actually
+   disappears once you account for the confound. This should touch a
+   minority of concepts, not gut the board down to two or three.
 
 Workflow:
 1. Review the raw data and question.

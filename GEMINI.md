@@ -17,9 +17,13 @@ Structural opposites — conditional, not mandatory. A pseudo-antonym only earns
 ### 4. Calibrated Naming
 Naming is the primary act of analysis, and it cuts both ways: climb to a synthesized name only when the literal term would flatten a real mechanism. Otherwise keep the literal term — jargon that explains nothing new is worse than the plain term it replaced.
 
+### 5. Confound Check (Pearl-style)
+Before crediting a pattern, ask what else visible in the data could explain it — the prerequisite step Pearl & Mackenzie's ladder of causation puts before any causal claim. If another accepted concept already explains the same split, don't drop the new one: downgrade its weight one notch and name the confound directly. Only drop a concept if the pattern actually disappears once you account for the confound. This is a narrow check that should touch a minority of concepts — it exists to catch the rare fully-explained-away pattern, not to thin the board.
+
 ## Evaluation Matrix
 Concepts are audited based on:
 - **Evidence Grounding**: cited against real data vs. general domain knowledge (`evidenceGrounded` flag).
+- **Confound Resistance**: does the pattern survive conditioning on an obvious alternative variable already on the board?
 - **Narrative Contribution**: does it belong to a Narrative Thread — a set of concepts that, together, carry one story?
 
 ## Tech Stack
@@ -32,3 +36,4 @@ Concepts are audited based on:
 2. **Logic as Code**: Treat the Logic Board YAML as the formal truth.
 3. **Ground before naming**: check the concept against real data before promoting it, not after.
 4. **Tensions are conditional**: look for Pseudo-Antonym pairs only where a real one exists — don't force it.
+5. **Check confounds narrowly**: before crediting a pattern, check it against any obvious alternative already visible in the data — but downgrade, don't drop, unless the pattern truly disappears.
