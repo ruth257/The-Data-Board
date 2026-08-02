@@ -180,6 +180,8 @@ The Data Board uses this to build **on-the-fly minimal ontologies** — the smal
 
 **Verification Shift** — when human vocabulary is supplied, the AI moves from invention to verification: checking whether concepts are grounded, coherent, and descriptive rather than generating them freely.
 
+**Representation as Hypothesis** — every concept on a board is a proposed representation, not an established truth. Grounding, confound-checking, and weighting earn a concept its place; none of them upgrade its status to "fact." Revision is the expected end state, not a failure mode.
+
 ---
 
 ## Theoretical anchors

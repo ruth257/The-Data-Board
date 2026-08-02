@@ -10,17 +10,20 @@ LLMs are the first tool that can reverse that order without losing the rigor. St
 
 ---
 
-## THE METHOD
+## THE METHOD — FROZEN CORE (v1.0)
 
-A concept doesn't earn the board by sounding analytical. It earns the board by surviving a check.
+**Every representation on the board is a hypothesis, not a finding.** Grounding earns a concept its place on the board; it does not promote the concept out of being a hypothesis. A concept doesn't earn the board by sounding analytical — it earns the board by surviving a check, and it stays open to revision even after it does.
 
-1. **Propose** — a hypothesis drawn from domain knowledge, the way an analyst actually thinks, not enumerated from raw columns.
-2. **Check** — does the data show the specific, checkable gap the hypothesis needs? Cite real values. Plausible isn't grounded.
-3. **Reject or Name** — fails, reject it and say why (rejection is insight, not failure). Passes, name it at the right rung of abstraction, then weight it (Dominant / Present / Edge Case).
-4. **Pair, conditionally** — a Pseudo-Antonym only if a real opposite survives the same check. Most concepts have none, and that's correct.
-5. **Assemble** — the board forms from what's accepted.
-6. **Thread** — independent of weight, which concepts carry one story together? That's a Narrative Thread, and that's where the deduction lives.
-7. **Name the gap** — every set of threads ships with one honest sentence naming what the accepted concepts don't explain. Not a disclaimer — the same job a residual does in a variance decomposition.
+This six-step core is frozen. It's deliberately small — additions beyond it have to earn their place through an actual experiment, not another round of design conversation:
+
+1. **Propose** — a Handle drawn from domain knowledge, the way an analyst actually thinks, not enumerated from raw columns.
+2. **Calibrate** — name it at the right rung of abstraction: literal if that's already clearest, synthesized only when the literal term would flatten a real mechanism.
+3. **Ground** — cite real values from the data for this Handle. Plausible isn't grounded; no data available means saying so explicitly, not inventing a number.
+4. **Check confounds** — before crediting the pattern, ask what else already accepted could explain it. Downgrade and name the confound rather than silently keeping the concept at full weight.
+5. **State the residual** — once representations are grouped into Narrative Threads, name, in one honest sentence, what the board still doesn't explain.
+6. **Revise** — if a confound check or a residual exposes a real problem, the representation changes or gets rejected, not defended. Rejection is insight, not failure — revision is expected, not exceptional.
+
+Pseudo-Antonym pairing and centrality weighting (Dominant / Present / Edge Case) are how representations that survive this loop get *composed* onto a board — real mechanics, downstream of the core, not part of it.
 
 ```mermaid
 flowchart TD
@@ -69,6 +72,8 @@ Every concept lives at one of three levels. Confusing them is the most common fa
 
 ## KEY CONCEPTS
 
+**Representation as Hypothesis** — every Handle and Concept on the board is a proposed representation, not an established truth. Status stays "proposed" even after grounding, a confound check, and centrality weighting — those steps earn a concept its place on the board, they don't upgrade its epistemic status. Revision is the expected end state, not a failure mode.
+
 **Deducible Space** — the minimal set of grounded, coherent, tension-bearing concepts from which a consistent narrative follows inevitably. Not a list of variables — the foundation that makes the narrative non-arbitrary.
 
 **Pseudo-Antonyms** — concept pairs at opposite ends of the same analytical dimension. Not lexical opposites — two independently-grounded findings pulling in opposite directions on the same real axis. Conditional, not mandatory: most concepts have no natural opposite, and forcing one is exactly the failure this framework catches.
@@ -81,7 +86,7 @@ Every concept lives at one of three levels. Confusing them is the most common fa
 
 **Narrative Thread** — which concepts, together, actually carry one story, independent of how any single one is weighted. A concept can belong to more than one thread.
 
-**Completeness Check** — every set of narrative threads includes one honest sentence naming what the accepted concepts do NOT explain. The verbal analogue of a residual in a variance decomposition: not exhaustive, just an explicit acknowledgment that the board isn't the whole picture. Rendered as a distinct, always-visible "Unaddressed" entry, not buried in prose.
+**Completeness Check** — every set of narrative threads includes one honest sentence naming what the accepted concepts do NOT explain. Inspired by how a residual is reported in a variance decomposition, without the arithmetic: not exhaustive, just an explicit acknowledgment that the board isn't the whole picture. Rendered as a distinct, always-visible "Unaddressed" entry, not buried in prose.
 
 ---
 
@@ -148,8 +153,8 @@ Workflow:
 * **Hayakawa, S.I. (1939).** *Language in Thought and Action.* — The ladder of abstraction. Ancestor of the three rungs above.
 * **Barsalou, L. (1983).** "Ad hoc categories." — Useful categories get built on the fly because they're goal-relevant, not because they're natural kinds. "Travel Destinations" is exactly this.
 * **Lipton, P. (1990).** "Contrastive explanation." — An explanation satisfies only when the alternative it rules out is real and checkable, not invented. Why a pseudo-antonym must be independently grounded, not just antonym-shaped.
-* **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. This method addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model — and the Confound Check directive operationalises the specific move of conditioning on a suspected common cause before crediting an association.
-* **Fisher, R.A. (1925).** *Statistical Methods for Research Workers.* — Introduced analysis of variance: total variation splits exactly into what a named factor explains and what's left over (the residual), and the residual is always reported, never allowed to go unstated. The Completeness Check is the language-native version of that same discipline — a board must name what it leaves unexplained, not just what it covers.
+* **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. This method addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model. The Confound Check is inspired by the same logic — ask what else could explain an association before crediting it — without the formal conditioning a causal model would require. It asks analysts to consider competing explanations explicitly; it does not perform causal inference.
+* **Fisher, R.A. (1925).** *Statistical Methods for Research Workers.* — Introduced analysis of variance: total variation splits exactly into what a named factor explains and what's left over (the residual), and the residual is always reported, never allowed to go unstated. The Completeness Check is inspired by that same discipline, not a variance decomposition — a board must say what it leaves unexplained, in one sentence, without computing what fraction that sentence represents.
 * **Glaser, B. & Strauss, A. (1967).** *The Discovery of Grounded Theory.* — Open and axial coding, the qualitative precedent this method operationalises computationally.
 
 ---

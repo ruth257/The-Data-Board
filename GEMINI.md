@@ -17,8 +17,8 @@ Structural opposites — conditional, not mandatory. A pseudo-antonym only earns
 ### 4. Calibrated Naming
 Naming is the primary act of analysis, and it cuts both ways: climb to a synthesized name only when the literal term would flatten a real mechanism. Otherwise keep the literal term — jargon that explains nothing new is worse than the plain term it replaced.
 
-### 5. Confound Check (Pearl-style)
-Before crediting a pattern, ask what else visible in the data could explain it — the prerequisite step Pearl & Mackenzie's ladder of causation puts before any causal claim. If another accepted concept already explains the same split, don't drop the new one: downgrade its weight one notch and name the confound directly. Only drop a concept if the pattern actually disappears once you account for the confound. This is a narrow check that should touch a minority of concepts — it exists to catch the rare fully-explained-away pattern, not to thin the board.
+### 5. Confound Check
+Inspired by the logic of confounding, not a formal causal-inference procedure: before crediting a pattern, ask what else visible in the data could explain it. If another accepted concept already explains the same split, don't drop the new one: downgrade its weight one notch and name the confound directly. Only drop a concept if the pattern actually disappears once you account for the confound. This is a narrow check that should touch a minority of concepts — it exists to catch the rare fully-explained-away pattern, not to thin the board.
 
 ### 6. Completeness Check
 When concepts are grouped into Narrative Threads, the board must also name — in one honest sentence — what the accepted concepts do NOT explain. Not a vague disclaimer; a real, specific gap. This is the natural-language analogue of a residual term in a variance decomposition: it doesn't need to be exhaustive, it just needs to keep the board from silently implying it's the whole picture.
