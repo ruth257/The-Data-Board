@@ -201,14 +201,12 @@ License: MIT
     direction: upstream
     of: "Life Satisfaction"
     via: resource_access
-  contrasts_with: "Structural Fragility"
   scope: global
   fidelity: 0.96`},{id:"h-2",word:"Communal Insulation",centrality:ve.DOMINANT,explanation:"The structural safety net provided by a reliable hierarchy of social connections.",dataInsight:"Evidence: High support scores in Iceland (1.84) and Israel (1.74) drive resilience despite external pressures.",source:"Gallup World Poll / Trust Audit",category:"Social",specificityScore:88,fidelity:.93,logic:`concept "Communal Insulation"
   is a: buffer
   context: "Communal safety nets"
   mechanism: "Trusted social networks reduce the psychological burden of crisis and improve recovery speed."
   evidence: "Support scores in high-trust nations (Iceland, Israel, Finland)"
-  contrasts_with: "Atomic Isolation"
   covers:
     explains: [national_resilience]
     aggregates: [social_support_score]
@@ -217,14 +215,12 @@ License: MIT
     direction: upstream
     of: "Emotional Security"
     via: relational_density
-  contrasts_with: "Social Isolation"
   scope: global
   fidelity: 0.93`},{id:"h-3",word:"Institutional Predictability",centrality:ve.PRESENT,explanation:"The level of confidence in public entities to act with transparency and fairness.",dataInsight:"Evidence: Finland and Denmark lead corruption-free scores (>0.48), creating a high happiness floor.",source:"Transparency International / WHR 2025",category:"Governance",specificityScore:90,fidelity:.91,logic:`concept "Institutional Predictability"
   is a: foundation
   context: "Predictability of social contract"
   mechanism: "Transparent institutions reduce systemic anxiety and improve collective cooperation."
   evidence: "Corruption perception scores (Finland/Denmark leading clusters)"
-  contrasts_with: "Arbitrary Governance"
   covers:
     explains: [institutional_trust]
     aggregates: [corruption_score]
@@ -233,7 +229,6 @@ License: MIT
     direction: upstream
     of: "Systemic Agency"
     via: rule_of_law
-  contrasts_with: "Governance Breakdown"
   scope: global
   fidelity: 0.91`},{id:"h-4",word:"Biological Vitality",centrality:ve.PRESENT,explanation:"The years of life spent in functional health, enabling participation in the social contract.",dataInsight:"Evidence: Healthy life expectancy in top nations averages 0.82+, significantly outperforming lower-tier countries.",source:"WHO / World Happiness Report 2025",category:"Health",specificityScore:85,fidelity:.94,logic:`concept "Biological Vitality"
   is a: prerequisite
@@ -248,7 +243,6 @@ License: MIT
     direction: upstream
     of: "Life Satisfaction"
     via: physical_agency
-  contrasts_with: "Chronic Fragility"
   scope: global
   fidelity: 0.94`},{id:"h-5",word:"Agency Capacity",centrality:ve.EDGE_CASE,explanation:"The perceived freedom to self-determine life path without permission or fear.",dataInsight:"Evidence: Nordic countries lead (0.95+), while nations with similar GDP but lower freedom (Vietnam 1.01 vs Singapore 0.85) show interesting variance.",source:"Psychological Audit / WHR 2025",category:"Rights",specificityScore:92,fidelity:.89,logic:`concept "Agency Capacity"
   is a: driver
@@ -263,7 +257,6 @@ License: MIT
     direction: downstream
     of: "Resource Elasticity"
     via: choice_capability
-  contrasts_with: "Structural Coercion"
   scope: global
   fidelity: 0.89`},{id:"h-6",word:"Agency-Resource Gap",centrality:ve.PRESENT,explanation:"The disconnect where rising income fails to translate into perceived freedom of life choice.",dataInsight:"Evidence: High-GDP nations with restrictive social norms (e.g., Korea, Singapore) show a significant gap between wealth and perceived agency.",source:"Socio-Economic Audit / WHR 2025",category:"Tension",specificityScore:95,fidelity:.94,logic:`concept "Agency-Resource Gap"
   is a: tension
@@ -278,7 +271,6 @@ License: MIT
     direction: downstream
     of: "Resource Elasticity"
     via: structural_friction
-  contrasts_with: "Aligned Optionality"
   scope: global
   fidelity: 0.94`},{id:"h-7",word:"Digital Fragmentation",centrality:ve.EDGE_CASE,explanation:"The erosion of physical social cohesion through hyper-individualized digital consumption.",dataInsight:"Evidence: Lower social trust in highly digitized OECD nations correlates with high screen-time densities among youth.",source:"Digital Life Audit / WHR 2025",category:"Technology",specificityScore:92,fidelity:.94,logic:`concept "Digital Fragmentation"
   is a: risk
@@ -336,7 +328,6 @@ License: MIT
     direction: downstream
     of: "Algorithmic Gluttony"
     via: thermal_debt
-  contrasts_with: "Scaling Unlimited"
   scope: global
   fidelity: 0.95`,cachedShadow:{id:"ai-2-s",word:"Jevons Paradox",centrality:ve.EDGE_CASE,explanation:"The efficiency trap: 2x chip efficiency leads to 4x workload demand, worsening the total carbon trajectory.",dataInsight:"Evidence: Historic GPU trends show that every efficiency breakthrough lowers inference cost, inducing massive new request volumes.",source:"Economic Foundation Audit",category:"Economics",specificityScore:97}},{id:"ai-3",word:"Deployment Fever",centrality:ve.PRESENT,explanation:"The market-driven imperative to ship models immediately, prioritizing release cycles over energy-optimization tuning.",dataInsight:"Evidence: Average time between model training completion and release has compressed from 18 months to 4 months (Kaggle Trends).",source:"Market Velocity Report",category:"Market",isAIConfirmed:!0,relevanceScore:88,specificityScore:85,logic:`concept "Deployment Fever"
   is a: market_driver
@@ -351,7 +342,6 @@ License: MIT
     direction: upstream
     of: "Optimization Lag"
     via: market_priority
-  contrasts_with: "Measured Maturation"
   scope: global
   fidelity: 0.90`},{id:"ai-4",word:"Gridlocked Ambition",centrality:ve.PRESENT,explanation:"The decoupling of AI demand from actual electrical grid capacity, where cluster plans exceed historical grid load growth.",dataInsight:"Evidence: 2024 IEA report identifies grid capacity as the primary bottleneck for 65% of planned hyperscale clusters.",source:"IEA Electricity Audit 2024",category:"Environment",isAIConfirmed:!0,relevanceScore:92,specificityScore:89,logic:`concept "Gridlocked Ambition"
   is a: block
@@ -365,7 +355,6 @@ License: MIT
     direction: downstream
     of: "Algorithmic Gluttony"
     via: load_saturation
-  contrasts_with: "Nuclear Integration"
   scope: global
   fidelity: 0.94`},{id:"ai-5",word:"Obsolescence Drift",centrality:ve.EDGE_CASE,explanation:"The systemic 'Toxicity' of software: models that become environmentally redundant before their training energy is amortized.",dataInsight:"Evidence: 70% of open-source models on major hubs see zero aggregate use after 90 days of release (HuggingFace Metrics).",source:"HuggingFace Metrics",category:"Lifecycle",isAIConfirmed:!0,relevanceScore:78,specificityScore:92,logic:`concept "Obsolescence Drift"
   is a: risk
@@ -379,7 +368,6 @@ License: MIT
     direction: downstream
     of: "Deployment Fever"
     via: utility_decay
-  contrasts_with: "Durable Intelligence"
   scope: global
   fidelity: 0.88`}],cachedExpansion:[{id:"ai-exp-1",word:"Physical Obsolescence",centrality:ve.DOMINANT,explanation:"The rapid hardware turnover in AI clusters where GPUs reach technical EOL within 1000 days of deployment.",dataInsight:"Evidence: High-intensity GPU clusters show failure rates increasing significantly after 36 months of 24/7 load.",source:"Hyperscale Fleet Audit",category:"Hardware",specificityScore:96,logic:`concept "Physical Obsolescence"
   is a: constraint
@@ -393,7 +381,6 @@ License: MIT
     direction: downstream
     of: "Algorithmic Gluttony"
     via: hardware_burnrate
-  contrasts_with: "Silicone Longevity"
   scope: global
   fidelity: 0.94`},{id:"ai-exp-2",word:"Intelligence Thinning",centrality:ve.PRESENT,explanation:"The shift toward 'Distillation' where massive teacher models are compressed into lightweight edge-ready student models.",dataInsight:"Evidence: 8-billion parameter distilled models approaching GPT-4 benchmarks in specific reasoning tasks.",source:"Model Compression Benchmarks",category:"Software",specificityScore:93,logic:`concept "Intelligence Thinning"
   is a: lever
@@ -420,7 +407,6 @@ License: MIT
     direction: downstream
     of: "Gridlocked Ambition"
     via: strategic_hoarding
-  contrasts_with: "Global Cloud Utility"
   scope: global
   fidelity: 0.96`}],metrics:{cohesion:96,coverage:92,entropy:30,sharpness:98,explanation:"The board successfully maps the collision between algorithmic ambition and the hard thermodynamic reality of energy and hardware limits.",synthesis:"AI Sustainability is a structural conflict between Algorithmic Gluttony and Thermodynamic Ceiling, moderated by Intelligence Thinning.",emergentPatterns:["The Efficiency Paradox","Infrastructure Saturation"],links:[{source:"Algorithmic Gluttony",target:"Thermodynamic Ceiling",label:"Violates"},{source:"Structural Elegance",target:"Intelligence Thinning",label:"Enables"},{source:"Deployment Fever",target:"Obsolescence Drift",label:"Accelerates"}],synthesisSuggestions:[]}},"gss-life-survey":{tiles:[{id:"gss-1",word:"Marital Stability",centrality:ve.DOMINANT,explanation:"The stabilizing effect of long-term committed relationships as a primary social anchor for American adults.",dataInsight:"Evidence: Married individuals consistently report 18% higher happiness scores across five decades of GSS data.",source:"GSS Longitudinal Tracking 1972-2024",category:"Demographics",specificityScore:96,logic:`concept "Marital Stability"
   is a: stabilizer
@@ -450,7 +436,6 @@ License: MIT
     direction: upstream
     of: "Job Satisfaction"
     via: physical_capacity
-  contrasts_with: "Health Decline"
   scope: regional
   fidelity: 0.95`},{id:"gss-3",word:"Financial Satisfaction",centrality:ve.PRESENT,explanation:"How individuals feel about their financial standing relative to their needs and local peer groups.",dataInsight:"Evidence: Relative financial standing predicts happiness more accurately than absolute dollar income levels.",source:"GSS Economic Outlook",category:"Economics",specificityScore:88,logic:`concept "Financial Satisfaction"
   is a: tension
@@ -465,7 +450,6 @@ License: MIT
     direction: downstream
     of: "Marital Stability"
     via: relative_status
-  contrasts_with: "Economic Distress"
   scope: regional
   fidelity: 0.92`},{id:"gss-4",word:"Job Satisfaction",centrality:ve.PRESENT,explanation:"The degree of fulfillment and purpose derived from one's professional life and daily work.",dataInsight:"Evidence: Meaningful work remains a top-3 predictor of happiness for American adults across all cohorts.",source:"GSS Labor Module / BLS",category:"Career",specificityScore:85,logic:`concept "Job Satisfaction"
   is a: driver
@@ -480,7 +464,6 @@ License: MIT
     direction: downstream
     of: "Personal Health"
     via: labor_participation
-  contrasts_with: "Work Burnout"
   scope: regional
   fidelity: 0.90`},{id:"gss-5",word:"Social Isolation",centrality:ve.EDGE_CASE,explanation:"A lack of close friends or confidants; the rising 'Zero Friends' phenomenon in modern life.",dataInsight:"Evidence: The number of Americans reporting 'no close friends' has tripled since 1985.",source:"GSS Social Network Audit",category:"Social",specificityScore:95,logic:`concept "Social Isolation"
   is a: risk
@@ -510,7 +493,6 @@ License: MIT
     direction: upstream
     of: "Job Satisfaction"
     via: credential_inflation
-  contrasts_with: "Labor Exclusion"
   scope: regional
   fidelity: 0.94`},{id:"gss-exp-2",word:"Shared Community",centrality:ve.PRESENT,explanation:"The traditional handle for communal identity and existential stability (Religion and groups).",dataInsight:"Participation in community groups provides a 10% happiness premium that persists even when controlling for income.",source:"GSS Community Module / Psychology of Meaning",category:"Culture",specificityScore:89,logic:`concept "Shared Community"
   is a: buffer
@@ -525,7 +507,6 @@ License: MIT
     direction: upstream
     of: "Marital Stability"
     via: moral_norming
-  contrasts_with: "Social Isolation"
   scope: regional
   fidelity: 0.89`},{id:"gss-exp-3",word:"Political Polarization",centrality:ve.EDGE_CASE,explanation:"The erosion of interpersonal trust through widening ideological divides.",dataInsight:"The 'Social Trust' score in GSS is at a record low in highly polarized political districts.",source:"GSS Political Audit / Pew Research",category:"Ideology",specificityScore:95,logic:`concept "Political Polarization"
   is a: risk
@@ -540,7 +521,6 @@ License: MIT
     direction: downstream
     of: "Marital Stability"
     via: affective_polarization
-  contrasts_with: "Marital Stability"
   scope: regional
   fidelity: 0.91`}],metrics:{cohesion:92,coverage:95,entropy:38,sharpness:94,explanation:"The GSS board provides a long-term view of the structural pillars of American life satisfaction, focusing on anchors vs. drift.",synthesis:"Life satisfaction is a deducible outcome of the interaction between Marital Stability and Personal Health.",emergentPatterns:["The Decoupled Affluence Trap","Total Social Atomization"],links:[{source:"Marital Stability",target:"Personal Health",label:"Dual Reinforcement"},{source:"Job Satisfaction",target:"Personal Health",label:"Dependent on"},{source:"Marital Stability",target:"Social Isolation",label:"Pseudo-Antonym"}],coverageBreakdown:{dominant:40,present:40,edgeCase:20},synthesisSuggestions:[]}},"big-mac-index":{tiles:[{id:"bm-2",word:"The Wealthy Surcharge",centrality:ve.DOMINANT,explanation:"The systematic price premium in high-GDP nations where high productivity in tradables inflates the cost of local non-tradable services.",dataInsight:"Evidence: Switzerland and Norway consistently sit 30-50% above the global regression line for burger prices.",source:"The Economist / GDP-Price Audit",category:"Economic Status",isAIConfirmed:!0,relevanceScore:98,specificityScore:96,logic:`concept "The Wealthy Surcharge"
   is a: driver
@@ -596,7 +576,6 @@ License: MIT
     direction: downstream
     of: "The Emerging Discount"
     via: speculative_friction
-  contrasts_with: "Instant Parity"
   scope: global
   fidelity: 0.91`},{id:"bm-6",word:"Integrated Parity",centrality:ve.PRESENT,explanation:"The tendency for nations within shared trade blocs (like the Eurozone) to maintain near-zero variance in standardized good prices.",dataInsight:"Evidence: Internal Eurozone price variance for the Big Mac is <5%, despite significant variance in local GDP.",source:"Geopolitical Groups",category:"Geopolitical Groups",isAIConfirmed:!0,relevanceScore:92,specificityScore:85,logic:`concept "Integrated Parity"
   is a: stabilizer
@@ -610,7 +589,6 @@ License: MIT
     direction: upstream
     of: "Monetary Inertia"
     via: market_fluidity
-  contrasts_with: "Policy Isolation"
   scope: regional
   fidelity: 0.94`},{id:"bm-7",word:"Logistical Premia",centrality:ve.EDGE_CASE,explanation:"Non-economic price spikes caused by local import tariffs (beef/wheat) or severe logistical bottlenecks.",dataInsight:"Evidence: Israel and Brazil appear as outliers where non-economic overhead keeps prices high relative to their GDP trend.",source:"Outlier Detection",category:"Trade Barriers",isAIConfirmed:!0,relevanceScore:92,specificityScore:95,logic:`concept "Logistical Premia"
   is a: distortion
@@ -698,7 +676,6 @@ License: MIT
     direction: upstream
     of: "Transition Friction"
     via: cognitive_dissonance
-  contrasts_with: "Cognitive Alignment"
   scope: global
   fidelity: 0.92`},{id:"gg-4",word:"Relational Shield",centrality:ve.PRESENT,explanation:"The retention of human authority in workflows where trust, legal responsibility, or social empathy can never be delegated.",dataInsight:"Evidence: Interpreters and PR Specialists show high base exposure but remain anchored in human-centric service categories.",source:"arXiv (Eloundou et al., 2023)",category:"Trust",specificityScore:90,fidelity:.91,logic:`concept "Relational Shield"
   is a: constraint
@@ -713,7 +690,6 @@ License: MIT
     direction: upstream
     of: "Automation Ceiling"
     via: legal_responsibility
-  contrasts_with: "Syntactic Sandbox"
   scope: global
   fidelity: 0.91`},{id:"gg-5",word:"Epistemic Hubris",centrality:ve.EDGE_CASE,explanation:"The model's tendency to rate creative or highly subjective semantic tasks as fully exposed, projecting complete capability.",dataInsight:"Evidence: AI models rate Poets, Lyricists and Creative Writers at 0.889 flat mid/high exposure, projecting generic mastery of authorship.",source:"arXiv (Eloundou et al., 2023)",category:"Creative",specificityScore:94,fidelity:.89,logic:`concept "Epistemic Hubris"
   is a: risk
@@ -728,7 +704,6 @@ License: MIT
     direction: upstream
     of: "Cultural Commoditization"
     via: stylistic_imitation
-  contrasts_with: "Generative Integrity"
   scope: global
   fidelity: 0.89`},{id:"gg-6",word:"Bio-Centric Cushion",centrality:ve.PRESENT,explanation:"The mechanical resilience of life science research that requires chemical testing, field sampling, and organic execution.",dataInsight:"Evidence: Low-to-moderate exposure metrics for Animal, Soil, and Plant Scientists compared to pure Environmental Economists.",source:"arXiv (Eloundou et al., 2023)",category:"Physical",specificityScore:88,fidelity:.9,logic:`concept "Bio-Centric Cushion"
   is a: stabilizer
@@ -743,7 +718,6 @@ License: MIT
     direction: downstream
     of: "Physical Anchor"
     via: biological_friction
-  contrasts_with: "Digital Twin Simulation"
   scope: global
   fidelity: 0.90`},{id:"gg-7",word:"The Codified Ceil",centrality:ve.PRESENT,explanation:"Computer programmers and designers are highly exposed because they operate in formal, mathematically consistent syntax.",dataInsight:"Evidence: Web Designers and Computer Programmers average above 0.68 mid/high exposure in human and model scores.",source:"arXiv (Eloundou et al., 2023)",category:"Cognitive",specificityScore:95,fidelity:.94,logic:`concept "The Codified Ceil"
   is a: driver
@@ -758,7 +732,6 @@ License: MIT
     direction: upstream
     of: "Syntactic Sandbox"
     via: sandbox_loops
-  contrasts_with: "Unstructured Intuition"
   scope: global
   fidelity: 0.94`},{id:"gg-8",word:"Semantic Transference",centrality:ve.EDGE_CASE,explanation:"The process where translation, pure editing, and technical text structures are fully absorbed into transformer neural pipelines.",dataInsight:"Evidence: Interpreters, Translators, and Correspondence Clerks scoring above 0.80 exposure on both Human and Model scales.",source:"arXiv (Eloundou et al., 2023)",category:"Translate",specificityScore:91,fidelity:.91,logic:`concept "Semantic Transference"
   is a: risk
@@ -773,7 +746,6 @@ License: MIT
     direction: upstream
     of: "Syntactic Sandbox"
     via: direct_mapping
-  contrasts_with: "Cultural Nuance"
   scope: global
   fidelity: 0.91`}],cachedExpansion:[],metrics:{cohesion:95,coverage:94,entropy:28,sharpness:96,explanation:"The board successfully maps the collision between alphanumeric cognitive labor and the spatial / biological reality that anchors human work.",synthesis:"AI exposure is not a linear function of job complexity, but a structural split between the Syntactic Sandbox and the Physical Anchor.",emergentPatterns:["The Embodied Retention Frontier","The Syntactic Coding Ceiling","Epistemic Bias in Creativity"],links:[{source:"Syntactic Sandbox",target:"Physical Anchor",label:"Contrasts"},{source:"The Codified Ceil",target:"Syntactic Sandbox",label:"Accelerates"},{source:"Semantic Transference",target:"Syntactic Sandbox",label:"Aggregates"},{source:"Bio-Centric Cushion",target:"Physical Anchor",label:"Anchors"},{source:"Projection Gap",target:"Syntactic Sandbox",label:"Tensions"}],synthesisSuggestions:[]}}};var Xs={exports:{}},Xd={},Wd,Px;function d2(){if(Px)return Wd;Px=1;function e(t,n){typeof n=="boolean"&&(n={forever:n}),this._originalTimeouts=JSON.parse(JSON.stringify(t)),this._timeouts=t,this._options=n||{},this._maxRetryTime=n&&n.maxRetryTime||1/0,this._fn=null,this._errors=[],this._attempts=1,this._operationTimeout=null,this._operationTimeoutCb=null,this._timeout=null,this._operationStart=null,this._timer=null,this._options.forever&&(this._cachedTimeouts=this._timeouts.slice(0))}return Wd=e,e.prototype.reset=function(){this._attempts=1,this._timeouts=this._originalTimeouts.slice(0)},e.prototype.stop=function(){this._timeout&&clearTimeout(this._timeout),this._timer&&clearTimeout(this._timer),this._timeouts=[],this._cachedTimeouts=null},e.prototype.retry=function(t){if(this._timeout&&clearTimeout(this._timeout),!t)return!1;var n=new Date().getTime();if(t&&n-this._operationStart>=this._maxRetryTime)return this._errors.push(t),this._errors.unshift(new Error("RetryOperation timeout occurred")),!1;this._errors.push(t);var o=this._timeouts.shift();if(o===void 0)if(this._cachedTimeouts)this._errors.splice(0,this._errors.length-1),o=this._cachedTimeouts.slice(-1);else return!1;var s=this;return this._timer=setTimeout(function(){s._attempts++,s._operationTimeoutCb&&(s._timeout=setTimeout(function(){s._operationTimeoutCb(s._attempts)},s._operationTimeout),s._options.unref&&s._timeout.unref()),s._fn(s._attempts)},o),this._options.unref&&this._timer.unref(),!0},e.prototype.attempt=function(t,n){this._fn=t,n&&(n.timeout&&(this._operationTimeout=n.timeout),n.cb&&(this._operationTimeoutCb=n.cb));var o=this;this._operationTimeoutCb&&(this._timeout=setTimeout(function(){o._operationTimeoutCb()},o._operationTimeout)),this._operationStart=new Date().getTime(),this._fn(this._attempts)},e.prototype.try=function(t){console.log("Using RetryOperation.try() is deprecated"),this.attempt(t)},e.prototype.start=function(t){console.log("Using RetryOperation.start() is deprecated"),this.attempt(t)},e.prototype.start=e.prototype.try,e.prototype.errors=function(){return this._errors},e.prototype.attempts=function(){return this._attempts},e.prototype.mainError=function(){if(this._errors.length===0)return null;for(var t={},n=null,o=0,s=0;s<this._errors.length;s++){var a=this._errors[s],u=a.message,c=(t[u]||0)+1;t[u]=c,c>=o&&(n=a,o=c)}return n},Wd}var Lx;function h2(){return Lx||(Lx=1,(function(e){var t=d2();e.operation=function(n){var o=e.timeouts(n);return new t(o,{forever:n&&(n.forever||n.retries===1/0),unref:n&&n.unref,maxRetryTime:n&&n.maxRetryTime})},e.timeouts=function(n){if(n instanceof Array)return[].concat(n);var o={retries:10,factor:2,minTimeout:1*1e3,maxTimeout:1/0,randomize:!1};for(var s in n)o[s]=n[s];if(o.minTimeout>o.maxTimeout)throw new Error("minTimeout is greater than maxTimeout");for(var a=[],u=0;u<o.retries;u++)a.push(this.createTimeout(u,o));return n&&n.forever&&!a.length&&a.push(this.createTimeout(u,o)),a.sort(function(c,p){return c-p}),a},e.createTimeout=function(n,o){var s=o.randomize?Math.random()+1:1,a=Math.round(s*Math.max(o.minTimeout,1)*Math.pow(o.factor,n));return a=Math.min(a,o.maxTimeout),a},e.wrap=function(n,o,s){if(o instanceof Array&&(s=o,o=null),!s){s=[];for(var a in n)typeof n[a]=="function"&&s.push(a)}for(var u=0;u<s.length;u++){var c=s[u],p=n[c];n[c]=(function(g){var v=e.operation(o),x=Array.prototype.slice.call(arguments,1),S=x.pop();x.push(function(A){v.retry(A)||(A&&(arguments[0]=v.mainError()),S.apply(this,arguments))}),v.attempt(function(){g.apply(n,x)})}).bind(n,p),n[c].options=o}}})(Xd)),Xd}var Qd,Ux;function p2(){return Ux||(Ux=1,Qd=h2()),Qd}var Vx;function m2(){if(Vx)return Xs.exports;Vx=1;const e=p2(),t=["Failed to fetch","NetworkError when attempting to fetch resource.","The Internet connection appears to be offline.","Network request failed"];class n extends Error{constructor(c){super(),c instanceof Error?(this.originalError=c,{message:c}=c):(this.originalError=new Error(c),this.originalError.stack=this.stack),this.name="AbortError",this.message=c}}const o=(u,c,p)=>{const h=p.retries-(c-1);return u.attemptNumber=c,u.retriesLeft=h,u},s=u=>t.includes(u),a=(u,c)=>new Promise((p,h)=>{c={onFailedAttempt:()=>{},retries:10,...c};const g=e.operation(c);g.attempt(async v=>{try{p(await u(v))}catch(x){if(!(x instanceof Error)){h(new TypeError(`Non-error was thrown: "${x}". You should only throw errors.`));return}if(x instanceof n)g.stop(),h(x.originalError);else if(x instanceof TypeError&&!s(x.message))g.stop(),h(x);else{o(x,v,c);try{await c.onFailedAttempt(x)}catch(S){h(S);return}g.retry(x)||h(g.mainError())}}})});return Xs.exports=a,Xs.exports.default=a,Xs.exports.AbortError=n,Xs.exports}var J_=m2();const g2=sp(J_);var y2={};/**
  * @license
@@ -1028,12 +1000,9 @@ ${v}`)}return u}),Ql=WV(kA);/**
       
       THE HUMAN DOMAIN DIRECTIVE:
       - PARADIGM GENERATOR MODE: You are an AUDITOR, not a describer. Do NOT simply re-label the column headers from the data.
-      - GOLDILOCKS NAMING: Find a handle that is precise enough to reduce statistical guessing but flexible enough to enable human narration.
-      - PSEUDO-ANTONYMS©: Every concept must be defined by the tension it holds. If you name a concept, you must be able to identify its structural opposite.
-      - FORBIDDEN: Do NOT use generic column names (e.g., "GDP", "Social Support", "Conversion"). These are "Statistical Inventions".
-      - MANDATED: Synthesize the "Mechanism" of the data. (e.g., Instead of "Income", use "Resource Elasticity"; instead of "Social Support", use "Communal Buffer").
-      - Use "Human Domain Vocabulary" that grounds the initial reasoning in recognizable but synthesized structural truths.
-      
+      - GOLDILOCKS NAMING CUTS BOTH WAYS: precise enough to be grounded, general enough to reason from. A synthesized name (e.g. "Resource Elasticity" instead of "Income") only earns its place when the literal term would flatten a real mechanism. If the literal, closer-to-the-data term is already the clearest handle, KEEP IT — do not invent a more abstract label just to sound more analytical. Jargon that explains nothing new is worse than the plain term it replaced.
+      - PSEUDO-ANTONYMS© ARE CONDITIONAL, NOT MANDATORY: only identify a structural opposite ("contrasts_with") if a genuine one already exists in this domain — something a domain expert would recognize as the real other side of a real tension. Many valid concepts are foundational or descriptive and have no natural opposite (e.g. "Healthy Life Expectancy" is not in tension with anything specific). For those, leave "contrasts_with" out entirely rather than inventing one. A pseudo-antonym exists to test whether the concept represents a real fault line in the whole dataset, not a single direction in it — forcing one onto every concept defeats that purpose.
+
       THE EVIDENCE COHERENCE DIRECTIVE:
       - The 'explanation' MUST be a specific, data-grounded observation that provides "Sharp Evidence".
       - Ensure the handle is globally coherent within the reasoning space of the scenario.
@@ -1065,7 +1034,7 @@ ${v}`)}return u}),Ql=WV(kA);/**
           direction: [upstream | downstream]
           of: "[other concept]"
           via: "[causal mechanism]"
-        contrasts_with: "[the pseudo-antonym concept]"
+        contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
         fidelity: [0.0-1.0]
         fidelity_basis: [semantic_density | expert_judgment | empirical_test]
@@ -1076,13 +1045,12 @@ ${v}`)}return u}),Ql=WV(kA);/**
       Suggest "Human Domain Vocabulary" for the subject: "${e.title}".
       
       THE HUMAN DOMAIN METHOD:
-      - PARADIGM GENERATOR MODE: You are the AUDITOR. Stop "guessing" meaning and start "verifying" it against the evidence. 
-      - GOLDILOCKS NAMING: Search for words that synthesize the structural truth hidden in the data. Avoid generic descriptions.
-      - PSEUDO-ANTONYMS©: Identify handles by finding the tug-of-war between tensions (e.g., "Informed Early" vs "Unaware").
-      - SEMANTIC SYNTHESIS: Your primary goal is to find handles that synthesize the "Mechanism" of the data, not just the "Label".
-      - FORBIDDEN: Do NOT use literal column names or one-word metrics (e.g., "Conversion", "Satisfaction", "Revenue"). These are too simple to enable audited narration.
+      - PARADIGM GENERATOR MODE: You are the AUDITOR. Stop "guessing" meaning and start "verifying" it against the evidence.
+      - GOLDILOCKS NAMING CUTS BOTH WAYS: search for the clearest handle for the structural truth in the data — sometimes that's a synthesized term, sometimes the plain descriptive term is already exact and inventing a fancier one would only add jargon. Prefer the plainest name that still captures the mechanism.
+      - PSEUDO-ANTONYMS© ARE CONDITIONAL, NOT MANDATORY: across the whole board, expect only a small number of genuine tension pairs (often just one or two) — pairs that represent a real fault line running through the WHOLE dataset, not a single direction in it. Most concepts on a board are foundational or descriptive and correctly have no pseudo-antonym. Do not force every handle into a tug-of-war; only pair concepts when a domain expert would recognize the opposition as real.
+      - SEMANTIC SYNTHESIS: Your primary goal is to find handles that are true to the "Mechanism" of the data. A literal label is fine when it already is the mechanism (e.g. "Healthy Life Expectancy" needs no synthesis); reach for a synthesized name only when the literal label would flatten something real (e.g. "Income" alone hides the distinction between raw wealth and the freedom it buys — "Resource Elasticity" earns its keep there).
       - Use descriptive segments and clear factual categories that ground the initial reasoning.
-      
+
       THE HANDLE DIRECTIVE:
       - The 'word' MUST be a simple, recognizable handle (1-2 words max).
       - The 'explanation' MUST be the "Sharp Evidence" that grounds this concept in the data.
@@ -1114,7 +1082,7 @@ ${v}`)}return u}),Ql=WV(kA);/**
           direction: [upstream | downstream]
           of: "[other concept]"
           via: "[causal mechanism]"
-        contrasts_with: "[the pseudo-antonym concept]"
+        contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
         fidelity: [0.0-1.0]
         fidelity_basis: [semantic_density | expert_judgment | empirical_test]
@@ -1137,7 +1105,7 @@ ${s.logic||`  is_a: ${s.category}
       DEDUCTION & SYNTHESIS DIRECTIVE:
       - Use the EXACT "concepts" and "logic" from the board above as the formal grounding for all insights.
       - BRIDGE: Use the "mechanism" and "evidence" fields from the YAML to bridge terms using human-like logical deduction.
-      - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" explicitly defined or implied by the "contrasts_with" and "mechanism" fields.
+      - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" explicitly defined by the "contrasts_with" fields. Do not invent tension pairs beyond what the board's concepts actually declare — most boards will only have one or two genuine pairs, and that is expected, not a gap to fill.
       - EMERGENT PATTERNS: These should be high-level narrative "Handles" that emerge from the interaction of the board's concepts. They MUST be consistent with the logic defined in the YAML.
       - SYNTHESIS: Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the board's vocabulary.
       
@@ -1161,8 +1129,8 @@ ${s.logic||`  is_a: ${s.category}
       1. AUDIT THE TENSION: Do not simply re-state column names. Identify the underlying "Audit Narrative" the data suggests.
       2. Create a Scenario: title, description, context, and two primary opposing outcomes (e.g., ["Structural Stability", "Systemic Collapse"]).
       3. Generate 8-12 Vocabulary Tiles (handles).
-      4. GOLDILOCKS NAMING: Synthesize the "Mechanism" of the data. (e.g., Instead of "Social Support", use "Communal Safety Net").
-      5. PSEUDO-ANTONYMS©: Every concept must exist in a tug-of-war. Find the structural opposites.
+      4. GOLDILOCKS NAMING CUTS BOTH WAYS: reach for a synthesized "Mechanism" name only when the literal column/field name would flatten something real (e.g., "Social Support" → "Communal Safety Net" earns its keep because it names the buffering mechanism). If the literal term is already the clearest handle, keep it — do not manufacture jargon for its own sake.
+      5. PSEUDO-ANTONYMS© ARE CONDITIONAL: across the WHOLE 8-12 tile board, expect only a small number of genuine tension pairs (typically 1-2) that represent a real structural fault line running through the whole dataset — not a single direction in it. Most tiles should have no pseudo-antonym at all. Only pair concepts when a domain expert would recognize the opposition as real; do not force a tug-of-war onto every concept.
       6. For each tile, provide a word, centrality, and a brief explanation/dataInsight based on evidence.
       
       Return JSON: 
@@ -1187,7 +1155,7 @@ ${s.logic||`  is_a: ${s.category}
           direction: [upstream | downstream]
           of: "[other concept]"
           via: "[causal mechanism]"
-        contrasts_with: "[the pseudo-antonym concept]"
+        contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
         fidelity: [0.0-1.0]
         fidelity_basis: [semantic_density | expert_judgment | empirical_test]
