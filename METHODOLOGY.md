@@ -55,6 +55,20 @@ Every concept lives at one of three levels. Confusing them is the single most co
 
 ---
 
+## THE THREE PILLARS OF REASONING
+
+The board leans on three distinct cognitive mechanisms — each doing a different job, none substituting for the others.
+
+| Pillar | Mechanism | What it's not |
+|---|---|---|
+| **Abstraction** | Calibrating the right rung (Signal → Finding → Concept) for each handle — sometimes staying literal, sometimes climbing. | Not "maximize abstraction." Always climbing to the most synthesized name is the over-abstraction failure this framework exists to catch. |
+| **Salience** | Traffic-light color coding (Dominant / Present / Edge Case) exploits pre-attentive visual processing — color is one of the few features the eye registers before conscious attention, which is why a three-bucket status system reads instantly. | Not a quantity. It's an ordinal category, not a number. The actual quantity in the app is the Sharpness score (0-100) — a different, complementary signal. |
+| **Narrative Cohesion** | Clustering concepts that share one story (Narrative Threads) — Gestalt grouping and chunking make related items easier to hold in mind together than scattered alone. | Not statistical clustering. Threads are proposed by a single LLM judgment call reading each concept's word and explanation, not an embedding or graph algorithm — pragmatic, not a formal clustering method. |
+
+**Grounded in:** pre-attentive processing (Treisman & Gelade, 1980) for salience; Gestalt grouping (Wertheimer, 1923) and chunking (Miller, 1956) for narrative cohesion; Hayakawa's ladder of abstraction (1939) for the first pillar — see Theoretical Anchors below.
+
+---
+
 ## KEY CONCEPTS
 
 ### Deducible Space
@@ -137,6 +151,9 @@ Workflow:
 * **Hayakawa, S.I. (1939).** *Language in Thought and Action.* — The ladder of abstraction. The direct ancestor of the three rungs above.
 * **Barsalou, L. (1983).** "Ad hoc categories." — People build useful categories on the fly because they're goal-relevant, not because they're natural kinds. "Travel Destinations" as a CTR-explaining category is exactly this: no dictionary groups content that way, it exists because it makes a real gap visible.
 * **Lipton, P. (1990).** "Contrastive explanation." — An explanation only satisfies when it explains "why P rather than Q," where Q is a real, checkable alternative — not an invented one. The theoretical basis for why a pseudo-antonym must be independently grounded, not merely antonym-shaped.
+* **Treisman, A. & Gelade, G. (1980).** "A feature-integration theory of attention." — Color is processed pre-attentively, before conscious attention. The basis for why traffic-light status coding reads instantly.
+* **Wertheimer, M. (1923).** "Laws of organization in perceptual forms." — Gestalt grouping: proximity and similarity read as one whole. The basis for Narrative Threads.
+* **Miller, G.A. (1956).** "The magical number seven, plus or minus two." — Chunking: related items held together are easier to reason about than the same items loose.
 * **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. The Data Board addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model.
 * **Glaser, B. & Strauss, A. (1967).** *The Discovery of Grounded Theory.* — Open and axial coding, the qualitative precedent this method operationalises computationally.
 * **Wittgenstein, L. (1922).** *Tractatus.* — "The limits of my language are the limits of my world."

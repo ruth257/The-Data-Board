@@ -233,19 +233,21 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             <div className="space-y-4">
               {[
                 { name: "Deducible Space", body: "The minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably. Not a list of variables — the conceptual foundation that makes reasoning possible and narrative non-arbitrary." },
-                { name: "Pseudo-Antonyms©", tag: "© Ruth Aharon", body: "Concept pairs occupying opposite ends of the same analytical dimension. Not logical opposites — structurally opposing concepts within a shared domain. The mechanism that makes deductions inevitable rather than inferred. Without tension, there is no story — only a report. Attribution required when citing." },
-                { 
-                  name: "Goldilocks Handle", 
+                { name: "Pseudo-Antonyms©", tag: "© Ruth Aharon", body: "Concept pairs occupying opposite ends of the same analytical dimension — not lexical opposites, but two independently-grounded findings pulling in opposite directions on the same real axis. Conditional, not mandatory: most concepts have no natural opposite, and forcing one onto every concept is exactly the failure mode this framework exists to catch. A pseudo-antonym only earns its place when both sides survive the same grounding check. Attribution required when citing." },
+                {
+                  name: "Goldilocks Handle",
                   body: (
                     <>
-                      A concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from.{" "}
-                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">The Wealthy Surcharge</code> names a mechanism (systematic price premium driven by the Balassa-Samuelson effect), compresses a pattern across 50+ countries, and creates structural tension against its pseudo-antonym.{" "}
-                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">Countries that are rich</code> is not a Goldilocks handle — it describes a category, implies no mechanism, and generates no analytical direction.
+                      A concept at the right level of abstraction — and this cuts both ways.{" "}
+                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">The Wealthy Surcharge</code> names a mechanism (systematic price premium driven by the Balassa-Samuelson effect) that the literal term "rich countries" would flatten.{" "}
+                      <code className="font-mono text-[11px] bg-[#F5F4F1] px-1.5 py-0.5 border border-ink/15">Healthy Life Expectancy</code> is also a Goldilocks handle — it's already the clearest term, so climbing to a synthesized name would only add jargon. The skill is knowing which situation you're in, not always reaching for the fancier word.
                     </>
                   )
                 },
+                { name: "Grounded Evidence", body: "A claim is grounded only when it cites specific values from a real dataset the AI was actually given — not when it merely sounds plausible for the domain. When no dataset is available, the honest label is \"general domain knowledge, not data-verified,\" not an invented statistic dressed up as one." },
                 { name: "Verification Shift", body: "When vocabulary is supplied, the AI moves from invention to verification — checking whether concepts are descriptive, domain-coherent, and evidentially grounded rather than generating labels freely. The AI stops guessing meaning and starts checking it." },
                 { name: "Semantic Weight", levels: true, body: "Centrality of a concept in the evidence base. Three levels:" },
+                { name: "Narrative Thread", body: "Which concepts, taken together, actually carry one story — independent of how any single concept is weighted. A board can hold several threads; a concept can belong to more than one. Proposed by a single LLM judgment pass over the board's concepts, refined by dragging concepts between threads, and re-audited on demand — not a statistical clustering algorithm." },
                 { name: "Minimal vs Expandable Board", body: "The minimal board contains the core deducible space — the smallest coherent set of concepts from which the global story follows. The expandable board adds shadow concepts and edge cases: the structural tensions that challenge or complicate the dominant narrative." }
               ].map((c, i) => (
                 <div key={i} className="border-2 border-[#141414] shadow-[4px_4px_0_0_#141414]">
