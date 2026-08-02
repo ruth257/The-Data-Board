@@ -2270,9 +2270,6 @@ export default function App() {
               Shared AI: {isSystemKeyActive ? 'Active' : 'Inactive'}
             </span>
           </div>
-          <p className="text-[10px] mono uppercase">
-            Built with Google Gemini
-          </p>
         </div>
       </footer>
     </div>
