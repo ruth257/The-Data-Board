@@ -365,94 +365,46 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
 
 export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): Promise<BoardMetrics> {
   if (!Array.isArray(tiles) || tiles.length === 0) {
-    return {
-      cohesion: 0,
-      coverage: 0,
-      entropy: 0,
-      sharpness: 0,
-      explanation: "No data on board to evaluate."
-    };
+    return { explanation: "No data on board to evaluate." };
   }
 
   const response = await callAIProxy("gemini-3-flash-preview",
     `
-      Evaluate the "Eureka Potential" of this board for scenario: "${scenario.title}".
-      
+      Synthesize the "Eureka Moment" of this board for scenario: "${scenario.title}".
+
       THE LOGIC BOARD SOURCE CODE (YAML):
       The board is defined by the following A Posteriori Ontology (Logic Board):
       ${tiles.map(t => `concept: "${t.word}"\n${t.logic || `  is_a: ${t.category}\n  mechanism: "${t.explanation}"`}`).join("\n---\n")}
-      
+
       DEDUCTION & SYNTHESIS DIRECTIVE:
       - Use the EXACT "concepts" and "logic" from the board above as the formal grounding for all insights.
       - BRIDGE: Use the "mechanism" and "evidence" fields from the YAML to bridge terms using human-like logical deduction.
       - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" explicitly defined by the "contrasts_with" fields. Do not invent tension pairs beyond what the board's concepts actually declare — most boards will only have one or two genuine pairs, and that is expected, not a gap to fill.
       - EMERGENT PATTERNS: These should be high-level narrative "Handles" that emerge from the interaction of the board's concepts. They MUST be consistent with the logic defined in the YAML.
       - SYNTHESIS: Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the board's vocabulary.
-      
-      THE SEMANTIC MAP (Links):
-      - Identify 3-6 "Causal Links" between the tiles CURRENTLY ON THE BOARD.
-      - CRITICAL: The 'source' and 'target' MUST EXACTLY MATCH the 'concept' names from the list above.
-      
-      METRICS DEFINITION (0-100):
-      - COHESION: How well do these terms connect to form a unified, logical argument based on the provided YAML?
-      - COVERAGE: How well does the board cover the breadth of the scenario context?
-      - SHARPNESS: How specific and grounded is the evidence for these connections?
-      
-      Return JSON: cohesion, coverage, entropy, sharpness, explanation, synthesis, emergentPatterns, links, synthesisSuggestions.
+      - Do NOT invent a numeric confidence/quality score for the board — the app computes its own grounding statistic directly from real data, and a second, AI-guessed number would just contradict it.
+
+      Return JSON: explanation, synthesis, emergentPatterns.
     `,
     {
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
         properties: {
-          cohesion: { type: Type.NUMBER },
-          coverage: { type: Type.NUMBER },
-          entropy: { type: Type.NUMBER },
-          sharpness: { type: Type.NUMBER },
           explanation: { type: Type.STRING },
           synthesis: { type: Type.STRING },
           emergentPatterns: { type: Type.ARRAY, items: { type: Type.STRING } },
-          links: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                source: { type: Type.STRING },
-                target: { type: Type.STRING },
-                label: { type: Type.STRING },
-              },
-              required: ["source", "target", "label"],
-            },
-          },
-          synthesisSuggestions: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                original: { type: Type.ARRAY, items: { type: Type.STRING } },
-                replacement: { type: Type.STRING },
-                reasoning: { type: Type.STRING },
-              },
-              required: ["original", "replacement", "reasoning"],
-            },
-          },
         },
-        required: ["cohesion", "coverage", "entropy", "sharpness", "explanation", "synthesis", "emergentPatterns", "links", "synthesisSuggestions"],
+        required: ["explanation", "synthesis", "emergentPatterns"],
       },
     }
   );
 
   const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
   return {
-    cohesion: result.cohesion || 0,
-    coverage: result.coverage || 0,
-    entropy: result.entropy || 0,
-    sharpness: result.sharpness || 0,
     explanation: result.explanation || "Evaluation complete.",
     synthesis: result.synthesis,
     emergentPatterns: result.emergentPatterns || [],
-    links: result.links || [],
-    synthesisSuggestions: Array.isArray(result.synthesisSuggestions) ? result.synthesisSuggestions : [],
   };
 }
 

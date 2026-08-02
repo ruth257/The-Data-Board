@@ -40,18 +40,17 @@ export interface NarrativeThread {
 }
 
 export interface BoardMetrics {
-  cohesion: number; // 0-100
-  coverage: number; // 0-100
-  entropy: number; // 0-100
-  sharpness: number; // 0-100 (Average specificity of findings)
   explanation: string;
   synthesis?: string; // The "Headline Insight" / Eureka Moment
   emergentPatterns?: string[];
+  // Legacy fields from earlier cached boards. No longer requested from the AI
+  // (they were invented scores with nothing behind them) and no longer
+  // rendered — kept optional here only so old CACHED_BOARDS data still typechecks.
+  cohesion?: number;
+  coverage?: number;
+  entropy?: number;
+  sharpness?: number;
   links?: { source: string; target: string; label: string }[];
-  coverageBreakdown?: {
-    dominant: number;
-    present: number;
-    edgeCase: number;
-  };
+  coverageBreakdown?: { dominant: number; present: number; edgeCase: number };
   synthesisSuggestions?: { original: string[]; replacement: string; reasoning: string }[];
 }

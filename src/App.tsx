@@ -1547,35 +1547,6 @@ export default function App() {
     }
   };
 
-  const handleApplySynthesis = async (original: string[], replacement: string) => {
-    if (isLoading) return;
-
-    if (!hasApiKey) {
-      setIsSettingsOpen(true);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    try {
-      // Remove original words
-      const filteredTiles = tiles.filter(t => !original.includes(t.word));
-      // Add replacement word
-      const existingWords = filteredTiles.map(t => t.word);
-      const newTile = await evaluateWord(scenario, replacement, existingWords, datasetSample || undefined);
-      setTiles([newTile, ...filteredTiles]);
-    } catch (err: any) {
-      console.error(err);
-      if (err.message?.includes("API_KEY_REQUIRED")) {
-        setIsSettingsOpen(true);
-      } else {
-        setError(err.message || "Failed to apply synthesis suggestion.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleGeminiSuggest = async () => {
     if (isLoading) return;
 
@@ -2146,47 +2117,31 @@ export default function App() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="group relative cursor-help border border-ink/10 p-4 bg-white/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1">
-                        <p className="text-[8px] mono uppercase font-bold opacity-50">Narrative Cohesion</p>
-                        <Info className="w-2 h-2 opacity-30" />
+                {(() => {
+                  const groundedCount = tiles.filter(t => t.evidenceGrounded).length;
+                  const ratio = tiles.length > 0 ? groundedCount / tiles.length : 0;
+                  return (
+                    <div className="group relative cursor-help border border-ink/10 p-4 bg-white/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1">
+                          <p className="text-[8px] mono uppercase font-bold opacity-50">Grounded In Your Data</p>
+                          <Info className="w-2 h-2 opacity-30" />
+                        </div>
+                        <p className="text-sm font-black">{groundedCount} of {tiles.length}</p>
                       </div>
-                      <p className="text-sm font-black">{metrics.cohesion}%</p>
-                    </div>
-                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${metrics.cohesion}%` }}
-                        className="h-full bg-databoard-yellow"
-                      />
-                    </div>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                      Measures how well the specific findings connect to form a unified argument.
-                    </div>
-                  </div>
-
-                  <div className="group relative cursor-help border border-ink/10 p-4 bg-white/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1">
-                        <p className="text-[8px] mono uppercase font-bold opacity-50">Finding Sharpness</p>
-                        <Zap className="w-2 h-2 opacity-30" />
+                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${ratio * 100}%` }}
+                          className="h-full bg-databoard-green"
+                        />
                       </div>
-                      <p className="text-sm font-black">{metrics.sharpness}%</p>
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
+                        Computed directly from your tiles — how many carry evidence actually checked against real data, versus general domain knowledge. Not an AI-guessed score.
+                      </div>
                     </div>
-                    <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${metrics.sharpness}%` }}
-                        className="h-full bg-databoard-green"
-                      />
-                    </div>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                      Measures the specificity of your findings. High sharpness means data-backed observations.
-                    </div>
-                  </div>
-                </div>
+                  );
+                })()}
                 {metrics.emergentPatterns && metrics.emergentPatterns.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Emergent Patterns</p>
