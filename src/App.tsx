@@ -1005,8 +1005,18 @@ const TileCard = React.memo(({
             </p>
             
             {tile.dataInsight && (
-              <div className="mb-3 p-2 bg-white/10 border-l border-white/30">
-                <p className="text-[8px] uppercase tracking-widest font-bold opacity-50 mb-1">Insight</p>
+              <div className={`mb-3 p-2 bg-white/10 border-l ${tile.evidenceGrounded ? "border-databoard-green" : "border-white/30"}`}>
+                <p className={`text-[8px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1 ${tile.evidenceGrounded ? "text-databoard-green opacity-100" : "opacity-50"}`}>
+                  {tile.evidenceGrounded ? (
+                    <>
+                      <Check className="w-2.5 h-2.5" /> Verified in your data
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="w-2.5 h-2.5" /> General knowledge — not data-verified
+                    </>
+                  )}
+                </p>
                 <p className="text-[9px] mono leading-tight">{tile.dataInsight}</p>
               </div>
             )}
@@ -1156,6 +1166,12 @@ export default function App() {
       return CACHED_BOARDS[scenario.id].tiles;
     }
     return [];
+  });
+  // The real rows behind the current board, when the user uploaded a CSV.
+  // Without this, no AI call after the initial upload has anything real to
+  // check a proposed concept against — every card's evidence stays a guess.
+  const [datasetSample, setDatasetSample] = useState<string | null>(() => {
+    return localStorage.getItem("databoard-dataset-sample");
   });
   const [metrics, setMetrics] = useState<BoardMetrics | null>(() => {
     const savedMetrics = localStorage.getItem("databoard-metrics");
@@ -1332,6 +1348,7 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
+        setDatasetSample(null);
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
@@ -1353,6 +1370,7 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
+        setDatasetSample(null);
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
@@ -1385,6 +1403,14 @@ export default function App() {
       localStorage.removeItem("databoard-threads");
     }
   }, [threads]);
+
+  useEffect(() => {
+    if (datasetSample) {
+      localStorage.setItem("databoard-dataset-sample", datasetSample);
+    } else {
+      localStorage.removeItem("databoard-dataset-sample");
+    }
+  }, [datasetSample]);
 
   useEffect(() => {
     localStorage.setItem("databoard-scenario", scenario.id);
@@ -1490,7 +1516,7 @@ export default function App() {
     setError(null);
     try {
       const existingWords = tiles.map(t => t.word);
-      const newTile = await evaluateWord(scenario, inputValue.trim(), existingWords);
+      const newTile = await evaluateWord(scenario, inputValue.trim(), existingWords, datasetSample || undefined);
       setTiles((prev) => {
         // Prevent duplicates by word
         if (prev.some(t => t.word.toLowerCase() === newTile.word.toLowerCase())) {
@@ -1527,7 +1553,7 @@ export default function App() {
       const filteredTiles = tiles.filter(t => !original.includes(t.word));
       // Add replacement word
       const existingWords = filteredTiles.map(t => t.word);
-      const newTile = await evaluateWord(scenario, replacement, existingWords);
+      const newTile = await evaluateWord(scenario, replacement, existingWords, datasetSample || undefined);
       setTiles([newTile, ...filteredTiles]);
     } catch (err: any) {
       console.error(err);
@@ -1572,7 +1598,7 @@ export default function App() {
     setError(null);
     try {
       const existingWords = tiles.map(t => t.word);
-      const suggestions = await generateBestVocabulary(scenario, existingWords);
+      const suggestions = await generateBestVocabulary(scenario, existingWords, datasetSample || undefined);
       
       if (!suggestions || suggestions.length === 0) {
         setIsExpansionAvailable(false);
@@ -1653,6 +1679,7 @@ export default function App() {
 
             setTiles(uniqueImportedTiles);
             setThreads([]);
+            setDatasetSample(null); // imported tiles carry no verifiable raw data with them
             setSelectedTile(null);
           }
         } else if (file.name.endsWith('.csv')) {
@@ -1673,7 +1700,7 @@ export default function App() {
 
           // Call AI to analyze and generate scenario + tiles
           const { scenario: newScenario, tiles: newTiles } = await analyzeCSVData(sampleStr);
-          
+
           setScenarios(prev => {
             const updated = [...prev, newScenario];
             localStorage.setItem("databoard-custom-scenarios", JSON.stringify(updated.filter(s => s.id.startsWith('custom-'))));
@@ -1682,6 +1709,9 @@ export default function App() {
           setScenario(newScenario);
           setTiles(newTiles);
           setThreads([]);
+          // Keep the real sample around — every later card added to this board
+          // has to check itself against it, not just describe it plausibly.
+          setDatasetSample(sampleStr);
           setSelectedTile(null);
         }
       } catch (err: any) {
@@ -1705,6 +1735,7 @@ export default function App() {
       setSelectedTile(null);
       setMetrics(null);
       setThreads([]);
+      setDatasetSample(null);
       localStorage.removeItem("databoard-tiles");
     }
   };
@@ -1867,6 +1898,7 @@ export default function App() {
                         setTiles([]);
                         setMetrics(null);
                         setThreads([]);
+                        setDatasetSample(null);
                         setSelectedTile(null);
                         setScenario(s);
                         setIsExpansionAvailable(true);
@@ -1928,6 +1960,7 @@ export default function App() {
                           setTiles(CACHED_BOARDS[scenario.id].tiles);
                           setMetrics(CACHED_BOARDS[scenario.id].metrics);
                           setThreads(CACHED_BOARDS[scenario.id].threads || []);
+                          setDatasetSample(null);
                           setSelectedTile(null);
                         }
                       }}
@@ -1974,6 +2007,7 @@ export default function App() {
                         setTiles(CACHED_BOARDS[scenario.id].tiles);
                         setMetrics(CACHED_BOARDS[scenario.id].metrics);
                         setThreads(CACHED_BOARDS[scenario.id].threads || []);
+                        setDatasetSample(null);
                       }}
                       className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
                     >

@@ -139,11 +139,26 @@ const generateId = () => {
   return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
 };
 
-export async function evaluateWord(scenario: Scenario, word: string, existingWords: string[] = []): Promise<Tile> {
-  const response = await callAIProxy("gemini-3-flash-preview", 
+export async function evaluateWord(scenario: Scenario, word: string, existingWords: string[] = [], datasetSample?: string): Promise<Tile> {
+  const groundingBlock = datasetSample
+    ? `
+      THE DATASET (this is real data you must check against — not a description of it):
+      ${datasetSample}
+
+      GROUNDING RULE — READ THIS FIRST:
+      - "dataInsight" MUST cite specific values, rows, or a specific comparison found in THE DATASET above. Quote or closely paraphrase the actual numbers/categories you're pointing at.
+      - Set "evidenceGrounded" to true only if you actually did this. If the dataset above does not support this concept, set "evidenceGrounded" to false and say in "dataInsight" what's missing — do not invent a plausible-sounding number.
+    `
+    : `
+      GROUNDING RULE — READ THIS FIRST:
+      - No dataset sample was provided for this scenario — you only have the text context below, not real rows to check.
+      - Set "evidenceGrounded" to false. "dataInsight" must be prefixed with "General domain knowledge (not data-verified): " and should draw on well-established facts about this domain, not an invented statistic.
+    `;
+
+  const response = await callAIProxy("gemini-3-flash-preview",
     `
       Evaluate the handle "${word}" for the subject: "${scenario.title}".
-      
+
       THE HUMAN DOMAIN DIRECTIVE:
       - PARADIGM GENERATOR MODE: You are an AUDITOR, not a describer. Do NOT simply re-label the column headers from the data.
       - GOLDILOCKS NAMING CUTS BOTH WAYS: precise enough to be grounded, general enough to reason from. A synthesized name (e.g. "Resource Elasticity" instead of "Income") only earns its place when the literal term would flatten a real mechanism. If the literal, closer-to-the-data term is already the clearest handle, KEEP IT — do not invent a more abstract label just to sound more analytical. Jargon that explains nothing new is worse than the plain term it replaced.
@@ -152,18 +167,18 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       THE EVIDENCE COHERENCE DIRECTIVE:
       - The 'explanation' MUST be a specific, data-grounded observation that provides "Sharp Evidence".
       - Ensure the handle is globally coherent within the reasoning space of the scenario.
-      
+      ${groundingBlock}
       CENTRALITY CATEGORIES:
       - DOMINANT: A major causal driver (Green).
       - PRESENT: A secondary factor (Yellow).
       - EDGE_CASE: A structural tension point or a false assumption (Red).
-      
+
       Context: ${scenario.context}
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing Board: ${existingWords.join(", ")}
-      
-      Return JSON: correctedWord, centrality, explanation, dataInsight, source, category, specificityScore, fidelity, logic.
-      
+
+      Return JSON: correctedWord, centrality, explanation, dataInsight, evidenceGrounded, source, category, specificityScore, fidelity, logic.
+
       LOGIC MARKUP (A Posteriori Ontology):
       The 'logic' field must be a Mermaid-like structured text block.
       CRITICAL: Every field (tag) MUST start on a new line.
@@ -197,25 +212,27 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
           centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
           explanation: { type: Type.STRING },
           dataInsight: { type: Type.STRING },
+          evidenceGrounded: { type: Type.BOOLEAN },
           source: { type: Type.STRING },
           category: { type: Type.STRING },
           specificityScore: { type: Type.NUMBER },
           fidelity: { type: Type.NUMBER },
           logic: { type: Type.STRING },
         },
-        required: ["correctedWord", "centrality", "explanation", "dataInsight", "source", "category", "specificityScore", "fidelity", "logic"],
+        required: ["correctedWord", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "specificityScore", "fidelity", "logic"],
       },
     }
   );
 
   const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
-  
+
   return {
     id: generateId(),
     word: result.correctedWord || word,
     centrality: result.centrality as Centrality,
     explanation: result.explanation || "No explanation provided.",
     dataInsight: result.dataInsight || "No specific data insight available.",
+    evidenceGrounded: result.evidenceGrounded ?? false,
     source: result.source || "General Knowledge",
     category: result.category || "General",
     specificityScore: result.specificityScore || 50,
@@ -224,11 +241,26 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
   };
 }
 
-export async function generateBestVocabulary(scenario: Scenario, existingWords: string[] = []): Promise<Tile[]> {
+export async function generateBestVocabulary(scenario: Scenario, existingWords: string[] = [], datasetSample?: string): Promise<Tile[]> {
+  const groundingBlock = datasetSample
+    ? `
+      THE DATASET (this is real data you must check against — not a description of it):
+      ${datasetSample}
+
+      GROUNDING RULE — READ THIS FIRST:
+      - For every tile, "dataInsight" MUST cite specific values, rows, or a specific comparison found in THE DATASET above. Quote or closely paraphrase the actual numbers/categories you're pointing at — do not describe a plausible-sounding trend you didn't check.
+      - Set "evidenceGrounded" to true only for tiles where you actually did this. If a candidate concept isn't supported by the dataset above, either drop it or set "evidenceGrounded" to false and say in "dataInsight" what's missing.
+    `
+    : `
+      GROUNDING RULE — READ THIS FIRST:
+      - No dataset sample was provided for this scenario — you only have the text context below, not real rows to check.
+      - Set "evidenceGrounded" to false for every tile. Each "dataInsight" must be prefixed with "General domain knowledge (not data-verified): " and draw on well-established facts about this domain, not an invented statistic.
+    `;
+
   const response = await callAIProxy("gemini-3-flash-preview",
     `
       Suggest "Human Domain Vocabulary" for the subject: "${scenario.title}".
-      
+
       THE HUMAN DOMAIN METHOD:
       - PARADIGM GENERATOR MODE: You are the AUDITOR. Stop "guessing" meaning and start "verifying" it against the evidence.
       - GOLDILOCKS NAMING CUTS BOTH WAYS: search for the clearest handle for the structural truth in the data — sometimes that's a synthesized term, sometimes the plain descriptive term is already exact and inventing a fancier one would only add jargon. Prefer the plainest name that still captures the mechanism.
@@ -239,18 +271,18 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       THE HANDLE DIRECTIVE:
       - The 'word' MUST be a simple, recognizable handle (1-2 words max).
       - The 'explanation' MUST be the "Sharp Evidence" that grounds this concept in the data.
-      
+      ${groundingBlock}
       CENTRALITY CATEGORIES:
       - DOMINANT: A major causal driver (Green).
       - PRESENT: A secondary factor (Yellow).
       - EDGE_CASE: A structural tension point or an outlier (Red).
-      
+
       Context: ${scenario.context}
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing: ${existingWords.join(", ")}
-      
-      Return JSON array: word, centrality, explanation, dataInsight, source, category, isAIConfirmed, relevanceScore, specificityScore, fidelity, logic.
-      
+
+      Return JSON array: word, centrality, explanation, dataInsight, evidenceGrounded, source, category, isAIConfirmed, relevanceScore, specificityScore, fidelity, logic.
+
       LOGIC MARKUP (A Posteriori Ontology):
       The 'logic' field for each tile must be a Mermaid-like structured text block.
       CRITICAL: Every field (tag) MUST start on a new line.
@@ -288,6 +320,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
             centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
             explanation: { type: Type.STRING },
             dataInsight: { type: Type.STRING },
+            evidenceGrounded: { type: Type.BOOLEAN },
             source: { type: Type.STRING },
             category: { type: Type.STRING },
             isAIConfirmed: { type: Type.BOOLEAN },
@@ -296,7 +329,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
             fidelity: { type: Type.NUMBER },
             logic: { type: Type.STRING },
           },
-          required: ["word", "centrality", "explanation", "dataInsight", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore", "fidelity", "logic"],
+          required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore", "fidelity", "logic"],
         },
       },
     }
@@ -319,6 +352,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
     centrality: (result.centrality as Centrality) || Centrality.PRESENT,
     explanation: result.explanation || "No explanation provided.",
     dataInsight: result.dataInsight || "No specific data insight available.",
+    evidenceGrounded: result.evidenceGrounded ?? false,
     source: result.source || "General Knowledge",
     category: result.category || "General",
     isAIConfirmed: result.isAIConfirmed ?? true,
@@ -440,11 +474,12 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       4. GOLDILOCKS NAMING CUTS BOTH WAYS: reach for a synthesized "Mechanism" name only when the literal column/field name would flatten something real (e.g., "Social Support" → "Communal Safety Net" earns its keep because it names the buffering mechanism). If the literal term is already the clearest handle, keep it — do not manufacture jargon for its own sake.
       5. PSEUDO-ANTONYMS© ARE CONDITIONAL: across the WHOLE 8-12 tile board, expect only a small number of genuine tension pairs (typically 1-2) that represent a real structural fault line running through the whole dataset — not a single direction in it. Most tiles should have no pseudo-antonym at all. Only pair concepts when a domain expert would recognize the opposition as real; do not force a tug-of-war onto every concept.
       6. For each tile, provide a word, centrality, and a brief explanation/dataInsight based on evidence.
-      
-      Return JSON: 
+      7. GROUNDING RULE: "dataInsight" MUST cite specific values, rows, or a specific comparison you can actually see in the CSV DATA SAMPLE above — quote or closely paraphrase the real numbers/categories, don't describe a plausible-sounding trend you didn't check. Set "evidenceGrounded" to true only when you did this; if a candidate concept isn't really supported by the sample, either drop it or set "evidenceGrounded" to false and say what's missing in "dataInsight".
+
+      Return JSON:
       {
         "scenario": { "title": "...", "description": "...", "context": "...", "outcomes": ["...", "..."] },
-        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "category": "...", "fidelity": "0.0-1.0", "logic": "..." } ]
+        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "evidenceGrounded": true, "category": "...", "fidelity": "0.0-1.0", "logic": "..." } ]
       }
       
       LOGIC MARKUP (A Posteriori Ontology):
@@ -495,11 +530,12 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
                 centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
                 explanation: { type: Type.STRING },
                 dataInsight: { type: Type.STRING },
+                evidenceGrounded: { type: Type.BOOLEAN },
                 category: { type: Type.STRING },
                 fidelity: { type: Type.NUMBER },
                 logic: { type: Type.STRING }
               },
-              required: ["word", "centrality", "explanation", "dataInsight", "category", "fidelity", "logic"]
+              required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "category", "fidelity", "logic"]
             }
           }
         },

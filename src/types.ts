@@ -10,6 +10,7 @@ export interface Tile {
   centrality: Centrality;
   explanation: string; // The "Sharp Evidence" or "Grounding Observation"
   dataInsight?: string; // Specific data distribution or pattern
+  evidenceGrounded?: boolean; // true only if dataInsight cites a real dataset sample the AI was given, not general domain knowledge
   source?: string; // Historical or scientific source
   category?: string;
   isAIConfirmed?: boolean;
