@@ -100,19 +100,19 @@ export const NarrativeThreads: React.FC<NarrativeThreadsProps> = ({
                 }}
                 className="border-2 border-ink bg-bg shadow-[6px_6px_0px_0px_rgba(20,20,20,1)] flex flex-col"
               >
-                <div className="p-4 border-b border-ink/10 flex items-start justify-between gap-2">
+                <div className="p-5 border-b border-ink/10 flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-sm font-black uppercase tracking-tight leading-tight">{thread.title}</h3>
+                    <h3 className="text-lg font-black uppercase tracking-tight leading-tight">{thread.title}</h3>
                   </div>
-                  <span className={`shrink-0 flex items-center gap-1 px-1.5 py-0.5 text-[8px] mono uppercase font-bold ${badge.color}`}>
+                  <span className={`shrink-0 flex items-center gap-1 px-2 py-1 text-[10px] mono uppercase font-bold ${badge.color}`}>
                     {badge.icon}
                     {badge.label}
                   </span>
                 </div>
 
-                <div className="p-4 flex flex-wrap gap-2 min-h-[52px]">
+                <div className="p-5 flex flex-wrap gap-2 min-h-[56px]">
                   {thread.conceptWords.length === 0 && (
-                    <span className="text-[9px] mono opacity-30 italic">Drop a concept here</span>
+                    <span className="text-[11px] mono opacity-30 italic">Drop a concept here</span>
                   )}
                   {thread.conceptWords.map(word => {
                     const tile = tiles.find(t => t.word === word);
@@ -125,9 +125,9 @@ export const NarrativeThreads: React.FC<NarrativeThreadsProps> = ({
                           setDragWord(word);
                         }}
                         onDragEnd={() => setDragWord(null)}
-                        className={`flex items-center gap-1 px-2 py-1 border border-ink/20 text-[10px] mono uppercase font-bold cursor-grab active:cursor-grabbing hover:border-ink transition-colors ${dragWord === word ? "opacity-40" : ""}`}
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 border border-ink/20 text-[11px] mono uppercase font-bold cursor-grab active:cursor-grabbing hover:border-ink transition-colors ${dragWord === word ? "opacity-40" : ""}`}
                       >
-                        <GripVertical className="w-2.5 h-2.5 opacity-30" />
+                        <GripVertical className="w-3 h-3 opacity-30" />
                         <span className={`w-1.5 h-1.5 rounded-full ${getCentralityDot(tile?.centrality || Centrality.PRESENT)}`} />
                         {word}
                       </span>
@@ -136,23 +136,23 @@ export const NarrativeThreads: React.FC<NarrativeThreadsProps> = ({
                 </div>
 
                 {thread.synthesis && (
-                  <div className="px-4 pb-3">
-                    <p className="text-[11px] serif-italic opacity-80 leading-snug">"{thread.synthesis}"</p>
+                  <div className="px-5 pb-4">
+                    <p className="text-[16px] serif-italic leading-relaxed">"{thread.synthesis}"</p>
                   </div>
                 )}
                 {thread.missingLink && (
-                  <div className="px-4 pb-3">
-                    <p className="text-[9px] mono opacity-50 leading-snug">Missing: {thread.missingLink}</p>
+                  <div className="px-5 pb-4">
+                    <p className="text-[12px] mono opacity-60 leading-relaxed">Missing: {thread.missingLink}</p>
                   </div>
                 )}
 
-                <div className="mt-auto p-3 border-t border-ink/10 flex justify-end">
+                <div className="mt-auto p-4 border-t border-ink/10 flex justify-end">
                   <button
                     onClick={() => onRecheckThread(thread.id)}
                     disabled={isRechecking || thread.conceptWords.length < 2}
-                    className="flex items-center gap-1 px-3 py-1.5 border border-ink/30 text-[9px] mono uppercase font-bold hover:bg-ink hover:text-bg transition-all disabled:opacity-30"
+                    className="flex items-center gap-1 px-3 py-1.5 border border-ink/30 text-[10px] mono uppercase font-bold hover:bg-ink hover:text-bg transition-all disabled:opacity-30"
                   >
-                    <RefreshCw className={`w-3 h-3 ${isRechecking ? "animate-spin" : ""}`} />
+                    <RefreshCw className={`w-3.5 h-3.5 ${isRechecking ? "animate-spin" : ""}`} />
                     Re-check
                   </button>
                 </div>
