@@ -2,35 +2,35 @@
 
 ### "Given a good enough set of semantics — can we use language to represent data?"
 
-Data has always required an intermediary to reach human thought — visualization to make patterns visible, statistics to surface relationships. Both are bottom-up: they start from numbers and work toward meaning.
+Data has always needed an intermediary to reach human thought — visualization to make patterns visible, statistics to surface relationships. Both are bottom-up: numbers first, meaning second.
 
-For centuries, analysis began with language — reasoning, rhetoric, argument. The shift toward numbers-first analysis wasn't one event; it built in waves: Taylorism's reduction of labor to measurable units in the early 1900s, the Cold War's systems analysis and operations research in the 1960s, and Big Data's "let the numbers speak for themselves" ideology in the 2000s. Each wave traded interpretability for scale.
+That wasn't always the order. For centuries, analysis began with language — reasoning, rhetoric, argument. Numbers-first analysis built up in waves: Taylorism reduced labor to measurable units in the early 1900s, the Cold War brought systems analysis and operations research, and Big Data made "let the numbers speak for themselves" an ideology. Each wave traded interpretability for scale.
 
-Large language models are the first tool capable of reversing that order without giving up the rigor. The Data Board starts with language, the way analysis always used to — but grounds every claim in the numerical evidence before it's allowed to stand.
+LLMs are the first tool that can reverse that order without losing the rigor. Start with language, the way analysis used to work — but ground every claim in real evidence before it's allowed to stand.
 
 ---
 
 ## THE METHOD
 
-A concept doesn't earn the board by sounding analytical — it earns the board by surviving a check.
+A concept doesn't earn the board by sounding analytical. It earns the board by surviving a check.
 
-1. **Propose** — a concept-shaped hypothesis, drawn from domain knowledge, not enumerated from raw columns. This is how a human analyst actually works: you start with a plausible idea, not a spreadsheet scan. (AI generates or human proposes — either way, this is a guess, not a conclusion.)
-2. **Check** — does the data show a real, checkable gap that would have to exist for the hypothesis to hold? Every claim must cite specific values from the actual dataset, not describe a plausible-sounding trend.
-3. **Reject or Name** — if the check fails, reject it and say why; rejection is insight, not failure. If it passes, name it at the right rung of abstraction (see below), then accept and weight it (Dominant / Present / Edge Case).
-4. **Pair, conditionally** — only if a genuine structural opposite also survives the same check does the concept get a Pseudo-Antonym. Most concepts won't have one, and that's correct, not a gap.
-5. **Assemble** — the board forms from accepted concepts.
-6. **Thread** — independent of how any single concept is weighted, ask which concepts actually carry one story together. That's a Narrative Thread, and it's where the deduction lives.
+1. **Propose** — a hypothesis drawn from domain knowledge, the way an analyst actually thinks, not enumerated from raw columns.
+2. **Check** — does the data show the specific, checkable gap the hypothesis needs? Cite real values. Plausible isn't grounded.
+3. **Reject or Name** — fails, reject it and say why (rejection is insight, not failure). Passes, name it at the right rung of abstraction, then weight it (Dominant / Present / Edge Case).
+4. **Pair, conditionally** — a Pseudo-Antonym only if a real opposite survives the same check. Most concepts have none, and that's correct.
+5. **Assemble** — the board forms from what's accepted.
+6. **Thread** — independent of weight, which concepts carry one story together? That's a Narrative Thread, and that's where the deduction lives.
 
 ```mermaid
 flowchart TD
-    A["Scenario<br/>dataset + question"] --> B["Rung 3 — Concept (as hypothesis)<br/>Propose a candidate concept,<br/>drawing on domain knowledge —<br/>not enumerated from raw columns"]
-    B --> C["Rung 2 — Finding<br/>What specific, checkable gap<br/>would have to exist in the data<br/>for this concept to hold?"]
-    C --> D{"Rung 1 — Signal<br/>Check the actual data:<br/>is that gap really there?"}
+    A["Scenario<br/>dataset + question"] --> B["Handle<br/>Propose a candidate concept,<br/>drawing on domain knowledge —<br/>not enumerated from raw columns"]
+    B --> C["Finding<br/>What specific, checkable gap<br/>would have to exist in the data<br/>for this to hold?"]
+    C --> D{"Signal<br/>Check the actual data:<br/>is that gap really there?"}
     D -->|No| E["Reject — state why<br/>(rejection is insight)"]
     E -.-> B
-    D -->|Yes| F["Rung 3 — Concept (confirmed)<br/>Goldilocks naming: stay literal if that's<br/>already clearest; climb only if literal<br/>would flatten the mechanism"]
+    D -->|Yes| F["Concept<br/>Named at the right rung —<br/>literal if that's already clearest,<br/>synthesized only if literal flattens it"]
     F --> G["Accept<br/>Weight: Dominant / Present / Edge Case"]
-    G --> H{"Does a real structural<br/>opposite also survive<br/>the same check?"}
+    G --> H{"Real structural<br/>opposite also survives<br/>the same check?"}
     H -->|Yes| I["Pair as Pseudo-Antonym"]
     H -->|No — most concepts| J["Stands alone"]
     I --> K["Board"]
@@ -43,66 +43,49 @@ flowchart TD
 
 ## THE THREE RUNGS OF ABSTRACTION
 
-Every concept lives at one of three levels. Confusing them is the single most common failure mode — either flattening a real mechanism into a raw metric, or inflating a raw metric into jargon that explains nothing new.
+Every concept lives at one of three levels. Confusing them is the most common failure mode — flattening a real mechanism into a raw metric, or inflating a raw metric into jargon that explains nothing new.
 
 | Rung | What it is | Example |
 |---|---|---|
-| **1 — Signal** | The raw field. No aboutness on its own. | `CTR` |
-| **2 — Finding** | Signal + a real, checkable partition that produces a gap. Still just a fact. | "CTR is higher for travel-destination content than baseline" |
-| **3 — Concept / Handle** | A finding, named at the right level, promoted onto the board. Portable: can be weighted, paired, reasoned about. | "Travel Destinations" |
+| **1 — Signal** | A raw field. No aboutness on its own. | `CTR` |
+| **2 — Finding** | Signal + a real, checkable gap. Still just a fact. | "CTR is higher for travel-destination content" |
+| **3 — Handle → Concept** | A *Handle* is the proposed name — not yet earned. It becomes a *Concept* once it survives the check: a mechanism that means more than the number that grounded it. | "Travel Destinations" |
 
-**Goldilocks naming cuts both ways.** A synthesized name only earns its place when the literal term would flatten a real mechanism — otherwise, keep the literal term. "Healthy Life Expectancy" needs no synthesis; "Resource Elasticity" earns its keep over "Income" because it names the distinction between raw wealth and the freedom it buys. Jargon that explains nothing new is worse than the plain term it replaced.
+**Goldilocks naming cuts both ways.** Climb to a synthesized name only when the literal term would flatten a real mechanism — otherwise keep it. "Healthy Life Expectancy" needs no synthesis. "Resource Elasticity" earns its keep over "Income" because it names the gap between raw wealth and the freedom it buys. Jargon that explains nothing new is worse than the plain term it replaced.
 
 ---
 
 ## THE THREE PILLARS OF REASONING
 
-The board leans on three distinct cognitive mechanisms — each doing a different job, none substituting for the others.
-
 | Pillar | Mechanism | What it's not |
 |---|---|---|
-| **Abstraction** | Calibrating the right rung (Signal → Finding → Concept) for each handle — sometimes staying literal, sometimes climbing. | Not "maximize abstraction." Always climbing to the most synthesized name is the over-abstraction failure this framework exists to catch. |
-| **Salience** | Traffic-light color coding (Dominant / Present / Edge Case) exploits pre-attentive visual processing — color is one of the few features the eye registers before conscious attention, which is why a three-bucket status system reads instantly. | Not a quantity. It's an ordinal category, not a number. The actual quantity in the app is the Sharpness score (0-100) — a different, complementary signal. |
-| **Narrative Cohesion** | Clustering concepts that share one story (Narrative Threads) — Gestalt grouping and chunking make related items easier to hold in mind together than scattered alone. | Not statistical clustering. Threads are proposed by a single LLM judgment call reading each concept's word and explanation, not an embedding or graph algorithm — pragmatic, not a formal clustering method. |
-
-**Grounded in:** pre-attentive processing (Treisman & Gelade, 1980) for salience; Gestalt grouping (Wertheimer, 1923) and chunking (Miller, 1956) for narrative cohesion; Hayakawa's ladder of abstraction (1939) for the first pillar — see Theoretical Anchors below.
+| **Abstraction** | Calibrating the right rung for each handle — sometimes literal, sometimes climbing. | Not "maximize abstraction" — always climbing is the over-abstraction failure this framework exists to catch. |
+| **Salience** | Traffic-light color (Dominant / Present / Edge Case) reads pre-attentively, before conscious attention. | Not a quantity — an ordinal category. The Sharpness score is the actual number. |
+| **Narrative Cohesion** | Clustering concepts that share one story (Narrative Threads) — related items held together are easier to reason about than scattered. | Not statistical clustering. A single LLM judgment call, not an embedding or graph algorithm. |
 
 ---
 
 ## KEY CONCEPTS
 
-### Deducible Space
-The minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably.
+**Deducible Space** — the minimal set of grounded, coherent, tension-bearing concepts from which a consistent narrative follows inevitably. Not a list of variables — the foundation that makes the narrative non-arbitrary.
 
-### Pseudo-Antonyms
-Concept pairs occupying opposite ends of the same analytical dimension — not lexical opposites, but two independently-grounded findings that pull in opposite directions on the same real axis. **Conditional, not mandatory.** A pseudo-antonym exists to test whether a concept represents a real fault line running through the *whole* dataset, not a single direction in it. Most concepts have no natural opposite, and forcing one onto every concept defeats the purpose — it's exactly the failure mode this framework exists to catch.
+**Pseudo-Antonyms** — concept pairs at opposite ends of the same analytical dimension. Not lexical opposites — two independently-grounded findings pulling in opposite directions on the same real axis. Conditional, not mandatory: most concepts have no natural opposite, and forcing one is exactly the failure this framework catches.
 
-### Goldilocks Handle
-A concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from — see Rungs of Abstraction above.
+**Grounded Evidence** — a claim citing specific values from a real dataset the AI was actually given, not what merely sounds plausible for the domain. No dataset available → say so ("general domain knowledge, not data-verified"), don't invent a statistic.
 
-### Grounded Evidence
-A claim is grounded only when it cites specific values from a real dataset the AI was actually given — not when it merely sounds plausible for the domain. When no dataset is available, the honest answer is "general domain knowledge, not data-verified," not an invented statistic dressed up as one.
+**Verification Shift** — the AI moves from invention to verification once vocabulary is supplied: checking whether concepts are descriptive and grounded, not generating labels freely.
 
-### Verification Shift
-When vocabulary is supplied, the AI moves from invention to verification — checking whether concepts are descriptive and grounded rather than generating labels freely.
+**Semantic Weight** — DOMINANT (primary driver) · PRESENT (real, not decisive) · EDGE CASE (marginal or structural outlier).
 
-### Semantic Weight
-* **DOMINANT**: primary causal driver.
-* **PRESENT**: real but not decisive.
-* **EDGE CASE**: marginal or structural outlier.
-
-### Narrative Thread
-Which concepts, taken together, actually carry one story — independent of how any single concept is weighted. A board can contain several threads; a concept can belong to more than one.
+**Narrative Thread** — which concepts, together, actually carry one story, independent of how any single one is weighted. A concept can belong to more than one thread.
 
 ---
 
-## EVALUATION MATRIX (WHAT THE COLOR MEANS)
+## EVALUATION MATRIX
 
-Every tile on the board reflects a logic audit result:
-
-* **GREEN (Dominant)**: Descriptive, Grounded, and Coherent. Drives the story.
-* **YELLOW (Present)**: Descriptive and Grounded. Supplementary to the story.
-* **RED (Edge Case)**: Descriptive and Grounded but isolated or marginal. Essential for boundaries.
+* **GREEN (Dominant)** — descriptive, grounded, coherent. Drives the story.
+* **YELLOW (Present)** — descriptive, grounded. Supplementary.
+* **RED (Edge Case)** — descriptive, grounded, but isolated or marginal. Essential for boundaries.
 
 ---
 
@@ -146,17 +129,12 @@ Workflow:
 
 ## THEORETICAL ANCHORS
 
-* **Peirce, C.S.** *Collected Papers.* — Abduction: reasoning starts from the most plausible explanatory hypothesis, then checks it against evidence. This is the actual order the method follows — concept first, grounding second — not a bottom-up scan of the data.
-* **Hayakawa, S.I. (1939).** *Language in Thought and Action.* — The ladder of abstraction. The direct ancestor of the three rungs above.
-* **Barsalou, L. (1983).** "Ad hoc categories." — People build useful categories on the fly because they're goal-relevant, not because they're natural kinds. "Travel Destinations" as a CTR-explaining category is exactly this: no dictionary groups content that way, it exists because it makes a real gap visible.
-* **Lipton, P. (1990).** "Contrastive explanation." — An explanation only satisfies when it explains "why P rather than Q," where Q is a real, checkable alternative — not an invented one. The theoretical basis for why a pseudo-antonym must be independently grounded, not merely antonym-shaped.
-* **Treisman, A. & Gelade, G. (1980).** "A feature-integration theory of attention." — Color is processed pre-attentively, before conscious attention. The basis for why traffic-light status coding reads instantly.
-* **Wertheimer, M. (1923).** "Laws of organization in perceptual forms." — Gestalt grouping: proximity and similarity read as one whole. The basis for Narrative Threads.
-* **Miller, G.A. (1956).** "The magical number seven, plus or minus two." — Chunking: related items held together are easier to reason about than the same items loose.
-* **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. The Data Board addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model.
+* **Peirce, C.S.** — Abduction: reasoning starts from the most plausible hypothesis, then checks it. The actual order this method follows.
+* **Hayakawa, S.I. (1939).** *Language in Thought and Action.* — The ladder of abstraction. Ancestor of the three rungs above.
+* **Barsalou, L. (1983).** "Ad hoc categories." — Useful categories get built on the fly because they're goal-relevant, not because they're natural kinds. "Travel Destinations" is exactly this.
+* **Lipton, P. (1990).** "Contrastive explanation." — An explanation satisfies only when the alternative it rules out is real and checkable, not invented. Why a pseudo-antonym must be independently grounded, not just antonym-shaped.
+* **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. This method addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model.
 * **Glaser, B. & Strauss, A. (1967).** *The Discovery of Grounded Theory.* — Open and axial coding, the qualitative precedent this method operationalises computationally.
-* **Wittgenstein, L. (1922).** *Tractatus.* — "The limits of my language are the limits of my world."
-* **Luhn, H.P. (1958).** *A Business Intelligence System.* — Intelligence as guiding action toward a desired goal, through named insight.
 
 ---
 
