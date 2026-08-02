@@ -939,7 +939,7 @@ const TileCard = React.memo(({
         exit={{ opacity: 0, scale: 0.8 }}
         transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
         onClick={() => onSelect(isSelected ? null : tile)}
-        className="w-full h-full min-h-[180px] cursor-pointer preserve-3d relative"
+        className="w-full h-full min-h-[260px] cursor-pointer preserve-3d relative"
       >
         {/* Front of Card */}
         <div className={`absolute inset-0 backface-hidden p-4 flex flex-col justify-between transition-all group border-t-4 ${
@@ -980,12 +980,12 @@ const TileCard = React.memo(({
         </div>
 
         {/* Back of Card (Explanation) */}
-        <div 
-          className="absolute inset-0 backface-hidden p-4 flex flex-col bg-ink text-bg border-t-4 border-t-ink overflow-y-auto"
+        <div
+          className="absolute inset-0 backface-hidden p-5 flex flex-col bg-ink text-bg border-t-4 border-t-ink overflow-y-auto"
           style={{ transform: 'rotateY(180deg)' }}
         >
-          <div className="flex justify-between items-start mb-2">
-            <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full mono text-ink ${
+          <div className="flex justify-between items-start mb-3">
+            <span className={`text-[10px] font-bold px-2 py-1 rounded-full mono text-ink ${
               tile.centrality === Centrality.DOMINANT ? "bg-databoard-green" :
               tile.centrality === Centrality.PRESENT ? "bg-databoard-yellow" :
               "bg-databoard-red"
@@ -994,35 +994,35 @@ const TileCard = React.memo(({
             </span>
             <div className="flex items-center gap-2">
               <button onClick={(e) => { e.stopPropagation(); onSelect(null); }}>
-                <X className="w-3 h-3 opacity-50 hover:opacity-100" />
+                <X className="w-4 h-4 opacity-50 hover:opacity-100" />
               </button>
             </div>
           </div>
-          
+
           <div className="flex-grow">
-            <p className="text-[10px] serif-italic leading-tight mb-3">
+            <p className="text-[15px] serif-italic leading-snug mb-4">
               {tile.explanation}
             </p>
-            
+
             {tile.dataInsight && (
-              <div className={`mb-3 p-2 bg-white/10 border-l ${tile.evidenceGrounded ? "border-databoard-green" : "border-white/30"}`}>
-                <p className={`text-[8px] uppercase tracking-widest font-bold mb-1 flex items-center gap-1 ${tile.evidenceGrounded ? "text-databoard-green opacity-100" : "opacity-50"}`}>
+              <div className={`mb-3 p-3 bg-white/10 border-l-2 ${tile.evidenceGrounded ? "border-databoard-green" : "border-white/30"}`}>
+                <p className={`text-[10px] uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1.5 ${tile.evidenceGrounded ? "text-databoard-green opacity-100" : "opacity-60"}`}>
                   {tile.evidenceGrounded ? (
                     <>
-                      <Check className="w-2.5 h-2.5" /> Verified in your data
+                      <Check className="w-3.5 h-3.5" /> Verified in your data
                     </>
                   ) : (
                     <>
-                      <AlertCircle className="w-2.5 h-2.5" /> General knowledge — not data-verified
+                      <AlertCircle className="w-3.5 h-3.5" /> General knowledge — not data-verified
                     </>
                   )}
                 </p>
-                <p className="text-[9px] mono leading-tight">{tile.dataInsight}</p>
+                <p className="text-[13px] mono leading-relaxed">{tile.dataInsight}</p>
               </div>
             )}
           </div>
 
-          <div className="mt-auto pt-2 border-t border-white/10 flex justify-between items-center text-[8px] mono uppercase opacity-50">
+          <div className="mt-auto pt-3 border-t border-white/10 flex justify-between items-center text-[10px] mono uppercase opacity-50">
             <div className="flex gap-3">
               <button 
                 onClick={(e) => { e.stopPropagation(); onEditLogic(tile); }}
@@ -2235,7 +2235,7 @@ export default function App() {
               </div>
             </div>
 
-          <div className="data-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 min-h-[400px] bg-white/30">
+          <div className="data-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-[400px] bg-white/30">
             <AnimatePresence mode="popLayout">
               {tiles.map((tile) => (
                 <TileCard 
