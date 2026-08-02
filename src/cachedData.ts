@@ -3,7 +3,7 @@ import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 // Bump this whenever CACHED_BOARDS content changes meaningfully. The app
 // clears any locally-saved board that predates this version, so returning
 // visitors see fresh cached data instead of a permanently stale local copy.
-export const CACHED_DATA_VERSION = "2";
+export const CACHED_DATA_VERSION = "3";
 
 export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
@@ -13,8 +13,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Resource Elasticity",
         centrality: Centrality.DOMINANT,
         explanation: "The capacity for wealth to buy individual agency and choice, rather than just survival.",
-        dataInsight: "Evidence: Log GDP remains the strongest baseline (0.8+ correlation), defining the ceiling of 'Agency Capacity'.",
-        source: "World Happiness Report 2025 / Gallup",
+        dataInsight: "Verified against the real 2025 WHR panel (147 countries, Gallup World Poll): GDP-contribution correlates with the happiness score at r=0.745 — strong, but not the single strongest factor (Social Support edges it out at r=0.805). Costa Rica is the clearest decoupling case: GDP ranks only 58th of 147, yet it lands at #4 overall, driven by social support (1.483) rather than wealth. GDP and Social Support are themselves correlated (r=0.683) — the two channels overlap, but Costa Rica shows they aren't the same thing.",
+        evidenceGrounded: true,
+        source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Economics",
         specificityScore: 94,
         fidelity: 0.96,
@@ -39,8 +40,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Communal Insulation",
         centrality: Centrality.DOMINANT,
         explanation: "The structural safety net provided by a reliable hierarchy of social connections.",
-        dataInsight: "Evidence: High support scores in Iceland (1.84) and Israel (1.74) drive resilience despite external pressures.",
-        source: "Gallup World Poll / Trust Audit",
+        dataInsight: "Verified: social-support contribution correlates with happiness at r=0.805 — the single strongest of the six explanatory factors in the 2025 panel, ahead of GDP (r=0.745). Iceland leads at 1.720, Finland at 1.638; Israel sits at 1.606 (happiness rank #8). Corrects the previously cited 1.84/1.74 figures, which don't match the real 2025 data.",
+        evidenceGrounded: true,
+        source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Social",
         specificityScore: 88,
         fidelity: 0.93,
@@ -65,8 +67,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Institutional Predictability",
         centrality: Centrality.PRESENT,
         explanation: "The level of confidence in public entities to act with transparency and fairness.",
-        dataInsight: "Evidence: Finland and Denmark lead corruption-free scores (>0.48), creating a high happiness floor.",
-        source: "Transparency International / WHR 2025",
+        dataInsight: "Corrected: corruption-free contribution correlates with happiness at only r=0.392 — the weakest of the five major factors (only Generosity, r=0.042, is weaker), which is why this stays PRESENT rather than DOMINANT. Singapore actually leads this metric (0.512), not Finland/Denmark as previously claimed — Finland is second (0.491), Denmark third (0.474, below the originally claimed >0.48 threshold).",
+        evidenceGrounded: true,
+        source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Governance",
         specificityScore: 90,
         fidelity: 0.91,
@@ -91,8 +94,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Biological Vitality",
         centrality: Centrality.PRESENT,
         explanation: "The years of life spent in functional health, enabling participation in the social contract.",
-        dataInsight: "Evidence: Healthy life expectancy in top nations averages 0.82+, significantly outperforming lower-tier countries.",
-        source: "WHO / World Happiness Report 2025",
+        dataInsight: "Verified: health contribution correlates with happiness at r=0.678. Iceland (0.996), Finland (0.939) and Denmark (0.930) — the top-3 happiness-ranked countries — all score well above the panel average; Lesotho (0.000) and Botswana (0.017) anchor the bottom. But health alone doesn't guarantee overall rank: Hong Kong SAR has the single highest health score in the whole 147-country panel (1.238) yet ranks only 90th overall.",
+        evidenceGrounded: true,
+        source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Health",
         specificityScore: 85,
         fidelity: 0.94,
@@ -117,8 +121,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Agency Capacity",
         centrality: Centrality.EDGE_CASE,
         explanation: "The perceived freedom to self-determine life path without permission or fear.",
-        dataInsight: "Evidence: Nordic countries lead (0.95+), while nations with similar GDP but lower freedom (Vietnam 1.01 vs Singapore 0.85) show interesting variance.",
-        source: "Psychological Audit / WHR 2025",
+        dataInsight: "Corrected: the original 'similar GDP' framing was wrong — Viet Nam (GDP rank 84/147) and Singapore (GDP rank 1/147) aren't close in wealth. The real, sharper finding: Viet Nam holds the single highest freedom-to-choose score in the entire panel (1.147) despite middling GDP, while Singapore — despite topping the GDP ranking outright — sits only 50th of 146 in freedom (0.980). Finland and Iceland score 1.105, just below Viet Nam's global lead.",
+        evidenceGrounded: true,
+        source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Rights",
         specificityScore: 92,
         fidelity: 0.89,
@@ -143,8 +148,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Agency-Resource Gap",
         centrality: Centrality.PRESENT,
         explanation: "The disconnect where rising income fails to translate into perceived freedom of life choice.",
-        dataInsight: "Evidence: High-GDP nations with restrictive social norms (e.g., Korea, Singapore) show a significant gap between wealth and perceived agency.",
-        source: "Socio-Economic Audit / WHR 2025",
+        dataInsight: "Verified: Singapore tops the GDP ranking (1st of 147) but ranks only 36th in overall happiness and 50th of 146 in freedom (0.980). Republic of Korea shows the same pattern more sharply: GDP rank 24/147 but happiness rank 67 and freedom rank 102/146 (0.825). The United States fits too: GDP rank 6/147, happiness rank 23, freedom only 0.776. The gap itself is real and data-grounded; 'restrictive social norms' as the cause is our inference, not something this dataset can verify.",
+        evidenceGrounded: true,
+        source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Tension",
         specificityScore: 95,
         fidelity: 0.94,
@@ -169,8 +175,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Digital Fragmentation",
         centrality: Centrality.EDGE_CASE,
         explanation: "The erosion of physical social cohesion through hyper-individualized digital consumption.",
-        dataInsight: "Evidence: Lower social trust in highly digitized OECD nations correlates with high screen-time densities among youth.",
-        source: "Digital Life Audit / WHR 2025",
+        dataInsight: "General domain knowledge (not data-verified): the real 2025 WHR panel used for this board has no internet-usage or screen-time columns, so this claim can't be checked against the data on this board — kept as a plausible, previously-cited claim pending a dataset that actually measures it.",
+        evidenceGrounded: false,
+        source: "General domain knowledge — not verified against the WHR 2025 panel used for this board",
         category: "Technology",
         specificityScore: 92,
         fidelity: 0.94,
@@ -195,8 +202,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Cultural Anchoring",
         centrality: Centrality.PRESENT,
         explanation: "The role of shared traditional values in providing existential meaning and community resilience.",
-        dataInsight: "Evidence: Resilience in Israel (#8) and Mexico (#10) suggests cultural narratives buffer against modern fragmentation.",
-        source: "World Values Survey",
+        dataInsight: "Corrected: Israel is #8 (verified), but Mexico is #12, not #10 as previously claimed. Both outperform their GDP tier — Mexico's GDP contribution (1.636) sits well outside the top 20, yet it lands at #12 overall.",
+        evidenceGrounded: true,
+        source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Culture",
         specificityScore: 94,
         fidelity: 0.91,
@@ -247,7 +255,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       entropy: 32,
       sharpness: 98,
       explanation: "The board maps a high-fidelity causal narrative from baseline resources to the modern collision between digital fragmentation and cultural anchoring.",
-      synthesis: "Global well-being is a structural outcome of Resource Elasticity and Communal Insulation, threatened by Digital Fragmentation but stabilized by Cultural Anchoring.",
+      synthesis: "Global well-being is a structural outcome of Resource Elasticity and Communal Insulation — with Communal Insulation the stronger of the two (r=0.805 vs. 0.745 in the real 2025 panel) — threatened by an unverified Digital Fragmentation claim but stabilized by Cultural Anchoring.",
       emergentPatterns: ["The Nordic Stability Cycle", "Security-Choice Tension", "The Meaning Buffer"],
       links: [
         { source: "Resource Elasticity", target: "Communal Insulation", label: "Pairs with" },
@@ -1064,8 +1072,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Syntactic Sandbox",
         centrality: Centrality.DOMINANT,
         explanation: "High AI exposure within purely symbolic, alphanumeric routines that lack physical/motor constraints.",
-        dataInsight: "Evidence: Alphanumeric clerks (Correspondence Clerks, Proofreaders) have nearly 100% human-rated and model-rated exposure scores.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Verified against the real Eloundou et al. (2023) occupation-level dataset (923 occupations): the model rates Correspondence Clerks and Proofreaders near-total exposure across all tiers (0.95-1.00). Human raters agree only at the broadest 'full exposure incl. complementary technology' tier (gamma: 0.89-1.00) — at the direct/no-tools tier (alpha), human ratings are far more conservative (Correspondence Clerks 0.57, Proofreaders 0.20). 'Nearly 100% on both scales' only holds at the broadest tier, not the direct one.",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
         specificityScore: 98,
         fidelity: 0.98,
@@ -1091,8 +1100,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Physical Anchor",
         centrality: Centrality.DOMINANT,
         explanation: "The structural safety of jobs bound to the physical configuration of spatial reality or biological objects.",
-        dataInsight: "Evidence: Low AI exposure ratings for Concierges, Animal/Soil/Plant Scientists, and hands-on maintenance workers.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Corrected: the original examples don't hold up — human raters actually rate Concierges at 0.67 and Animal Scientists at 0.75 direct exposure, not low at all. The real pattern: 160 of 923 occupations (17%) are rated below 0.05 direct exposure by BOTH model and human raters — genuine cross-rater agreement concentrated in manual trades: Carpenters, Automotive Service Technicians and Mechanics, Construction Laborers, Brickmasons, and Cooks (Fast Food/Short Order) among them.",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Physical",
         specificityScore: 95,
         fidelity: 0.96,
@@ -1118,16 +1128,17 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Projection Gap",
         centrality: Centrality.PRESENT,
         explanation: "The systemic discrepancy between human self-assessments of work complexity and AI models' projection of their own capabilities.",
-        dataInsight: "Evidence: Survey Researchers show a 0.50 score gap in low exposure between human raters and model raters.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Corrected: across all 923 occupations, model and human ratings are essentially tied on average at the direct-exposure tier (0.142 vs 0.144) with only moderate correlation (r=0.435) — not a simple one-directional bias. When they diverge sharply, it splits two ways: the model rates itself far HIGHER than humans for occupations needing certified/tested output (Court Reporters: 0.92 vs 0.12; Software Developers: 0.79 vs 0.05); humans rate exposure far HIGHER than the model for occupations involving field or regulatory judgment (Animal Scientists: human 0.75 vs model 0.12; Survey Researchers: human 0.75 vs model 0.25 — the original 0.50 gap figure is right, but the direction was backwards: humans rated it MORE exposed, not less).",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
         specificityScore: 92,
         fidelity: 0.92,
         logic: `concept "Projection Gap"
   is a: tension
   context: "Human self-rating vs model capability-rating"
-  mechanism: "humans underestimate the promptable codification of specialized fields, whereas models assume fully structured workflows"
-  evidence: "Survey Researchers show a significant score gap in perceived low exposure between Human and Model raters"
+  mechanism: "the gap runs in both directions depending on the occupation: models overrate their own exposure where verified/certified accuracy is the real bottleneck, and underrate it where field presence or regulatory judgment matters"
+  evidence: "Survey Researchers (human 0.75 vs model 0.25) and Court Reporters (model 0.92 vs human 0.12) show the gap running in opposite directions"
   covers:
     explains: [automation_surprise]
     aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
@@ -1144,16 +1155,17 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Relational Shield",
         centrality: Centrality.PRESENT,
         explanation: "The retention of human authority in workflows where trust, legal responsibility, or social empathy can never be delegated.",
-        dataInsight: "Evidence: Interpreters and PR Specialists show high base exposure but remain anchored in human-centric service categories.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Corrected: Interpreters don't actually support this concept — both model (0.88) and human (0.80) rate them highly exposed, the opposite of 'shielded.' The real supporting evidence: Judges & Magistrates (model 0.00, human 0.06), Physician Assistants (0.00/0.00), and Nurse Anesthetists (0.00/0.00) show genuine cross-rater agreement on near-zero direct exposure — roles bound by legal responsibility or hands-on clinical judgment that neither rater treats as automatable, despite being cognitively demanding rather than manual.",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Trust",
         specificityScore: 90,
         fidelity: 0.91,
         logic: `concept "Relational Shield"
   is a: constraint
-  context: "High-exposure interpersonal domains"
-  mechanism: "societal expectations for responsibility and raw empathy limit the actual adoption rate of model substitution"
-  evidence: "Interpreters and Public Relations Specialists show high base exposure but remain anchored in human-centric service categories"
+  context: "Legal and clinical judgment roles"
+  mechanism: "legal liability and hands-on clinical judgment mean neither model nor human raters treat these roles as automatable, regardless of cognitive complexity"
+  evidence: "Judges & Magistrates, Physician Assistants, and Nurse Anesthetists all show near-zero direct exposure on both model and human scales"
   covers:
     explains: [retention_index]
     aggregates: [AI_Exposure_Human_Mid]
@@ -1170,8 +1182,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "AI Overconfidence",
         centrality: Centrality.EDGE_CASE,
         explanation: "The model's tendency to rate creative or highly subjective semantic tasks as fully exposed, projecting complete capability.",
-        dataInsight: "Evidence: AI models rate Poets, Lyricists and Creative Writers at 0.889 flat mid/high exposure, projecting generic mastery of authorship.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Verified: model self-rating for Poets, Lyricists and Creative Writers is flat 0.89 across all tiers; human raters are notably lower at the direct-exposure tier (0.67 vs the model's 0.89). This matches a real board-wide pattern at the broader tiers: averaged across all 923 occupations, the model rates itself higher than humans rate it at the mid/high tier (0.345 vs 0.303) and the full-exposure tier (0.548 vs 0.461) — a systematic scaling difference, not random noise (the two tiers correlate at r=0.88-0.91).",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Creative",
         specificityScore: 94,
         fidelity: 0.89,
@@ -1194,18 +1207,19 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       {
         id: "gg-6",
         word: "Life Sciences Buffer",
-        centrality: Centrality.PRESENT,
+        centrality: Centrality.EDGE_CASE,
         explanation: "The mechanical resilience of life science research that requires chemical testing, field sampling, and organic execution.",
-        dataInsight: "Evidence: Low-to-moderate exposure metrics for Animal, Soil, and Plant Scientists compared to pure Environmental Economists.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Downgraded per confound check: this claim holds only under the model's own self-rating (Animal Scientists 0.12, Soil/Plant Scientists 0.00 — both low), but human raters see it oppositely — Animal Scientists 0.75 is one of the highest human-rated occupations in the entire panel, and Soil/Plant Scientists sits at a moderate 0.43. The 'buffer' framing isn't independently grounded once you check the human side; it's confounded by which rater you trust, so this drops from PRESENT to EDGE_CASE rather than being removed outright.",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Physical",
         specificityScore: 88,
         fidelity: 0.90,
         logic: `concept "Life Sciences Buffer"
   is a: stabilizer
   context: "Life sciences and laboratory sciences"
-  mechanism: "the unpredictability of organic materials and field studies requires somatic, iterative physical labor"
-  evidence: "Low-to-moderate AI exposure metrics for Soil and Plant Scientists compared to Environmental Economists"
+  mechanism: "unresolved — the model rates fieldwork as low-exposure, but human raters disagree; no confirmed mechanism survives the confound check"
+  evidence: "Model rates Animal/Soil/Plant Scientists as low exposure (0.00-0.12), but human raters rate the same occupations moderate-to-high (0.43-0.75) — a genuine rater disagreement, not a confirmed buffer"
   covers:
     explains: [field_resilience]
     aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
@@ -1222,8 +1236,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Programming Exposure",
         centrality: Centrality.PRESENT,
         explanation: "Computer programmers and designers are highly exposed because they operate in formal, mathematically consistent syntax.",
-        dataInsight: "Evidence: Web Designers and Computer Programmers average above 0.68 mid/high exposure in human and model scores.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Corrected for tier precision: at the mid/high (beta) tier, Web Developers (model 0.93) and Computer Programmers (model 0.95) are well above 0.68, but human beta ratings are lower and more mixed — Web Developers 0.63 (below 0.68), Computer Programmers and Web/Digital Interface Designers both exactly at 0.68 rather than above it. 'Above 0.68 on both scales' only holds cleanly for the model side.",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
         specificityScore: 95,
         fidelity: 0.94,
@@ -1248,8 +1263,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Semantic Transference",
         centrality: Centrality.EDGE_CASE,
         explanation: "The process where translation, pure editing, and technical text structures are fully absorbed into transformer neural pipelines.",
-        dataInsight: "Evidence: Interpreters, Translators, and Correspondence Clerks scoring above 0.80 exposure on both Human and Model scales.",
-        source: "arXiv (Eloundou et al., 2023)",
+        dataInsight: "Corrected: Interpreters and Translators clear 0.80 on both scales (model 0.88, human 0.80), but Correspondence Clerks only clears 0.80 by the model's rating (0.96) — human raters put it at 0.57 direct exposure, well below 0.80. Holds fully only at the broadest 'full exposure with complementary tools' (gamma) tier, where Correspondence Clerks reaches 0.89 human / 0.96 model.",
+        evidenceGrounded: true,
+        source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Translate",
         specificityScore: 91,
         fidelity: 0.91,
@@ -1288,11 +1304,11 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       },
       {
         id: "gg-thread-3",
-        title: "The Human-Bound Exceptions",
+        title: "Confidence vs. Confound",
         conceptWords: ["Relational Shield", "Life Sciences Buffer"],
-        synthesis: "Two very different domains — interpersonal trust work and physical lab science — both resist automation, but for reasons that have nothing to do with symbolic complexity: one needs social permission, the other needs a body in the room.",
+        synthesis: "Both concepts claim a domain is protected from automation, but only one survives a confound check: Relational Shield holds because model and human raters independently agree (Judges, Physician Assistants both near-zero exposure); Life Sciences Buffer doesn't, because the model's low rating for Animal Scientists is directly contradicted by a high human rating for the same occupation — a real disagreement, not a resolved buffer.",
         coheres: "partial",
-        missingLink: "These are two separate mechanisms (trust vs. physical reality) bundled into one thread because both resist automation — a real pattern, but not literally the same causal story.",
+        missingLink: "One concept is confirmed by rater agreement, the other is an open disagreement between raters — they belong on the board for different reasons, not the same one.",
       },
     ],
     metrics: {
