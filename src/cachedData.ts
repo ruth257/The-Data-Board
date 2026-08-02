@@ -26,7 +26,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Life Satisfaction"
     via: resource_access
-  contrasts_with: "Structural Fragility"
   scope: global
   fidelity: 0.96`
       },
@@ -45,7 +44,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   context: "Communal safety nets"
   mechanism: "Trusted social networks reduce the psychological burden of crisis and improve recovery speed."
   evidence: "Support scores in high-trust nations (Iceland, Israel, Finland)"
-  contrasts_with: "Atomic Isolation"
   covers:
     explains: [national_resilience]
     aggregates: [social_support_score]
@@ -54,7 +52,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Emotional Security"
     via: relational_density
-  contrasts_with: "Social Isolation"
   scope: global
   fidelity: 0.93`
       },
@@ -73,7 +70,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   context: "Predictability of social contract"
   mechanism: "Transparent institutions reduce systemic anxiety and improve collective cooperation."
   evidence: "Corruption perception scores (Finland/Denmark leading clusters)"
-  contrasts_with: "Arbitrary Governance"
   covers:
     explains: [institutional_trust]
     aggregates: [corruption_score]
@@ -82,7 +78,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Systemic Agency"
     via: rule_of_law
-  contrasts_with: "Governance Breakdown"
   scope: global
   fidelity: 0.91`
       },
@@ -109,7 +104,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Life Satisfaction"
     via: physical_agency
-  contrasts_with: "Chronic Fragility"
   scope: global
   fidelity: 0.94`
       },
@@ -136,7 +130,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Resource Elasticity"
     via: choice_capability
-  contrasts_with: "Structural Coercion"
   scope: global
   fidelity: 0.89`
       },
@@ -163,7 +156,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Resource Elasticity"
     via: structural_friction
-  contrasts_with: "Aligned Optionality"
   scope: global
   fidelity: 0.94`
       },
@@ -301,7 +293,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Algorithmic Gluttony"
     via: thermal_debt
-  contrasts_with: "Scaling Unlimited"
   scope: global
   fidelity: 0.95`,
         cachedShadow: {
@@ -339,7 +330,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Optimization Lag"
     via: market_priority
-  contrasts_with: "Measured Maturation"
   scope: global
   fidelity: 0.90`
       },
@@ -366,7 +356,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Algorithmic Gluttony"
     via: load_saturation
-  contrasts_with: "Nuclear Integration"
   scope: global
   fidelity: 0.94`
       },
@@ -393,7 +382,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Deployment Fever"
     via: utility_decay
-  contrasts_with: "Durable Intelligence"
   scope: global
   fidelity: 0.88`
       }
@@ -420,7 +408,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Algorithmic Gluttony"
     via: hardware_burnrate
-  contrasts_with: "Silicone Longevity"
   scope: global
   fidelity: 0.94`
       },
@@ -469,7 +456,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Gridlocked Ambition"
     via: strategic_hoarding
-  contrasts_with: "Global Cloud Utility"
   scope: global
   fidelity: 0.96`
       }
@@ -540,7 +526,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Job Satisfaction"
     via: physical_capacity
-  contrasts_with: "Health Decline"
   scope: regional
   fidelity: 0.95`
       },
@@ -566,7 +551,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Marital Stability"
     via: relative_status
-  contrasts_with: "Economic Distress"
   scope: regional
   fidelity: 0.92`
       },
@@ -592,7 +576,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Personal Health"
     via: labor_participation
-  contrasts_with: "Work Burnout"
   scope: regional
   fidelity: 0.90`
       },
@@ -646,7 +629,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Job Satisfaction"
     via: credential_inflation
-  contrasts_with: "Labor Exclusion"
   scope: regional
   fidelity: 0.94`
       },
@@ -672,7 +654,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Marital Stability"
     via: moral_norming
-  contrasts_with: "Social Isolation"
   scope: regional
   fidelity: 0.89`
       },
@@ -698,7 +679,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Marital Stability"
     via: affective_polarization
-  contrasts_with: "Marital Stability"
   scope: regional
   fidelity: 0.91`
       }
@@ -836,7 +816,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "The Emerging Discount"
     via: speculative_friction
-  contrasts_with: "Instant Parity"
   scope: global
   fidelity: 0.91`
       },
@@ -863,7 +842,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Monetary Inertia"
     via: market_fluidity
-  contrasts_with: "Policy Isolation"
   scope: regional
   fidelity: 0.94`
       },
@@ -1067,7 +1045,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Transition Friction"
     via: cognitive_dissonance
-  contrasts_with: "Cognitive Alignment"
   scope: global
   fidelity: 0.92`
       },
@@ -1094,7 +1071,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Automation Ceiling"
     via: legal_responsibility
-  contrasts_with: "Syntactic Sandbox"
   scope: global
   fidelity: 0.91`
       },
@@ -1121,7 +1097,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Cultural Commoditization"
     via: stylistic_imitation
-  contrasts_with: "Generative Integrity"
   scope: global
   fidelity: 0.89`
       },
@@ -1148,7 +1123,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Physical Anchor"
     via: biological_friction
-  contrasts_with: "Digital Twin Simulation"
   scope: global
   fidelity: 0.90`
       },
@@ -1175,7 +1149,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Syntactic Sandbox"
     via: sandbox_loops
-  contrasts_with: "Unstructured Intuition"
   scope: global
   fidelity: 0.94`
       },
@@ -1202,7 +1175,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Syntactic Sandbox"
     via: direct_mapping
-  contrasts_with: "Cultural Nuance"
   scope: global
   fidelity: 0.91`
       }

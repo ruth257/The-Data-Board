@@ -146,12 +146,9 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       
       THE HUMAN DOMAIN DIRECTIVE:
       - PARADIGM GENERATOR MODE: You are an AUDITOR, not a describer. Do NOT simply re-label the column headers from the data.
-      - GOLDILOCKS NAMING: Find a handle that is precise enough to reduce statistical guessing but flexible enough to enable human narration.
-      - PSEUDO-ANTONYMS©: Every concept must be defined by the tension it holds. If you name a concept, you must be able to identify its structural opposite.
-      - FORBIDDEN: Do NOT use generic column names (e.g., "GDP", "Social Support", "Conversion"). These are "Statistical Inventions".
-      - MANDATED: Synthesize the "Mechanism" of the data. (e.g., Instead of "Income", use "Resource Elasticity"; instead of "Social Support", use "Communal Buffer").
-      - Use "Human Domain Vocabulary" that grounds the initial reasoning in recognizable but synthesized structural truths.
-      
+      - GOLDILOCKS NAMING CUTS BOTH WAYS: precise enough to be grounded, general enough to reason from. A synthesized name (e.g. "Resource Elasticity" instead of "Income") only earns its place when the literal term would flatten a real mechanism. If the literal, closer-to-the-data term is already the clearest handle, KEEP IT — do not invent a more abstract label just to sound more analytical. Jargon that explains nothing new is worse than the plain term it replaced.
+      - PSEUDO-ANTONYMS© ARE CONDITIONAL, NOT MANDATORY: only identify a structural opposite ("contrasts_with") if a genuine one already exists in this domain — something a domain expert would recognize as the real other side of a real tension. Many valid concepts are foundational or descriptive and have no natural opposite (e.g. "Healthy Life Expectancy" is not in tension with anything specific). For those, leave "contrasts_with" out entirely rather than inventing one. A pseudo-antonym exists to test whether the concept represents a real fault line in the whole dataset, not a single direction in it — forcing one onto every concept defeats that purpose.
+
       THE EVIDENCE COHERENCE DIRECTIVE:
       - The 'explanation' MUST be a specific, data-grounded observation that provides "Sharp Evidence".
       - Ensure the handle is globally coherent within the reasoning space of the scenario.
@@ -183,7 +180,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
           direction: [upstream | downstream]
           of: "[other concept]"
           via: "[causal mechanism]"
-        contrasts_with: "[the pseudo-antonym concept]"
+        contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
         fidelity: [0.0-1.0]
         fidelity_basis: [semantic_density | expert_judgment | empirical_test]
@@ -233,13 +230,12 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       Suggest "Human Domain Vocabulary" for the subject: "${scenario.title}".
       
       THE HUMAN DOMAIN METHOD:
-      - PARADIGM GENERATOR MODE: You are the AUDITOR. Stop "guessing" meaning and start "verifying" it against the evidence. 
-      - GOLDILOCKS NAMING: Search for words that synthesize the structural truth hidden in the data. Avoid generic descriptions.
-      - PSEUDO-ANTONYMS©: Identify handles by finding the tug-of-war between tensions (e.g., "Informed Early" vs "Unaware").
-      - SEMANTIC SYNTHESIS: Your primary goal is to find handles that synthesize the "Mechanism" of the data, not just the "Label".
-      - FORBIDDEN: Do NOT use literal column names or one-word metrics (e.g., "Conversion", "Satisfaction", "Revenue"). These are too simple to enable audited narration.
+      - PARADIGM GENERATOR MODE: You are the AUDITOR. Stop "guessing" meaning and start "verifying" it against the evidence.
+      - GOLDILOCKS NAMING CUTS BOTH WAYS: search for the clearest handle for the structural truth in the data — sometimes that's a synthesized term, sometimes the plain descriptive term is already exact and inventing a fancier one would only add jargon. Prefer the plainest name that still captures the mechanism.
+      - PSEUDO-ANTONYMS© ARE CONDITIONAL, NOT MANDATORY: across the whole board, expect only a small number of genuine tension pairs (often just one or two) — pairs that represent a real fault line running through the WHOLE dataset, not a single direction in it. Most concepts on a board are foundational or descriptive and correctly have no pseudo-antonym. Do not force every handle into a tug-of-war; only pair concepts when a domain expert would recognize the opposition as real.
+      - SEMANTIC SYNTHESIS: Your primary goal is to find handles that are true to the "Mechanism" of the data. A literal label is fine when it already is the mechanism (e.g. "Healthy Life Expectancy" needs no synthesis); reach for a synthesized name only when the literal label would flatten something real (e.g. "Income" alone hides the distinction between raw wealth and the freedom it buys — "Resource Elasticity" earns its keep there).
       - Use descriptive segments and clear factual categories that ground the initial reasoning.
-      
+
       THE HANDLE DIRECTIVE:
       - The 'word' MUST be a simple, recognizable handle (1-2 words max).
       - The 'explanation' MUST be the "Sharp Evidence" that grounds this concept in the data.
@@ -271,7 +267,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
           direction: [upstream | downstream]
           of: "[other concept]"
           via: "[causal mechanism]"
-        contrasts_with: "[the pseudo-antonym concept]"
+        contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
         fidelity: [0.0-1.0]
         fidelity_basis: [semantic_density | expert_judgment | empirical_test]
@@ -355,7 +351,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
       DEDUCTION & SYNTHESIS DIRECTIVE:
       - Use the EXACT "concepts" and "logic" from the board above as the formal grounding for all insights.
       - BRIDGE: Use the "mechanism" and "evidence" fields from the YAML to bridge terms using human-like logical deduction.
-      - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" explicitly defined or implied by the "contrasts_with" and "mechanism" fields.
+      - STRUCTURAL TENSION: Identify "Counter-Forces" or "Tension Pairs" explicitly defined by the "contrasts_with" fields. Do not invent tension pairs beyond what the board's concepts actually declare — most boards will only have one or two genuine pairs, and that is expected, not a gap to fill.
       - EMERGENT PATTERNS: These should be high-level narrative "Handles" that emerge from the interaction of the board's concepts. They MUST be consistent with the logic defined in the YAML.
       - SYNTHESIS: Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the board's vocabulary.
       
@@ -441,8 +437,8 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       1. AUDIT THE TENSION: Do not simply re-state column names. Identify the underlying "Audit Narrative" the data suggests.
       2. Create a Scenario: title, description, context, and two primary opposing outcomes (e.g., ["Structural Stability", "Systemic Collapse"]).
       3. Generate 8-12 Vocabulary Tiles (handles).
-      4. GOLDILOCKS NAMING: Synthesize the "Mechanism" of the data. (e.g., Instead of "Social Support", use "Communal Safety Net").
-      5. PSEUDO-ANTONYMS©: Every concept must exist in a tug-of-war. Find the structural opposites.
+      4. GOLDILOCKS NAMING CUTS BOTH WAYS: reach for a synthesized "Mechanism" name only when the literal column/field name would flatten something real (e.g., "Social Support" → "Communal Safety Net" earns its keep because it names the buffering mechanism). If the literal term is already the clearest handle, keep it — do not manufacture jargon for its own sake.
+      5. PSEUDO-ANTONYMS© ARE CONDITIONAL: across the WHOLE 8-12 tile board, expect only a small number of genuine tension pairs (typically 1-2) that represent a real structural fault line running through the whole dataset — not a single direction in it. Most tiles should have no pseudo-antonym at all. Only pair concepts when a domain expert would recognize the opposition as real; do not force a tug-of-war onto every concept.
       6. For each tile, provide a word, centrality, and a brief explanation/dataInsight based on evidence.
       
       Return JSON: 
@@ -467,7 +463,7 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
           direction: [upstream | downstream]
           of: "[other concept]"
           via: "[causal mechanism]"
-        contrasts_with: "[the pseudo-antonym concept]"
+        contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
         fidelity: [0.0-1.0]
         fidelity_basis: [semantic_density | expert_judgment | empirical_test]
