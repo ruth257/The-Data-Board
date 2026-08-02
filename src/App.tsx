@@ -7,6 +7,7 @@ import { CACHED_BOARDS, CACHED_DATA_VERSION } from "./cachedData";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "./types";
 import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread } from "./services/geminiService";
 import { NarrativeThreads } from "./components/NarrativeThreads";
+import { ReasoningGauge } from "./components/ReasoningGauge";
 
 import yaml from "js-yaml";
 
@@ -2119,25 +2120,18 @@ export default function App() {
 
                 {(() => {
                   const groundedCount = tiles.filter(t => t.evidenceGrounded).length;
-                  const ratio = tiles.length > 0 ? groundedCount / tiles.length : 0;
                   return (
                     <div className="group relative cursor-help border border-ink/10 p-4 bg-white/30">
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-1">
-                          <p className="text-[8px] mono uppercase font-bold opacity-50">Grounded In Your Data</p>
+                          <p className="text-[8px] mono uppercase font-bold opacity-50">Reasoning Strength</p>
                           <Info className="w-2 h-2 opacity-30" />
                         </div>
-                        <p className="text-sm font-black">{groundedCount} of {tiles.length}</p>
+                        <p className="text-sm font-black">{groundedCount} of {tiles.length} grounded</p>
                       </div>
-                      <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${ratio * 100}%` }}
-                          className="h-full bg-databoard-green"
-                        />
-                      </div>
+                      <ReasoningGauge groundedCount={groundedCount} totalCount={tiles.length} />
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-3 bg-ink text-bg text-[9px] mono leading-tight opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-xl border border-white/10">
-                        Computed directly from your tiles — how many carry evidence actually checked against real data, versus general domain knowledge. Not an AI-guessed score.
+                        A Handle is a proposed name, not yet checked. A Concept has survived the grounding check and describes more than the raw data. Computed directly from your tiles — not an AI-guessed score.
                       </div>
                     </div>
                   );
