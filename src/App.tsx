@@ -33,7 +33,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       description: "We don't start with numbers; we start with situational logic. This ensures the model respects the physical and social constraints of the dataset's 'physics' before it begins synthesizing meaning."
     },
     {
-      title: "Pseudo-Antonyms©",
+      title: "Pseudo-Antonyms",
       subtitle: "The Tension Search",
       icon: <Scale className="w-7 h-7" />,
       color: "bg-databoard-yellow text-ink",
@@ -177,7 +177,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                   <line x1="195" y1="190" x2="195" y2="228" stroke="#F39C12" strokeWidth="1.5" markerEnd="url(#arr)" fill="none"/>
                   <rect x="30" y="230" width="125" height="72" rx="8" fill="#FDEDEC" stroke="#E74C3C" strokeWidth="2"/>
                   <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#922B21" x="92" y="252" textAnchor="middle" dominantBaseline="central">PSEUDO-</text>
-                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#922B21" x="92" y="266" textAnchor="middle" dominantBaseline="central">ANTONYMS©</text>
+                  <text fontFamily="Inter, sans-serif" fontWeight="700" fontSize="10" fill="#922B21" x="92" y="266" textAnchor="middle" dominantBaseline="central">ANTONYMS</text>
                   <text fontFamily="ui-monospace, monospace" fontSize="7" fill="#922B21" opacity="0.75" x="92" y="284" textAnchor="middle" dominantBaseline="central">tension pairs</text>
                   <text fontFamily="ui-monospace, monospace" fontSize="7" fill="#922B21" opacity="0.75" x="92" y="294" textAnchor="middle" dominantBaseline="central">create the story</text>
                   <rect x="165" y="230" width="125" height="72" rx="8" fill="#EAFAF1" stroke="#27AE60" strokeWidth="2"/>
@@ -233,7 +233,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             <div className="space-y-4">
               {[
                 { name: "Deducible Space", body: "The minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably. Not a list of variables — the conceptual foundation that makes reasoning possible and narrative non-arbitrary." },
-                { name: "Pseudo-Antonyms©", tag: "© Ruth Aharon", body: "Concept pairs occupying opposite ends of the same analytical dimension — not lexical opposites, but two independently-grounded findings pulling in opposite directions on the same real axis. Conditional, not mandatory: most concepts have no natural opposite, and forcing one onto every concept is exactly the failure mode this framework exists to catch. A pseudo-antonym only earns its place when both sides survive the same grounding check. Attribution required when citing." },
+                { name: "Pseudo-Antonyms", body: "Concept pairs occupying opposite ends of the same analytical dimension — not lexical opposites, but two independently-grounded findings pulling in opposite directions on the same real axis. Conditional, not mandatory: most concepts have no natural opposite, and forcing one onto every concept is exactly the failure mode this framework exists to catch. A pseudo-antonym only earns its place when both sides survive the same grounding check." },
                 {
                   name: "Goldilocks Handle",
                   body: (
@@ -253,7 +253,6 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                 <div key={i} className="border-2 border-[#141414] shadow-[4px_4px_0_0_#141414]">
                   <div className="bg-[#141414] px-4 py-2 flex items-baseline gap-3">
                     <span className="font-serif italic font-bold text-lg text-white">{c.name}</span>
-                    {c.tag && <span className="font-mono text-[8px] font-bold uppercase tracking-widest bg-[#D4B84A] text-ink px-2 py-0.5">{c.tag}</span>}
                   </div>
                   <div className="bg-white p-4">
                     <div className="text-[13px] opacity-80 leading-relaxed m-0">{c.body}</div>
@@ -408,19 +407,28 @@ AI generates or human proposes vocabulary. You evaluate it.
 
 Core directives:
 1. Naming is analysis. Treat every concept as a type that carries analytical weight.
-2. Verification shift: check whether each concept is descriptive, coherent, 
-   and evidentially supported in this domain.
-3. Pseudo-Antonyms©: for each accepted concept, identify its structural opposite. 
-   Tension pairs are where the non-trivial narrative lives.
-4. Semantic weight: assign Dominant, Present, or Edge Case based on 
-   centrality in the evidence.
-5. Rejection is insight: when you reject a concept, explain why.
+2. Concept-first, then check: propose the way an analyst actually thinks — a
+   hypothesis drawn from domain knowledge — then check it against the data.
+   Do not enumerate columns and wait for patterns to emerge.
+3. Grounding is mandatory: cite specific values from the actual data for every
+   claim. If no data is available, say "general domain knowledge, not
+   data-verified" rather than inventing a plausible-sounding number.
+4. Goldilocks naming cuts both ways: climb to a synthesized name only when the
+   literal term would flatten a real mechanism. Otherwise keep the literal term.
+5. Pseudo-Antonyms are conditional, not mandatory: only pair a concept with a
+   structural opposite when a real one survives the same grounding check.
+   Most concepts have no opposite, and that's correct, not a gap.
+6. Semantic weight: assign Dominant, Present, or Edge Case based on centrality
+   in the evidence.
+7. Rejection is insight: when you reject a concept, explain why.
 
 Workflow:
 1. Review the raw data and question.
-2. Generate or evaluate a vocabulary board (Dominant, Present, Edge Case).
-3. Audit causal tension — identify pseudo-antonym© pairs.
-4. Synthesize the global story based ONLY on the established board.`}
+2. Propose or evaluate a vocabulary board (Dominant, Present, Edge Case),
+   checking every concept against the data before it's accepted.
+3. Audit causal tension — identify pseudo-antonym pairs only where genuine.
+4. Identify narrative threads — which concepts, together, carry one story.
+5. Synthesize the global story based ONLY on the established board.`}
               </div>
             </div>
           </section>
@@ -471,7 +479,7 @@ Workflow:
               </div>
 
               <div className="px-6 py-5 bg-[#F5F4F1] border-t border-ink/10">
-                <div className="font-mono text-[8px] font-bold uppercase tracking-widest opacity-40 mb-3">Pseudo-antonyms©</div>
+                <div className="font-mono text-[8px] font-bold uppercase tracking-widest opacity-40 mb-3">Pseudo-antonyms</div>
                 <div className="flex flex-wrap gap-x-12 gap-y-3">
                   <div className="flex items-center gap-3">
                     <span className="px-3 py-1 bg-[#4CAF50] text-ink font-bold text-[10px] uppercase border border-ink">Social Cohesion</span>
@@ -527,11 +535,10 @@ Workflow:
 
           {/* LICENSE */}
           <section className="pb-12">
-            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">License & Attribution</div>
-            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">Open source.<br/>Protected rights.</h2>
+            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">License</div>
+            <h2 className="text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">Open source.<br/>All the way down.</h2>
             <div className="bg-[#141414] text-white/70 p-8 shadow-[10px_10px_0_0_rgba(20,20,20,0.3)] border-2 border-[#141414] space-y-4 text-sm leading-relaxed">
-              <p>The Data Board methodology is released under the <strong>MIT License</strong> — free for commercial and non-commercial use, modification, and distribution globally.</p>
-              <p>The term <strong className="text-white">Pseudo-Antonyms©</strong> is a proprietary conceptual framework created by Ruth Aharon. Attribution is required when using or citing this concept.</p>
+              <p>The Data Board methodology, including the term <strong className="text-white">Pseudo-Antonyms</strong>, is released under the <strong>MIT License</strong> — free for commercial and non-commercial use, modification, and distribution globally, no separate permission needed.</p>
               <p>Cite as: Aharon, R. (2026). <span className="italic">The Data Board: A Methodology for Language-Based Data Analysis.</span> thedataboard.ai</p>
             </div>
           </section>
@@ -1973,7 +1980,7 @@ export default function App() {
                     </button>
                   )}
                 </div>
-                <p className="text-[11px] opacity-70 serif-italic leading-relaxed">
+                <p className="text-[15px] opacity-90 serif-italic leading-relaxed">
                   {scenario.context}
                 </p>
 
@@ -2275,7 +2282,7 @@ export default function App() {
           <p className="text-sm serif-italic leading-tight">
             "What we cannot think, that we cannot think; we cannot therefore say what we cannot think" Ludwig Wittgenstein (Tractatus 5.61)
             <br /><br />
-            The Data Board framework and the Pseudo-Antonyms© methodology are proprietary conceptual frameworks created by Ruth Aharon.
+            The Data Board framework and the Pseudo-Antonyms methodology were created by Ruth Aharon.
             <br /><br />
             <strong>License:</strong> MIT License. This framework is fully open-source and free for both commercial and non-commercial use.
           </p>

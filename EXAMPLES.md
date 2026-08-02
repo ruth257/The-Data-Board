@@ -14,7 +14,7 @@ This document provides detailed case studies of the Data Board methodology appli
 - **Present**: Local Labor Anchor, Market Lag, Neighboring Parity
 - **Edge Case**: Supply Chain Friction, Policy Gap
 
-### PSEUDO-ANTONYMS©
+### PSEUDO-ANTONYMS
 *   **The Wealthy Surcharge** ↔ **The Emerging Discount**
 
 ### GLOBAL STORY
@@ -38,7 +38,7 @@ This document provides detailed case studies of the Data Board methodology appli
 - **Present**: Institutional Trust, Individual Freedom, Generosity
 - **Edge Case**: Systemic Distress, Atomized Autonomy, The Freedom Gap
 
-### PSEUDO-ANTONYMS©
+### PSEUDO-ANTONYMS
 *   **Institutional Trust** ↔ **Systemic Distress**
 *   **Individual Freedom** ↔ **Atomized Autonomy**
 

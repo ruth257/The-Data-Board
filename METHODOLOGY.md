@@ -17,7 +17,7 @@ A concept doesn't earn the board by sounding analytical — it earns the board b
 1. **Propose** — a concept-shaped hypothesis, drawn from domain knowledge, not enumerated from raw columns. This is how a human analyst actually works: you start with a plausible idea, not a spreadsheet scan. (AI generates or human proposes — either way, this is a guess, not a conclusion.)
 2. **Check** — does the data show a real, checkable gap that would have to exist for the hypothesis to hold? Every claim must cite specific values from the actual dataset, not describe a plausible-sounding trend.
 3. **Reject or Name** — if the check fails, reject it and say why; rejection is insight, not failure. If it passes, name it at the right rung of abstraction (see below), then accept and weight it (Dominant / Present / Edge Case).
-4. **Pair, conditionally** — only if a genuine structural opposite also survives the same check does the concept get a Pseudo-Antonym©. Most concepts won't have one, and that's correct, not a gap.
+4. **Pair, conditionally** — only if a genuine structural opposite also survives the same check does the concept get a Pseudo-Antonym. Most concepts won't have one, and that's correct, not a gap.
 5. **Assemble** — the board forms from accepted concepts.
 6. **Thread** — independent of how any single concept is weighted, ask which concepts actually carry one story together. That's a Narrative Thread, and it's where the deduction lives.
 
@@ -74,8 +74,7 @@ The board leans on three distinct cognitive mechanisms — each doing a differen
 ### Deducible Space
 The minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably.
 
-### Pseudo-Antonyms©
-*© Ruth Aharon*
+### Pseudo-Antonyms
 Concept pairs occupying opposite ends of the same analytical dimension — not lexical opposites, but two independently-grounded findings that pull in opposite directions on the same real axis. **Conditional, not mandatory.** A pseudo-antonym exists to test whether a concept represents a real fault line running through the *whole* dataset, not a single direction in it. Most concepts have no natural opposite, and forcing one onto every concept defeats the purpose — it's exactly the failure mode this framework exists to catch.
 
 ### Goldilocks Handle
@@ -127,7 +126,7 @@ Core directives:
    data-verified" rather than inventing a plausible-sounding number.
 4. Goldilocks naming cuts both ways: climb to a synthesized name only when the
    literal term would flatten a real mechanism. Otherwise keep the literal term.
-5. Pseudo-Antonyms© are conditional, not mandatory: only pair a concept with a
+5. Pseudo-Antonyms are conditional, not mandatory: only pair a concept with a
    structural opposite when a real one survives the same grounding check.
    Most concepts have no opposite, and that's correct, not a gap.
 6. Semantic weight: assign Dominant, Present, or Edge Case based on centrality
@@ -138,7 +137,7 @@ Workflow:
 1. Review the raw data and question.
 2. Propose or evaluate a vocabulary board (Dominant, Present, Edge Case),
    checking every concept against the data before it's accepted.
-3. Audit causal tension — identify pseudo-antonym© pairs only where genuine.
+3. Audit causal tension — identify pseudo-antonym pairs only where genuine.
 4. Identify narrative threads — which concepts, together, carry one story.
 5. Synthesize the global story based ONLY on the established board.
 ```
@@ -161,8 +160,7 @@ Workflow:
 
 ---
 
-## LICENSE & ATTRIBUTION
+## LICENSE
 
-Released under **MIT License**.
-**Pseudo-Antonyms©** is a proprietary framework by **Ruth Aharon**. Attribution required.
+Released under the **MIT License** — including the term **Pseudo-Antonyms**, no separate permission needed.
 © 2026 Ruth Aharon | thedataboard.ai

@@ -32,7 +32,7 @@ See the [full methodology →](METHODOLOGY.md)
 
 **The question:** What structural conditions explain the persistent gap between market exchange rates and purchasing power parity?
 
-**Pseudo-antonym© pair at the heart of the board:**
+**Pseudo-antonym pair at the heart of the board:**
 
 ```
 The Wealthy Surcharge ↔ The Emerging Discount
@@ -69,7 +69,7 @@ Policy Gap Central bank intervention creates deducible gap: market ≠ real valu
 
 **The question:** What structural conditions explain why high GDP does not guarantee high happiness?
 
-**Pseudo-antonym© pairs at the heart of the board:**
+**Pseudo-antonym pairs at the heart of the board:**
 
 ```
 Institutional Trust ↔ Systemic Distress
@@ -116,10 +116,14 @@ Do not generate vocabulary. Evaluate vocabulary I propose.
 When I propose a concept, check whether it is:
 (a) descriptive not evaluative — does it describe a condition or embed a conclusion?
 (b) domain-coherent — does it fit with other accepted concepts?
-(c) evidentially grounded — is it consistent with what is known about this domain?
+(c) grounded — cite specific values from the data I've shared, not just what's
+    plausible for the domain. If I haven't shared data, say so explicitly rather
+    than inventing a statistic.
 
-For each accepted concept, identify its Pseudo-Antonym© — the structural
-opposite in this domain. These tension pairs are where the non-trivial narrative lives.
+Only identify a Pseudo-Antonym when a real structural opposite exists and
+survives the same grounding check — most concepts have no natural opposite,
+and that's expected, not a gap to fill. Forcing a tension pair onto every
+concept is the failure mode to avoid.
 
 Assign each accepted concept a weight:
 Dominant — primary driver of the pattern
@@ -130,7 +134,7 @@ When you reject a concept, explain why. Rejection reveals hidden assumptions.
 
 Workflow:
 1. I propose candidate concepts. You evaluate each one.
-2. We identify pseudo-antonym© pairs among accepted concepts.
+2. We identify pseudo-antonym pairs among accepted concepts.
 3. The board assembles with weighted concepts.
 4. Optional: split the board by outcome. Read the inversions.
 
@@ -158,8 +162,7 @@ The Data Board uses this to build **on-the-fly minimal ontologies** — the smal
 
 **Deducible Space** — the minimal set of grounded, coherent, tension-bearing concepts from which consistent narrative conclusions follow inevitably.
 
-**Pseudo-Antonyms©** — concept pairs occupying opposite ends of the same analytical dimension. Not logical opposites — structurally opposing concepts within a shared domain. The mechanism that makes deductions inevitable rather than inferred.
-*© Ruth Aharon — attribution required when citing.*
+**Pseudo-Antonyms** — concept pairs occupying opposite ends of the same analytical dimension. Not logical opposites — structurally opposing concepts within a shared domain. The mechanism that makes deductions inevitable rather than inferred. Conditional, not mandatory — most concepts have no natural opposite.
 
 **Goldilocks Handle** — a concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from. "The Wealthy Surcharge" is a Goldilocks handle — it names a mechanism (systematic price premium driven by the Balassa-Samuelson effect), compresses a pattern across 50+ countries into a single reasoned-about type, and creates structural tension against its pseudo-antonym. "Countries that are rich" is not — it describes membership in a category, implies no mechanism, and generates no analytical direction.
 
@@ -192,9 +195,7 @@ Open an issue, submit a PR, or reach out at [thedataboard.ai](https://thedataboa
 
 ## License
 
-The Data Board methodology is released under the **[MIT License](https://opensource.org/licenses/MIT)** — free for commercial and non-commercial use, modification, and distribution.
-
-The term **Pseudo-Antonyms©** is a proprietary conceptual framework created by Ruth Aharon. Attribution is required when using or citing this concept.
+The Data Board methodology, including the term **Pseudo-Antonyms** (created by Ruth Aharon), is released under the **[MIT License](https://opensource.org/licenses/MIT)** — free for commercial and non-commercial use, modification, and distribution, no separate permission needed.
 
 **Cite as:** Aharon, R. (2026). *The Data Board: A Methodology for Language-Based Data Analysis.* thedataboard.ai
 

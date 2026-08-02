@@ -3,28 +3,32 @@
 ## Overview
 The Data Board is an AI-first methodology for data analysis that uses human language to construct an audited narrative foundation. Created by **Ruth Aharon**, it shifts the AI's role from "Generative Invention" to "Semantic Verification."
 
-## Core Principles (v3.1)
+## Core Principles (v4.0)
 
 ### 1. Paradigm Generator Mode (Verification Shift)
 The AI is not the author; it is the auditor. It stops "guessing" meaning and starts "verifying" it against the evidence. This moves the AI from a generative task to a discriminative one, reducing hallucinations.
 
-### 2. Pseudo-Antonyms©
-A proprietary conceptual framework for defining structural opposites. Every meaningful story is a tug-of-war between tensions (e.g., "Informed Early" vs "Unaware").
+### 2. Concept-First, Then Grounded
+Propose the way an analyst actually thinks — a hypothesis drawn from domain knowledge — then check it against the data. Every claim must cite specific values from the actual dataset when one is available; otherwise say "general domain knowledge, not data-verified" rather than inventing a plausible-sounding number.
 
-### 3. Goldilocks Naming
-Naming is the primary act of analysis. We find words that are precise enough to reduce statistical guessing but flexible enough to enable human narration.
+### 3. Pseudo-Antonyms
+Structural opposites — conditional, not mandatory. A pseudo-antonym only earns its place when a real, independently-grounded opposite survives the same check. Most concepts have no natural opposite; forcing one onto every concept is the failure mode this framework exists to catch, not the goal.
+
+### 4. Goldilocks Naming
+Naming is the primary act of analysis, and it cuts both ways: climb to a synthesized name only when the literal term would flatten a real mechanism. Otherwise keep the literal term — jargon that explains nothing new is worse than the plain term it replaced.
 
 ## Evaluation Matrix
 Concepts are audited based on:
-- **Evidence Grounding**: High vs Low.
-- **Narrative Contribution**: High vs Low.
+- **Evidence Grounding**: cited against real data vs. general domain knowledge (`evidenceGrounded` flag).
+- **Narrative Contribution**: does it belong to a Narrative Thread — a set of concepts that, together, carry one story?
 
 ## Tech Stack
 - **Frontend:** React, Tailwind CSS, Framer Motion.
-- **Visualization:** D3.js for the Semantic Map.
+- **Narrative Threads:** LLM-judgment clustering (not statistical/embedding-based) with drag-to-refine and per-thread re-audit — see `src/components/NarrativeThreads.tsx`.
 - **Logic Syntax:** YAML (for the Logic Board Specification).
 
 ## For AI Agents
 1. **Respect the Role**: You are a Paradigm Generator. Evaluate proposed vocabulary against the logic audit matrix.
 2. **Logic as Code**: Treat the Logic Board YAML as the formal truth.
-3. **Focus on Tensions**: Look for Pseudo-Antonym© pairs.
+3. **Ground before naming**: check the concept against real data before promoting it, not after.
+4. **Tensions are conditional**: look for Pseudo-Antonym pairs only where a real one exists — don't force it.
