@@ -29,6 +29,15 @@ export interface Scenario {
   url?: string; // Optional URL for the scenario source
 }
 
+export interface NarrativeThread {
+  id: string;
+  title: string; // short label for the story this thread tells, e.g. "The price-gap story"
+  conceptWords: string[]; // words of the tiles currently in this thread
+  synthesis: string; // 1-sentence narrative using only this thread's concepts
+  coheres: "yes" | "partial" | "no"; // does the current membership actually hold together as one story
+  missingLink?: string; // if not fully coherent, what's missing to make it one
+}
+
 export interface BoardMetrics {
   cohesion: number; // 0-100
   coverage: number; // 0-100

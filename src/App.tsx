@@ -4,9 +4,9 @@ import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
 import { CACHED_BOARDS } from "./cachedData";
-import { BoardMetrics, Centrality, Scenario, Tile } from "./types";
-import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData } from "./services/geminiService";
-import { RelationshipGraph } from "./components/RelationshipGraph";
+import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "./types";
+import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread } from "./services/geminiService";
+import { NarrativeThreads } from "./components/NarrativeThreads";
 
 import yaml from "js-yaml";
 
@@ -1167,6 +1167,9 @@ export default function App() {
     return null;
   });
   const [isMetricsLoading, setIsMetricsLoading] = useState(false);
+  const [threads, setThreads] = useState<NarrativeThread[]>([]);
+  const [isClusteringThreads, setIsClusteringThreads] = useState(false);
+  const [recheckingThreadId, setRecheckingThreadId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTile, setSelectedTile] = useState<Tile | null>(null);
@@ -1303,6 +1306,7 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
+        setThreads([]);
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
@@ -1322,6 +1326,7 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
+        setThreads([]);
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
@@ -1384,6 +1389,57 @@ export default function App() {
       updateMetrics();
     }
   }, []);
+
+  const handleClusterThreads = async () => {
+    if (isClusteringThreads || tiles.length < 2) return;
+
+    if (!hasApiKey) {
+      setIsSettingsOpen(true);
+      return;
+    }
+
+    setIsClusteringThreads(true);
+    setError(null);
+    try {
+      const newThreads = await clusterIntoThreads(scenario, tiles);
+      setThreads(newThreads);
+    } catch (err: any) {
+      console.error(err);
+      if (err.message?.includes("API_KEY_REQUIRED")) {
+        setIsSettingsOpen(true);
+      } else {
+        setError(err.message || "Failed to find narrative threads.");
+      }
+    } finally {
+      setIsClusteringThreads(false);
+    }
+  };
+
+  const handleRecheckThread = async (threadId: string) => {
+    const thread = threads.find(t => t.id === threadId);
+    if (!thread || recheckingThreadId) return;
+
+    if (!hasApiKey) {
+      setIsSettingsOpen(true);
+      return;
+    }
+
+    setRecheckingThreadId(threadId);
+    setError(null);
+    try {
+      const result = await synthesizeThread(scenario, thread.conceptWords, tiles);
+      setThreads(prev => prev.map(t => t.id === threadId ? { ...t, ...result } : t));
+    } catch (err: any) {
+      console.error(err);
+      if (err.message?.includes("API_KEY_REQUIRED")) {
+        setIsSettingsOpen(true);
+      } else {
+        setError(err.message || "Failed to re-check this thread.");
+      }
+    } finally {
+      setRecheckingThreadId(null);
+    }
+  };
 
   const handleAddWord = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -1560,6 +1616,7 @@ export default function App() {
             });
 
             setTiles(uniqueImportedTiles);
+            setThreads([]);
             setSelectedTile(null);
           }
         } else if (file.name.endsWith('.csv')) {
@@ -1588,6 +1645,7 @@ export default function App() {
           });
           setScenario(newScenario);
           setTiles(newTiles);
+          setThreads([]);
           setSelectedTile(null);
         }
       } catch (err: any) {
@@ -1610,6 +1668,7 @@ export default function App() {
       setTiles([]);
       setSelectedTile(null);
       setMetrics(null);
+      setThreads([]);
       localStorage.removeItem("databoard-tiles");
     }
   };
@@ -1771,6 +1830,7 @@ export default function App() {
                         // Clear board immediately
                         setTiles([]);
                         setMetrics(null);
+                        setThreads([]);
                         setSelectedTile(null);
                         setScenario(s);
                         setIsExpansionAvailable(true);
@@ -1830,6 +1890,7 @@ export default function App() {
                         if (confirm("Reset this board to original research defaults? Your custom changes to this board will be lost.")) {
                           setTiles(CACHED_BOARDS[scenario.id].tiles);
                           setMetrics(CACHED_BOARDS[scenario.id].metrics);
+                          setThreads([]);
                           setSelectedTile(null);
                         }
                       }}
@@ -1875,6 +1936,7 @@ export default function App() {
                       onClick={() => {
                         setTiles(CACHED_BOARDS[scenario.id].tiles);
                         setMetrics(CACHED_BOARDS[scenario.id].metrics);
+                        setThreads([]);
                       }}
                       className="w-full py-2 border border-ink/20 hover:bg-ink hover:text-bg transition-all mono text-[9px] uppercase font-bold flex items-center justify-center gap-2"
                     >
@@ -2121,17 +2183,15 @@ export default function App() {
             </AnimatePresence>
           </div>
 
-          {metrics?.links && metrics.links.length > 0 && (
-            <div className="mt-8">
-              <div className="mb-4 p-3 border border-ink/10 bg-ink/5 flex items-start gap-3">
-                <Info className="w-4 h-4 mt-0.5 opacity-40 shrink-0" />
-                <p className="text-[10px] mono uppercase leading-tight opacity-60">
-                  Clusters indicate narrative themes. Detached nodes represent conceptual gaps—bridge them with new handles to find the global story.
-                </p>
-              </div>
-              <RelationshipGraph tiles={tiles} links={metrics.links} />
-            </div>
-          )}
+          <NarrativeThreads
+            tiles={tiles}
+            threads={threads}
+            onCluster={handleClusterThreads}
+            onThreadsChange={setThreads}
+            onRecheckThread={handleRecheckThread}
+            isClustering={isClusteringThreads}
+            recheckingThreadId={recheckingThreadId}
+          />
         </div>
       </main>
 

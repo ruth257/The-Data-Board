@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
-import { BoardMetrics, Centrality, Scenario, Tile } from "../types";
+import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "../types";
 
 const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay = 1000): Promise<T> => {
   let lastError: any;
@@ -525,3 +525,131 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
 
   return { scenario, tiles };
 };
+
+const generateThreadId = () => `thread-${generateId()}`;
+
+/**
+ * Groups the board's concepts into narrative threads: which concepts, taken
+ * together, actually carry a single coherent story. Independent of the
+ * Dominant/Present/Edge-Case layout, and independent of pseudo-antonym pairs
+ * (a thread is not a tension pair — it's a set of concepts that co-explain
+ * one outcome). A concept may belong to more than one thread if it genuinely
+ * supports more than one story.
+ */
+export async function clusterIntoThreads(scenario: Scenario, tiles: Tile[]): Promise<NarrativeThread[]> {
+  if (!Array.isArray(tiles) || tiles.length < 2) return [];
+
+  const response = await callAIProxy("gemini-3-flash-preview",
+    `
+      Group the concepts on this board into narrative threads for scenario: "${scenario.title}".
+
+      A "narrative thread" is a subset of the concepts below that, together, explain ONE coherent
+      story about the data — not every concept on the board belongs to the same story.
+
+      THE CONCEPTS ON THE BOARD:
+      ${tiles.map(t => `- "${t.word}" (${t.centrality}): ${t.explanation}`).join("\n")}
+
+      INSTRUCTIONS:
+      - Propose 2-3 threads. Each thread needs at least 2 concepts.
+      - A concept CAN appear in more than one thread if it genuinely supports more than one story.
+      - Do NOT force every concept into a thread — a concept with no real narrative partner can be left out.
+      - For each thread, give it a short title (3-6 words) naming the story, list which concept words
+        belong to it (must exactly match the words above), and write a 1-sentence synthesis of the story
+        using only those concepts.
+      - Every thread you propose should already cohere as one story — that's what makes it a thread.
+
+      Context: ${scenario.context}
+
+      Return JSON array: title, conceptWords, synthesis.
+    `,
+    {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            conceptWords: { type: Type.ARRAY, items: { type: Type.STRING } },
+            synthesis: { type: Type.STRING },
+          },
+          required: ["title", "conceptWords", "synthesis"],
+        },
+      },
+    }
+  );
+
+  let results: any[];
+  try {
+    results = JSON.parse(cleanJsonResponse(response.text || "[]"));
+  } catch (e) {
+    console.error("Failed to parse thread clustering response:", e);
+    results = [];
+  }
+
+  return (Array.isArray(results) ? results : []).map((r: any) => ({
+    id: generateThreadId(),
+    title: r.title || "Untitled Thread",
+    conceptWords: Array.isArray(r.conceptWords) ? r.conceptWords : [],
+    synthesis: r.synthesis || "",
+    coheres: "yes" as const,
+  }));
+}
+
+/**
+ * Re-checks whether a specific, user-edited set of concepts actually coheres
+ * into one story. Used after a user drags a concept into or out of a thread.
+ * Unlike clusterIntoThreads, this does not invent membership — it audits the
+ * membership it's given, and says so honestly when it doesn't hold together.
+ */
+export async function synthesizeThread(
+  scenario: Scenario,
+  conceptWords: string[],
+  tiles: Tile[]
+): Promise<{ coheres: "yes" | "partial" | "no"; synthesis: string; missingLink?: string }> {
+  const relevantTiles = tiles.filter(t => conceptWords.includes(t.word));
+  if (relevantTiles.length < 2) {
+    return { coheres: "no", synthesis: "", missingLink: "A thread needs at least 2 concepts to test for a shared story." };
+  }
+
+  const response = await callAIProxy("gemini-3-flash-preview",
+    `
+      Audit whether this specific set of concepts coheres into ONE story for scenario: "${scenario.title}".
+
+      THE CONCEPTS IN THIS THREAD:
+      ${relevantTiles.map(t => `- "${t.word}" (${t.centrality}): ${t.explanation}`).join("\n")}
+
+      INSTRUCTIONS:
+      - Do NOT invent a connection that isn't there. You are auditing this exact membership, not
+        proposing your own grouping.
+      - "yes": all concepts clearly co-explain one outcome. Write the 1-sentence synthesis.
+      - "partial": most concepts fit but one is a stretch, or the story is thin. Write the synthesis
+        anyway, and name what's missing in missingLink.
+      - "no": these concepts don't actually share a story. Leave synthesis short/empty and explain
+        what's missing in missingLink instead.
+
+      Context: ${scenario.context}
+
+      Return JSON: coheres ("yes"|"partial"|"no"), synthesis, missingLink.
+    `,
+    {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          coheres: { type: Type.STRING, enum: ["yes", "partial", "no"] },
+          synthesis: { type: Type.STRING },
+          missingLink: { type: Type.STRING },
+        },
+        required: ["coheres", "synthesis"],
+      },
+    }
+  );
+
+  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
+  return {
+    coheres: (result.coheres as "yes" | "partial" | "no") || "partial",
+    synthesis: result.synthesis || "",
+    missingLink: result.missingLink,
+  };
+}
