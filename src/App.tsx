@@ -4,6 +4,7 @@ import { Plus, Info, Star, ChevronRight, RefreshCw, AlertCircle, Download, Users
 import Papa from "papaparse";
 import { SCENARIOS } from "./constants";
 import { CACHED_BOARDS, CACHED_DATA_VERSION } from "./cachedData";
+import { CANDY_SCENARIO_ID, CANDY_DATASET_SAMPLE } from "./studyData";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "./types";
 import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread } from "./services/geminiService";
 import { NarrativeThreads } from "./components/NarrativeThreads";
@@ -1165,6 +1166,14 @@ const LogicEditorModal = ({
   );
 };
 
+// Study scenarios (see RESEARCH_AGENDA.md) ship a real dataset sample but no
+// cached tiles — the board starts empty, and every proposed Handle is
+// grounded against real rows from the very first one.
+const studyDatasetSampleFor = (scenarioId: string): string | null => {
+  if (scenarioId === CANDY_SCENARIO_ID) return CANDY_DATASET_SAMPLE;
+  return null;
+};
+
 export default function App() {
   const [scenarios, setScenarios] = useState<Scenario[]>(() => {
     const saved = localStorage.getItem("databoard-custom-scenarios");
@@ -1378,7 +1387,7 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
-        setDatasetSample(null);
+        setDatasetSample(studyDatasetSampleFor(found.id));
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
@@ -1400,7 +1409,7 @@ export default function App() {
       const found = scenarios.find(s => s.id === scenarioId);
       if (found) {
         setScenario(found);
-        setDatasetSample(null);
+        setDatasetSample(studyDatasetSampleFor(found.id));
         if (CACHED_BOARDS[found.id]) {
           setTiles(CACHED_BOARDS[found.id].tiles);
           setMetrics(CACHED_BOARDS[found.id].metrics);
@@ -1897,7 +1906,7 @@ export default function App() {
                         setTiles([]);
                         setMetrics(null);
                         setThreads([]);
-                        setDatasetSample(null);
+                        setDatasetSample(studyDatasetSampleFor(s.id));
                         setSelectedTile(null);
                         setScenario(s);
 
@@ -2045,7 +2054,7 @@ export default function App() {
                 )}
               </button>
             </form>
-                {tiles.length === 0 && (
+                {tiles.length === 0 && scenario.id !== CANDY_SCENARIO_ID && (
                   <div className="flex gap-2">
                     <button
                       id="ai-suggestions"

@@ -41,4 +41,12 @@ export const SCENARIOS: Scenario[] = [
     outcomes: ["Life Satisfaction", "Social Fragmentation"],
     url: "https://gss.norc.org/"
   },
+  {
+    id: "candy-power-ranking",
+    title: "Candy Power Ranking (FiveThirtyEight)",
+    description: "85 real candies, each rated in thousands of randomized online head-to-head matchups.",
+    context: "Every row is one candy with its ingredients/format (chocolate, fruity, caramel, peanuty/almondy, nougat, crisped rice wafer, hard, bar, pluribus) plus its sugar percentile, price percentile, and overall win percentage against other candies. Question: what actually explains a candy's win percentage?",
+    outcomes: ["High Win Rate", "Low Win Rate"],
+    url: "https://github.com/fivethirtyeight/data/tree/master/candy-power-ranking"
+  },
 ];
