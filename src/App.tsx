@@ -1166,9 +1166,9 @@ const LogicEditorModal = ({
   );
 };
 
-// Study scenarios (see RESEARCH_AGENDA.md) ship a real dataset sample but no
-// cached tiles — the board starts empty, and every proposed Handle is
-// grounded against real rows from the very first one.
+// Some scenarios ship a real dataset sample but no cached tiles — the board
+// starts empty, and every proposed Handle is grounded against real rows
+// from the very first one.
 const studyDatasetSampleFor = (scenarioId: string): string | null => {
   if (scenarioId === CANDY_SCENARIO_ID) return CANDY_DATASET_SAMPLE;
   return null;

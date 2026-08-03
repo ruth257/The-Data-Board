@@ -1,21 +1,12 @@
-// Data for the Paper 1 pilot study (see RESEARCH_AGENDA.md). This scenario
-// intentionally has NO cached tiles — participants in the scaffolded arm
-// build the board themselves via "Propose a Handle," which is the thing
-// being tested. Only the raw dataset sample is pre-loaded, so every proposed
-// concept has real rows to be grounded and confound-checked against from the
-// very first Handle, without requiring a manual CSV upload step.
+// A scenario with a real dataset sample pre-loaded but no cached tiles —
+// the board starts empty, and every proposed Handle is grounded against
+// real rows from the very first one, without requiring a manual CSV upload.
 //
 // Source: FiveThirtyEight's real head-to-head candy survey data
 // (github.com/fivethirtyeight/data/tree/master/candy-power-ranking).
-// Verified answer key lives in RESEARCH_AGENDA.md — chocolate is the real,
-// independent driver of winning; "bar" format looks like one too but is
-// almost entirely explained by chocolate; ~60% of the variance in win rate
-// is unexplained by chocolate alone, and price still correlates with
-// winning even among chocolate-only candies.
 //
 // CANDY_DATASET_SAMPLE is generated programmatically from the real CSV
-// (not hand-transcribed) to avoid exactly the kind of transcription drift
-// this project's grounding principle exists to catch. Regenerate via:
+// (not hand-transcribed) to avoid transcription drift. Regenerate via:
 //   curl -sSL -o candy.csv https://raw.githubusercontent.com/fivethirtyeight/data/master/candy-power-ranking/candy-data.csv
 //   python3 -c "import csv,json; print(json.dumps(list(csv.DictReader(open('candy.csv')))))"
 
