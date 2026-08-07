@@ -82,7 +82,13 @@ Every concept lives at one of three levels. Confusing them is the most common fa
 
 **Verification Shift** — the AI moves from invention to verification once vocabulary is supplied: checking whether concepts are descriptive and grounded, not generating labels freely.
 
-**Semantic Weight** — DOMINANT (primary driver) · PRESENT (real, not decisive) · EDGE CASE (marginal or structural outlier).
+**Concept** (Glaser & Strauss, 1967) — a label earns concept status only once multiple, diverse indicators converge on the same underlying mechanism. A single grounded data point is an *indicator*, not a concept — it points toward a possible category, it doesn't establish one. This is the actual test a Handle has to pass at the Ground and Check-confounds steps, made explicit: not "is there one number that supports this," but "do independent instances, checked against each other, agree on what's happening." Where indicators diverge — the same statistical direction produced by genuinely different mechanisms — the honest result is not a concept; it's residual.
+
+**Theoretical Saturation** — the signal to stop refining a concept, or to stop generating new ones. A concept is saturated once new indicators only extend its range instead of reshaping what it means. A board is complete, for the evidence at hand, not when every data point has a label, but when the next candidate grouping fails the convergence test — that failure is itself the stopping signal, named honestly in the residual rather than papered over with a manufactured concept. Saturation is always provisional: new data can reopen a concept that was saturated against the old evidence (see Representation as Hypothesis).
+
+**Core Category** — among a board's concepts, the one with the greatest explanatory reach: not just central, but the pattern the others are read as deviations *from*. Distinct from Dominant centrality, a per-concept weight — a board can have several Dominant concepts, but only one plays this organizing role relative to the rest.
+
+**Semantic Weight** — DOMINANT (primary driver) · PRESENT (real, not decisive) · EDGE CASE (marginal or structural outlier). In Glaser & Strauss's terms, this is a *property* of a concept — how central it is to explaining the dataset — with each concept's centrality as its *dimension*: a specific position on that property's range, not a fixed identity.
 
 **Narrative Thread** — which concepts, together, actually carry one story, independent of how any single one is weighted. A concept can belong to more than one thread.
 
@@ -155,7 +161,7 @@ Workflow:
 * **Lipton, P. (1990).** "Contrastive explanation." — An explanation satisfies only when the alternative it rules out is real and checkable, not invented. Why a pseudo-antonym must be independently grounded, not just antonym-shaped.
 * **Pearl, J. & Mackenzie, D. (2018).** *The Book of Why.* — The ladder of causation. This method addresses the prerequisite Pearl assumes is solved: knowing which concepts belong in the model. The Confound Check is inspired by the same logic — ask what else could explain an association before crediting it — without the formal conditioning a causal model would require. It asks analysts to consider competing explanations explicitly; it does not perform causal inference.
 * **Fisher, R.A. (1925).** *Statistical Methods for Research Workers.* — Introduced analysis of variance: total variation splits exactly into what a named factor explains and what's left over (the residual), and the residual is always reported, never allowed to go unstated. The Completeness Check is inspired by that same discipline, not a variance decomposition — a board must say what it leaves unexplained, in one sentence, without computing what fraction that sentence represents.
-* **Glaser, B. & Strauss, A. (1967).** *The Discovery of Grounded Theory.* — Open and axial coding, the qualitative precedent this method operationalises computationally.
+* **Glaser, B. & Strauss, A. (1967).** *The Discovery of Grounded Theory.* — The Concept-Indicator Model: a concept is only validated once multiple, diverse indicators converge on it; a single data point is an indicator, not a concept. This method's definition of "Concept" (see Key Concepts) is this model applied directly, not merely inspired by it — including its stopping rule: comparison ends when new data stops changing what a category means (theoretical saturation), and a candidate grouping that fails to converge on one mechanism is reported as residual, not forced into a concept.
 
 ---
 

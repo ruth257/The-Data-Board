@@ -3,7 +3,7 @@ import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 // Bump this whenever CACHED_BOARDS content changes meaningfully. The app
 // clears any locally-saved board that predates this version, so returning
 // visitors see fresh cached data instead of a permanently stale local copy.
-export const CACHED_DATA_VERSION = "7";
+export const CACHED_DATA_VERSION = "8";
 
 export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
@@ -280,104 +280,117 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   "big-mac-index": {
     tiles: [
       {
-        id: "bm-2",
-        word: "The Wealthy Surcharge",
-        centrality: Centrality.PRESENT,
-        explanation: "A systematic price premium concentrated in a small number of extreme-GDP economies, not a broad high-income pattern — corrected from an earlier overclaim.",
-        dataInsight: "Corrected against the real July 2026 snapshot: Switzerland ($9.04, +45.4% vs. the $6.22 US baseline) and Norway ($8.05, +29.5%) still carry a real premium. But the original claim of a broad 'high-GDP nations' pattern doesn't hold — the 10 highest-GDP countries in the panel average $5.58, actually 10.3% *below* the US price. The premium is real but concentrated in 2-3 extreme cases, not the top of the GDP range generally. Downgraded from DOMINANT to PRESENT to match.",
+        id: "bm-10",
+        word: "Parity Reversion",
+        centrality: Centrality.DOMINANT,
+        explanation: "The board's core category: the baseline pattern every other concept here is a deviation from. Most countries' currencies move to offset domestic price changes, not reinforce them.",
+        dataInsight: "Verified across the full Jan-to-Jul 2026 panel: local price change and currency change correlate at r=-0.944 across 53 countries. 43 of 53 countries follow this pattern. Saturated: as more countries were checked, the relationship held rather than reshaping — new indicators extended its range without changing what it means.",
         evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026",
-        category: "Economic Status",
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan-Jul 2026 comparison",
+        category: "Currency Dynamics",
         isAIConfirmed: true,
-        relevanceScore: 98,
-        specificityScore: 96,
-        logic: `concept "The Wealthy Surcharge"
-  is a: driver
-  context: "High-income economy price dynamics"
-  mechanism: "higher productivity in tradable sectors drives up non-tradable costs like local labor and rent"
-  evidence: "Swiss and Nordic clusters in the Big Mac dataset"
+        relevanceScore: 90,
+        specificityScore: 88,
+        logic: `concept "Parity Reversion"
+  is a: core_category
+  context: "Baseline currency-price relationship across the panel"
+  mechanism: "currencies adjust to offset domestic price changes, consistent with short-run purchasing power parity holding at the panel level"
+  evidence: "r=-0.944 correlation between local price change and currency change, Jan-Jul 2026, n=53"
   covers:
-    explains: [local_price_premium]
-    aggregates: [gdp_per_capita]
-    replaces: "The Wealthy Surcharge"
+    explains: [background_self_correction]
   relation:
     direction: upstream
-    of: "Purchasing Power Parity"
-    via: Balassa-Samuelson_effect
-  contrasts_with: "The Emerging Discount"
+    of: "Northern European Premium, Asian Currency Suppression, Defensive Currency Premium"
+    via: baseline_against_which_deviations_are_visible
   scope: global
-  fidelity: 0.98`,
-        cachedShadow: {
-            id: "bm-2-s",
-            word: "Structural Fragility",
-            centrality: Centrality.PRESENT,
-            explanation: "The vulnerability of high-price markets to supply chain shocks that bypass standard PPP mechanisms.",
-            dataInsight: "Evidence: Observed price spikes in highly developed island nations (e.g., Iceland) that decouple from GDP benchmarks.",
-            source: "Logistics Audit",
-            category: "Economics",
-            specificityScore: 92
-        }
+  fidelity: 0.96`
       },
       {
-        id: "bm-3",
-        word: "The Emerging Discount",
+        id: "bm-8",
+        word: "Asian Currency Suppression",
         centrality: Centrality.DOMINANT,
-        explanation: "The structural undervaluation of currencies in developing markets, where low labor costs create a massive discount relative to the US dollar benchmark.",
-        dataInsight: "Verified against The Economist's own Big Mac Index data (Jan 2026 snapshot): Taiwan $2.47, India $2.51, Indonesia $2.52, Egypt $2.65, and Vietnam $2.89 all sit 53-60% below the $6.12 US baseline.",
+        explanation: "A regional currency-undervaluation pattern that holds regardless of income level — the region's richest and poorest economies are undervalued by nearly the same logic, which rules out labor cost as the driver.",
+        dataInsight: "Open-coded from the full July 2026 panel, not preselected: all 13 Asian economies present show negative GDP-adjusted valuation (The Economist's own productivity-adjusted index), from Singapore (-11.4%, GDP $108k) to Taiwan (-61.9%, GDP $98k) down to India (-49.5%, GDP $6k) and Pakistan (-19.0%, GDP $2.7k). Mean -37.1% vs. +6.1% for the rest of the 52-country panel. Income-independent — Taiwan and Hong Kong are richer than the US yet more undervalued than Vietnam, which directly rules out a labor-cost explanation. This concept absorbs and replaces two earlier, weaker attempts to name this territory ('The Emerging Discount' and 'Managed Currency Gap'), both retired: they preselected a handful of poor countries and missed that the pattern is regional and income-independent, not a poverty story. Mechanism (deliberate policy vs. structural export orientation) is not independently verified — real central bank policy data was not reachable to check.",
         evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan 2026",
-        category: "Market Inequity",
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, full 52-country panel",
+        category: "Monetary Policy",
         isAIConfirmed: true,
-        relevanceScore: 96,
-        specificityScore: 94,
-        logic: `concept "The Emerging Discount"
-  is a: stabilizer
-  context: "Developing market valuation"
-  mechanism: "lower labor intensity and export-oriented currency policy create an artificial price floor"
-  evidence: "Undervaluation clusters (Egypt, Vietnam, India) below the PPP trend line"
+        relevanceScore: 94,
+        specificityScore: 93,
+        logic: `concept "Asian Currency Suppression"
+  is a: regional_pattern
+  context: "Currency valuation independent of productivity, concentrated in one region"
+  mechanism: "unconfirmed — plausibly deliberate export-currency policy or structural export orientation; not independently verified against real policy data"
+  evidence: "13/13 Asian economies in the panel show negative GDP-adjusted valuation, spanning a 40x GDP range ($2.7k-$108k); mean -37.1% vs +6.1% elsewhere"
   covers:
-    explains: [dollar_gap]
-    replaces: "Market exchange rate"
+    explains: [regional_undervaluation]
+    replaces: "The Emerging Discount, Managed Currency Gap"
   relation:
     direction: downstream
-    of: "The Wealthy Surcharge"
-    via: value_asymmetry
-  contrasts_with: "The Wealthy Surcharge"
+    of: "Parity Reversion"
+    via: sustained_deviation
   scope: regional
-  fidelity: 0.97`
+  fidelity: 0.9`
       },
       {
-        id: "bm-4",
-        word: "Local Labor Anchor",
+        id: "bm-2",
+        word: "Northern European Premium",
         centrality: Centrality.PRESENT,
-        explanation: "The stubborn link between domestic productivity and the cost of the primarily non-tradable inputs (service labor) in a burger.",
-        dataInsight: "Checked against the full 52-country Jan 2026 dataset: GDP per capita correlates only moderately with Big Mac price (r ≈ 0.29) — directionally consistent with wage-anchoring, but far from a clean linear relationship. Other forces clearly move prices independent of GDP alone.",
+        explanation: "A price premium in a specific cluster of high-income Northern/Western European economies that survives even after controlling for how rich they are — something beyond income keeps prices there above what GDP alone predicts.",
+        dataInsight: "Checked on a GDP-adjusted basis across the full panel: Switzerland (+48.5%), Norway (+33.6%), Britain (+33.1%), Euro area (+29.1%), Sweden (+26.6%), and Denmark (+19.7%) all show a premium that survives after removing the part GDP alone would predict. This corrects an earlier, narrower version of this concept ('The Wealthy Surcharge') that only checked 2 countries on raw price and wrongly implied high-GDP nations broadly carry a premium — the 10 highest-GDP countries in the panel actually average 10.3% *below* the US price on a raw basis. The real pattern is this specific 6-country cluster, not GDP rank generally.",
         evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan 2026",
-        category: "Structural Fundamentals",
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, GDP-adjusted",
+        category: "Economic Status",
         isAIConfirmed: true,
-        relevanceScore: 92,
+        relevanceScore: 88,
         specificityScore: 90,
-        logic: `concept "Local Labor Anchor"
-  is a: structural_link
-  context: "Service sector wage pressure"
-  mechanism: "wages in the service sector move with local productivity, anchoring prices to national rather than global benchmarks"
-  evidence: "Service-to-Commodity price ratio variance in the index dataset"
+        logic: `concept "Northern European Premium"
+  is a: regional_pattern
+  context: "High-income economy price dynamics, Northern/Western Europe specifically"
+  mechanism: "unconfirmed beyond productivity — plausibly wage-floor regulation or non-tradable service structure common to this cluster, not independently verified"
+  evidence: "6-country cluster (Switzerland, Norway, Britain, Euro area, Sweden, Denmark) all show +20% to +49% premium after GDP-adjustment"
   covers:
-    explains: [price_persistence]
+    explains: [regional_price_premium]
+    replaces: "The Wealthy Surcharge"
   relation:
-    direction: upstream
-    of: "The Wealthy Surcharge"
-    via: wage_inertia
-  contrasts_with: "The Commodity Floor"
-  scope: global
-  fidelity: 0.92`
+    direction: downstream
+    of: "Parity Reversion"
+    via: sustained_deviation
+  scope: regional
+  fidelity: 0.85`
+      },
+      {
+        id: "bm-9",
+        word: "Defensive Currency Premium",
+        centrality: Centrality.PRESENT,
+        explanation: "A cluster of countries, unrelated by income level, that are priced well above what their GDP predicts — plausibly linked to recent inflation-fighting monetary policy in each, though that specific mechanism isn't independently confirmed.",
+        dataInsight: "Open-coded from a full sweep of the panel: Uruguay (+77.4%), Colombia (+63.6%), Turkey (+38.7%), Costa Rica (+38.1%), Israel (+35.2%), Mexico (+25.4%), Argentina (+19.0%), and Poland (+19.3%) all show a large positive residual after GDP-adjustment, despite spanning GDP from $8.4k to $56k — income doesn't unify this group, so the earlier per-country stories don't hold. This absorbs and replaces two earlier, thinner concepts: 'Contractionary Strength' (n=3: Colombia, Costa Rica, Israel) and 'Logistical Premia' (claimed tariffs explained Uruguay/Colombia/Mexico's premium, a mechanism that was never actually checked). All 5 of Logistical Premia's and Contractionary Strength's named countries turn out to be members of this single, larger, better-evidenced cluster. The shared mechanism (defensive interest-rate policy) is plausible given each country's recent inflation history but not independently verified — real central bank rate data was not reachable to check.",
+        evidenceGrounded: true,
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, full panel sweep",
+        category: "Currency Dynamics",
+        isAIConfirmed: true,
+        relevanceScore: 82,
+        specificityScore: 88,
+        logic: `concept "Defensive Currency Premium"
+  is a: tension
+  context: "Currency premium decoupled from income level"
+  mechanism: "unconfirmed — plausibly defensive interest-rate policy (rate hikes to fight inflation) common across each member's recent history, not independently verified against real rate data"
+  evidence: "8 countries (Uruguay, Colombia, Turkey, Costa Rica, Israel, Mexico, Argentina, Poland), GDP $8.4k-$56k, all +19% to +77% after GDP-adjustment"
+  covers:
+    explains: [income_independent_premium]
+    replaces: "Contractionary Strength, Logistical Premia"
+  relation:
+    direction: downstream
+    of: "Parity Reversion"
+    via: sustained_deviation
+  scope: dataset-specific
+  fidelity: 0.68`
       },
       {
         id: "bm-5",
         word: "Monetary Inertia",
         centrality: Centrality.PRESENT,
-        explanation: "The temporal gap where exchange rates resist immediate adjustment to changes in local purchasing power, creating temporary 'Value Pockets'.",
+        explanation: "The temporal gap where exchange rates resist immediate adjustment to changes in local purchasing power, creating temporary 'Value Pockets'. Distinct from Defensive Currency Premium: this is about short-term volatility over time, not a sustained price level.",
         dataInsight: "Verified across the time series: Argentina's Big Mac valuation swung from 32.6% undervalued (Jan 2024) to 20.1% overvalued (Jan 2025) to 9.6% undervalued (Jan 2026) — a 50+ point swing in two years, real short-term volatility disconnected from a stable PPP trend.",
         evidenceGrounded: true,
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), 2024-2026 time series",
@@ -395,28 +408,29 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     replaces: "Market Lag"
   relation:
     direction: downstream
-    of: "The Emerging Discount"
+    of: "Parity Reversion"
     via: speculative_friction
+  contrasts_with: "Defensive Currency Premium"
   scope: global
   fidelity: 0.91`
       },
       {
         id: "bm-6",
         word: "Integrated Parity",
-        centrality: Centrality.PRESENT,
-        explanation: "The tendency for nations within shared trade blocs (like the Eurozone) to maintain near-zero variance in standardized good prices.",
-        dataInsight: "Not directly checkable against this dataset: The Economist reports the Eurozone as a single aggregated 'Euro area' row rather than disaggregating member countries, so internal Eurozone price variance can't be verified from this sample — kept on the board as a plausible, previously-cited claim, not a re-verified one.",
+        centrality: Centrality.EDGE_CASE,
+        explanation: "The tendency for nations within shared trade blocs (like the Eurozone) to maintain near-zero variance in standardized good prices. Downgraded to Edge Case: it has never actually been checked against real data.",
+        dataInsight: "Not checkable against this dataset: The Economist reports the Eurozone as a single aggregated 'Euro area' row rather than disaggregating member countries, so internal Eurozone price variance can't be verified from this sample. Kept on the board only as an explicitly flagged, unverified claim — a Present-level tile sitting next to evidence-checked ones while itself unchecked was a method inconsistency, corrected here.",
         evidenceGrounded: false,
-        source: "Geopolitical Groups",
+        source: "Geopolitical Groups (unverified claim, not re-checked)",
         category: "Geopolitical Groups",
         isAIConfirmed: true,
-        relevanceScore: 92,
+        relevanceScore: 60,
         specificityScore: 85,
         logic: `concept "Integrated Parity"
   is a: stabilizer
   context: "Trade bloc price convergence"
   mechanism: "market integration and shared regulatory frameworks force price transparency and competition"
-  evidence: "Eurozone price distribution clustering"
+  evidence: "Eurozone price distribution clustering — asserted, not independently checkable from this dataset"
   covers:
     explains: [regional_price_clusters]
     replaces: "Neighboring Parity"
@@ -425,111 +439,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     of: "Monetary Inertia"
     via: market_fluidity
   scope: regional
-  fidelity: 0.94`
-      },
-      {
-        id: "bm-7",
-        word: "Logistical Premia",
-        centrality: Centrality.EDGE_CASE,
-        explanation: "Non-economic price spikes caused by local import tariffs (beef/wheat) or severe logistical bottlenecks — this replaced an earlier, unverified claim about Israel and Brazil once checked against real data: Israel is actually priced almost exactly where its GDP predicts (a negligible +$0.04 residual) in the current data, not an outlier at all.",
-        dataInsight: "Verified: Uruguay is the single largest positive outlier in the entire 52-country Jan 2026 dataset, priced $0.84 above what GDP alone predicts — well beyond Switzerland's $0.53 premium. Colombia (+$0.35) and Mexico (+$0.31) show smaller but real versions of the same pattern.",
-        evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan 2026",
-        category: "Trade Barriers",
-        isAIConfirmed: true,
-        relevanceScore: 92,
-        specificityScore: 95,
-        logic: `concept "Logistical Premia"
-  is a: distortion
-  context: "Trade barriers and supply chain overhead"
-  mechanism: "artificial overheads (tariffs) override the expected correlation between local productivity and price"
-  evidence: "Outlier status of Israel and Brazil in retail price variance"
-  replaces: "Supply Chain Friction"
-  relation:
-    direction: upstream
-    of: "The Wealthy Surcharge"
-    via: tariff_loading
-  contrasts_with: "Integrated Parity"
-  scope: regional
-  fidelity: 0.93`
-      },
-      {
-        id: "bm-8",
-        word: "Managed Currency Gap",
-        centrality: Centrality.EDGE_CASE,
-        explanation: "The decoupling of a currency's market value from its purchasing power due to central bank pegs or intervention.",
-        dataInsight: "Re-checked against the real July 2026 snapshot: Vietnam (-53.5%), Indonesia (-61.7%), and the Philippines (-56.0%) are all still deeply undervalued — the mechanism holds. But they're no longer the most extreme cases on the board: Taiwan (-61.0%) and India (-60.5%) now exceed Vietnam and the Philippines, which the January-only framing didn't capture. The named examples were accurate then and are stale now — a live instance of why a concept needs periodic re-grounding, not just an initial check.",
-        evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026",
-        category: "Monetary Policy",
-        isAIConfirmed: true,
-        relevanceScore: 88,
-        specificityScore: 92,
-        logic: `concept "Managed Currency Gap"
-  is a: block
-  context: "Central bank intervention and capital controls"
-  mechanism: "deliberate policy prevents currency appreciation to protect exports, creating a sustained 'burger' discount"
-  evidence: "FX reserve accumulation vs PPP gap in emerging markets"
-  replaces: "Policy Gap"
-  relation:
-    direction: downstream
-    of: "The Emerging Discount"
-    via: administrative_peg
-  contrasts_with: "Monetary Inertia"
-  scope: dataset-specific
-  fidelity: 0.95`
-      },
-      {
-        id: "bm-9",
-        word: "Contractionary Strength",
-        centrality: Centrality.PRESENT,
-        explanation: "A country's currency and local price both rising together while its economy contracts — the opposite of the usual pattern where a strengthening currency tracks growth.",
-        dataInsight: "Grounded, narrowly: comparing the Jan-to-Jul 2026 change, only 3 of 53 countries show both local price and currency rising by more than 3% each — Colombia, Costa Rica, and Israel. All three also show negative GDP growth over the same period (-3.4%, -0.5%, -8.4%). Confound-checked against the outlier-status finding on this board: all three were already positive price-outliers in January, so this describes an *intensifying* existing outlier, not a separate mechanism. The likely driver — defensive interest-rate hikes attracting capital despite a weak economy — could not be independently verified: real central bank rate data was not reachable to check. n=3 is thin; treat this as a real but narrow pattern, not a settled finding.",
-        evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan-Jul 2026 comparison",
-        category: "Currency Dynamics",
-        isAIConfirmed: true,
-        relevanceScore: 78,
-        specificityScore: 90,
-        logic: `concept "Contractionary Strength"
-  is a: tension
-  context: "Currency appreciation decoupled from economic growth"
-  mechanism: "unconfirmed — plausibly defensive monetary policy (rate hikes to fight inflation despite contraction), not independently verified against real rate data"
-  evidence: "Colombia, Costa Rica, Israel: price +5% to +15%, currency +4.6% to +12.2%, GDP -0.5% to -8.4%, all in the same 6-month window"
-  covers:
-    explains: [outlier_intensification]
-  relation:
-    direction: downstream
-    of: "The Wealthy Surcharge"
-    via: outlier_persistence
-  scope: dataset-specific
-  fidelity: 0.62`
-      },
-      {
-        id: "bm-10",
-        word: "Parity Reversion",
-        centrality: Centrality.DOMINANT,
-        explanation: "The dominant background pattern the board's other findings sit on top of: most countries' currencies move to offset domestic price changes, not reinforce them.",
-        dataInsight: "Verified across the full Jan-to-Jul 2026 panel: local price change and currency change correlate at r=-0.944 across 53 countries — a strong, real, offsetting relationship (when local prices rise, the currency tends to weaken to compensate, and vice versa). 43 of 53 countries follow this pattern; only 3 (Contractionary Strength) clearly break it. This wasn't previously named on the board — every other tile describes a deviation from parity; this names the norm the deviations are exceptions to.",
-        evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan-Jul 2026 comparison",
-        category: "Currency Dynamics",
-        isAIConfirmed: true,
-        relevanceScore: 90,
-        specificityScore: 88,
-        logic: `concept "Parity Reversion"
-  is a: norm
-  context: "Baseline currency-price relationship across the panel"
-  mechanism: "currencies adjust to offset domestic price changes, consistent with short-run purchasing power parity holding at the panel level"
-  evidence: "r=-0.944 correlation between local price change and currency change, Jan-Jul 2026, n=53"
-  covers:
-    explains: [background_self_correction]
-  relation:
-    direction: upstream
-    of: "Contractionary Strength"
-    via: baseline_against_which_exceptions_are_visible
-  scope: global
-  fidelity: 0.96`
+  fidelity: 0.3`
       }
     ],
     cachedExpansion: [
@@ -537,98 +447,101 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         id: "bm-exp-1",
         word: "Development-Adjusted PPP",
         centrality: Centrality.DOMINANT,
-        explanation: "The sophisticated metric that isolates 'true' overvaluation by regressing prices against a country's development level.",
-        dataInsight: "Evidence: Explains why some 'cheap' currencies are actually fairly valued once local wage levels are accounted for.",
-        source: "The Economist Adjusted Index",
-        category: "Sophisticated Metrics",
+        explanation: "The technique that isolates 'true' currency overvaluation by regressing prices against a country's development level — this is exactly the method used to derive every 'GDP-adjusted' figure across this board's tiles.",
+        dataInsight: "This is not a separate hypothesis — it's the tool that produced the board. The Economist's own GDP-adjusted index was used directly: e.g., Sweden's raw valuation (+15.1%) looks modest, but its GDP-adjusted valuation (+26.6%) shows the naive PPP reading actually understates how much of its price sits outside what income explains. Every DOMINANT/PRESENT tile above cites this adjustment.",
+        evidenceGrounded: true,
+        source: "The Economist Big Mac Index Adjusted methodology (github.com/TheEconomist/big-mac-data), Jul 2026",
+        category: "Method",
+        isAIConfirmed: true,
+        relevanceScore: 85,
         specificityScore: 98,
         logic: `concept "Development-Adjusted PPP"
-  is a: refinement
-  context: "Truth-seeking in price data"
-  mechanism: "statistically stripping the expected Balassa-Samuelson effect to find the underlying currency anomaly"
-  evidence: "Residual analysis of Price-on-GDP regressions"
-  replaces: "GDP-Adjusted PPP"
-  fidelity: 0.99`
+  is a: method
+  context: "Separating productivity-driven price levels from residual currency effects"
+  mechanism: "regressing price on GDP per capita and reading the residual, rather than reading raw price gaps directly"
+  evidence: "Used throughout this board: Asian Currency Suppression, Northern European Premium, and Defensive Currency Premium are all defined on the GDP-adjusted residual, not raw price"
+  covers:
+    explains: [productivity_stripped_valuation]
+  fidelity: 0.97`
       },
       {
         id: "bm-exp-2",
         word: "The Commodity Floor",
-        centrality: Centrality.PRESENT,
-        explanation: "The globalized cost of physical inputs (beef, wheat) that should theoretically level prices across borders.",
-        dataInsight: "Evidence: The baseline price for the physical components remains consistent, highlighting that 60% of price variance comes from local labor and rent.",
-        source: "Global Commodity Audit",
+        centrality: Centrality.EDGE_CASE,
+        explanation: "The claim that globalized input costs (beef, wheat) create a price floor, with local labor/rent explaining the rest — flagged here because the specific number attached to it is contradicted by this board's own findings.",
+        dataInsight: "The original claim asserted '60% of price variance comes from local labor and rent' but this was never checked, and this session's confound-controlled analysis contradicts it directly: GDP/labor cost explains at most ~25% of the undervaluation gap for the Asian Currency Suppression cluster, and 0% of Taiwan's. Kept on the board only as a flagged, disconfirmed claim — rejection is insight, not something to quietly delete.",
+        evidenceGrounded: false,
+        source: "Global Commodity Audit (unverified, contradicted by this session's re-grounding)",
         category: "Input Costs",
+        isAIConfirmed: false,
+        relevanceScore: 40,
         specificityScore: 92,
         logic: `concept "The Commodity Floor"
   is a: baseline
   context: "Tradable vs Non-tradable inputs"
-  mechanism: "globalized supply chains for food staples create a theoretical price floor that is violated by local productivity gaps"
-  evidence: "Input cost parity vs local retail price variance"
+  mechanism: "globalized supply chains for food staples create a theoretical price floor that is violated by local productivity gaps — asserted, not verified"
+  evidence: "No direct check performed; the specific '60% from labor/rent' figure is contradicted by this board's Asian Currency Suppression finding (GDP/labor explains ≤25% of the equivalent gap)"
   replaces: "The Google Index"
-  contrasts_with: "Local Labor Anchor"
-  fidelity: 0.94`
+  fidelity: 0.15`
       },
       {
         id: "bm-3-exp",
         word: "Capital Flow Friction",
         centrality: Centrality.EDGE_CASE,
-        explanation: "The noise in the signal: how sudden hot-money flows can temporarily crash or spike a currency's burger-value.",
-        dataInsight: "Evidence: Massive 24-hour shifts in 'burger valuation' during local central bank interest rate announcements.",
-        source: "Capital Flow Audit",
+        explanation: "The claim that sudden hot-money flows can temporarily crash or spike a currency's burger-value — plausible, but never independently checked against real data.",
+        dataInsight: "No dataInsight was ever produced for this tile — no intraday FX or interest-rate-announcement data was available to check it. Flagged as unverified rather than removed, consistent with the rest of this board's re-grounding pass.",
+        evidenceGrounded: false,
+        source: "Capital Flow Audit (unverified)",
         category: "Market",
+        isAIConfirmed: false,
+        relevanceScore: 45,
         specificityScore: 95,
         logic: `concept "Capital Flow Friction"
   is a: noise_driver
   context: "Volatility-driven decoupling"
-  mechanism: "speculative capital moves faster than price indices, creating short-term statistical artifacts"
-  evidence: "Intraday FX volatility vs quarterly CPI"
+  mechanism: "speculative capital moves faster than price indices, creating short-term statistical artifacts — asserted, not verified"
+  evidence: "No data check performed"
   replaces: "Currency Pegs"
-  fidelity: 0.93`
+  fidelity: 0.2`
       }
     ],
     threads: [
       {
         id: "bm-thread-1",
-        title: "The Two-Sided Price Gap",
-        conceptWords: ["The Wealthy Surcharge", "The Emerging Discount"],
-        synthesis: "Global burger price variance isn't noise — it's the structural outcome of the same mechanism pulling in opposite directions: rich-country labor costs push prices up, emerging-market labor costs pull them down.",
+        title: "Deviations from the Baseline",
+        conceptWords: ["Parity Reversion", "Northern European Premium", "Asian Currency Suppression", "Defensive Currency Premium"],
+        synthesis: "Currency movements mostly offset local price changes (Parity Reversion) — the real story is the three distinct, evidence-checked ways a minority of countries break from that baseline: a specific rich-Europe cluster, a region-wide Asian pattern independent of income, and a cluster of countries sharing plausible currency-defense pressure regardless of how rich they are.",
         coheres: "yes",
       },
       {
         id: "bm-thread-2",
-        title: "The Labor Cost Mechanism",
-        conceptWords: ["Local Labor Anchor", "The Wealthy Surcharge"],
-        synthesis: "The wealthy surcharge isn't abstract — it's mechanically produced by local labor costs anchoring service-sector prices to domestic productivity.",
-        coheres: "yes",
-      },
-      {
-        id: "bm-thread-3",
-        title: "The Friction Layer",
-        conceptWords: ["Monetary Inertia", "Logistical Premia", "Managed Currency Gap"],
-        synthesis: "Beyond the core wealth/labor mechanism, three separate frictions distort prices further — exchange-rate lag, tariffs, and deliberate currency management each break the clean PPP prediction in their own way.",
+        title: "Volatility vs. Level",
+        conceptWords: ["Monetary Inertia", "Defensive Currency Premium"],
+        synthesis: "Two different axes of the same underlying stress: Monetary Inertia is about how much a currency swings over time; Defensive Currency Premium is about where it sits on average. A country (Turkey, Argentina) can show both at once without it being the same finding twice.",
         coheres: "yes",
       },
       {
         id: "bm-thread-unaddressed",
         title: "Unaddressed",
         conceptWords: [],
-        synthesis: "Local Labor Anchor's own dataInsight admits GDP per capita correlates only moderately with Big Mac price (r≈0.23-0.29 depending on snapshot) — meaning most of the country-to-country price variance isn't attributable to any single concept on this board. And Contractionary Strength's own mechanism is still open: real interest-rate data to confirm whether defensive rate hikes actually explain Colombia, Costa Rica, and Israel's pattern was not reachable to check — the pattern is grounded, the explanation for it isn't.",
+        synthesis: "Local Labor Anchor was proposed and rejected this session: GDP per capita alone doesn't reliably predict price — Taiwan (GDP $98k) is the single most undervalued country on the panel, and GDP-adjustment explains 0% of its gap, directly contradicting a labor-cost story. Rejection is insight, not a gap to hide. Separately, 9 countries (Ukraine, Egypt, South Africa, Jordan, Romania, Oman, Qatar, Kuwait, Pakistan) show the same undervaluation direction as Asian Currency Suppression but were deliberately excluded from that concept: constant comparison shows they don't share one mechanism (Ukraine plausibly war disruption, Egypt an IMF-linked devaluation, the Gulf states a dollar-peg/expat-labor structure) — grouping them by shared statistical sign alone would repeat the exact error this board's retired concepts made. A further 18 countries fall in the |adjusted valuation| ≤ 15% middle ground and haven't been examined for structure at all. Integrated Parity also remains unverified. The board is not claiming completeness — this is the honest edge of what today's evidence supports.",
         coheres: "no",
         isResidual: true,
       },
     ],
     metrics: {
-      cohesion: 98,
-      coverage: 92,
-      entropy: 25,
-      sharpness: 99,
-      explanation: "The board provides a high-fidelity mapping of how national wealth and localized labor costs anchor the global economy's price signal.",
-      synthesis: "Global price variance is not an error, but a structural tension between The Wealthy Surcharge and The Emerging Discount.",
-      emergentPatterns: ["The Labor Anchor Cycle", "Policy-Driven Asymmetry"],
+      cohesion: 94,
+      coverage: 88,
+      entropy: 30,
+      sharpness: 92,
+      explanation: "The board separates the baseline currency-price relationship (Parity Reversion, the core category) from three real, mechanism-distinct deviations from it — a specific rich-Europe premium, a broad Asian undervaluation pattern independent of income, and a currency-defense cluster unrelated to income level — while explicitly retiring three originally-proposed concepts (The Emerging Discount, Local Labor Anchor, Logistical Premia) that didn't survive comparison against the full 52-country panel.",
+      synthesis: "Currency movements mostly offset local price changes — the deviations from that baseline cluster into three distinct, evidence-checked patterns, not one generic 'rich vs. poor' story.",
+      emergentPatterns: ["Regional undervaluation independent of income level", "Multiple deviation mechanisms from one shared baseline"],
       links: [
-        { source: "The Wealthy Surcharge", target: "The Emerging Discount", label: "Contrasts" },
-        { source: "Local Labor Anchor", target: "The Wealthy Surcharge", label: "Anchors" },
-        { source: "The Emerging Discount", target: "Managed Currency Gap", label: "Drives" }
+        { source: "Parity Reversion", target: "Northern European Premium", label: "Baseline for" },
+        { source: "Parity Reversion", target: "Asian Currency Suppression", label: "Baseline for" },
+        { source: "Parity Reversion", target: "Defensive Currency Premium", label: "Baseline for" },
+        { source: "Monetary Inertia", target: "Defensive Currency Premium", label: "Different axis of" }
       ],
       synthesisSuggestions: []
     }
