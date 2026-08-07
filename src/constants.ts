@@ -3,8 +3,8 @@ import { Scenario } from "./types";
 export const SCENARIOS: Scenario[] = [
   {
     id: "big-mac-index",
-    title: "Economist Big Mac Index (GitHub)",
-    description: "The formalization of the deducible space for global currency valuation.",
+    title: "Economist Big Mac Index — Jul 2026 (GitHub)",
+    description: "The formalization of the deducible space for global currency valuation, grounded in the Jul 2026 snapshot (Jan 2024–Jul 2026 time series for volatility concepts).",
     context: "Global price data and PPP. Focus on: 'Purchasing Power Parity' vs 'Currency Valuation'.",
     outcomes: ["Currency Alignment", "Economic Arbitrage"],
     url: "https://github.com/TheEconomist/big-mac-data"
