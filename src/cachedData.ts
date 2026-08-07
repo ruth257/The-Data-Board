@@ -3,7 +3,7 @@ import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 // Bump this whenever CACHED_BOARDS content changes meaningfully. The app
 // clears any locally-saved board that predates this version, so returning
 // visitors see fresh cached data instead of a permanently stale local copy.
-export const CACHED_DATA_VERSION = "5";
+export const CACHED_DATA_VERSION = "6";
 
 export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
@@ -531,11 +531,11 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
       {
         id: "bm-2",
         word: "The Wealthy Surcharge",
-        centrality: Centrality.DOMINANT,
-        explanation: "The systematic price premium in high-GDP nations where high productivity in tradables inflates the cost of local non-tradable services.",
-        dataInsight: "Verified against The Economist's own Big Mac Index data (Jan 2026 snapshot): Switzerland $9.08 and Norway $7.52 vs. the $6.12 US baseline — a 23-48% premium.",
+        centrality: Centrality.PRESENT,
+        explanation: "A systematic price premium concentrated in a small number of extreme-GDP economies, not a broad high-income pattern — corrected from an earlier overclaim.",
+        dataInsight: "Corrected against the real July 2026 snapshot: Switzerland ($9.04, +45.4% vs. the $6.22 US baseline) and Norway ($8.05, +29.5%) still carry a real premium. But the original claim of a broad 'high-GDP nations' pattern doesn't hold — the 10 highest-GDP countries in the panel average $5.58, actually 10.3% *below* the US price. The premium is real but concentrated in 2-3 extreme cases, not the top of the GDP range generally. Downgraded from DOMINANT to PRESENT to match.",
         evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan 2026",
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026",
         category: "Economic Status",
         isAIConfirmed: true,
         relevanceScore: 98,
@@ -707,9 +707,9 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         word: "Managed Currency Gap",
         centrality: Centrality.EDGE_CASE,
         explanation: "The decoupling of a currency's market value from its purchasing power due to central bank pegs or intervention.",
-        dataInsight: "Verified: Vietnam (-52.7%), Indonesia (-58.9%), and the Philippines (-53.6%) all show large, persistent undervaluation in the Jan 2026 snapshot, consistent with managed currency regimes in SE Asia rather than a one-off dip.",
+        dataInsight: "Re-checked against the real July 2026 snapshot: Vietnam (-53.5%), Indonesia (-61.7%), and the Philippines (-56.0%) are all still deeply undervalued — the mechanism holds. But they're no longer the most extreme cases on the board: Taiwan (-61.0%) and India (-60.5%) now exceed Vietnam and the Philippines, which the January-only framing didn't capture. The named examples were accurate then and are stale now — a live instance of why a concept needs periodic re-grounding, not just an initial check.",
         evidenceGrounded: true,
-        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan 2026",
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026",
         category: "Monetary Policy",
         isAIConfirmed: true,
         relevanceScore: 88,
@@ -727,6 +727,58 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   contrasts_with: "Monetary Inertia"
   scope: dataset-specific
   fidelity: 0.95`
+      },
+      {
+        id: "bm-9",
+        word: "Contractionary Strength",
+        centrality: Centrality.PRESENT,
+        explanation: "A country's currency and local price both rising together while its economy contracts — the opposite of the usual pattern where a strengthening currency tracks growth.",
+        dataInsight: "Grounded, narrowly: comparing the Jan-to-Jul 2026 change, only 3 of 53 countries show both local price and currency rising by more than 3% each — Colombia, Costa Rica, and Israel. All three also show negative GDP growth over the same period (-3.4%, -0.5%, -8.4%). Confound-checked against the outlier-status finding on this board: all three were already positive price-outliers in January, so this describes an *intensifying* existing outlier, not a separate mechanism. The likely driver — defensive interest-rate hikes attracting capital despite a weak economy — could not be independently verified: real central bank rate data was not reachable to check. n=3 is thin; treat this as a real but narrow pattern, not a settled finding.",
+        evidenceGrounded: true,
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan-Jul 2026 comparison",
+        category: "Currency Dynamics",
+        isAIConfirmed: true,
+        relevanceScore: 78,
+        specificityScore: 90,
+        logic: `concept "Contractionary Strength"
+  is a: tension
+  context: "Currency appreciation decoupled from economic growth"
+  mechanism: "unconfirmed — plausibly defensive monetary policy (rate hikes to fight inflation despite contraction), not independently verified against real rate data"
+  evidence: "Colombia, Costa Rica, Israel: price +5% to +15%, currency +4.6% to +12.2%, GDP -0.5% to -8.4%, all in the same 6-month window"
+  covers:
+    explains: [outlier_intensification]
+  relation:
+    direction: downstream
+    of: "The Wealthy Surcharge"
+    via: outlier_persistence
+  scope: dataset-specific
+  fidelity: 0.62`
+      },
+      {
+        id: "bm-10",
+        word: "Parity Reversion",
+        centrality: Centrality.DOMINANT,
+        explanation: "The dominant background pattern the board's other findings sit on top of: most countries' currencies move to offset domestic price changes, not reinforce them.",
+        dataInsight: "Verified across the full Jan-to-Jul 2026 panel: local price change and currency change correlate at r=-0.944 across 53 countries — a strong, real, offsetting relationship (when local prices rise, the currency tends to weaken to compensate, and vice versa). 43 of 53 countries follow this pattern; only 3 (Contractionary Strength) clearly break it. This wasn't previously named on the board — every other tile describes a deviation from parity; this names the norm the deviations are exceptions to.",
+        evidenceGrounded: true,
+        source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan-Jul 2026 comparison",
+        category: "Currency Dynamics",
+        isAIConfirmed: true,
+        relevanceScore: 90,
+        specificityScore: 88,
+        logic: `concept "Parity Reversion"
+  is a: norm
+  context: "Baseline currency-price relationship across the panel"
+  mechanism: "currencies adjust to offset domestic price changes, consistent with short-run purchasing power parity holding at the panel level"
+  evidence: "r=-0.944 correlation between local price change and currency change, Jan-Jul 2026, n=53"
+  covers:
+    explains: [background_self_correction]
+  relation:
+    direction: upstream
+    of: "Contractionary Strength"
+    via: baseline_against_which_exceptions_are_visible
+  scope: global
+  fidelity: 0.96`
       }
     ],
     cachedExpansion: [
@@ -809,7 +861,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         id: "bm-thread-unaddressed",
         title: "Unaddressed",
         conceptWords: [],
-        synthesis: "Local Labor Anchor's own dataInsight admits GDP per capita correlates only moderately with Big Mac price (r≈0.29) across the 52-country panel — meaning most of the country-to-country price variance isn't attributable to any single concept on this board, wealth-premium and labor-anchor included.",
+        synthesis: "Local Labor Anchor's own dataInsight admits GDP per capita correlates only moderately with Big Mac price (r≈0.23-0.29 depending on snapshot) — meaning most of the country-to-country price variance isn't attributable to any single concept on this board. And Contractionary Strength's own mechanism is still open: real interest-rate data to confirm whether defensive rate hikes actually explain Colombia, Costa Rica, and Israel's pattern was not reachable to check — the pattern is grounded, the explanation for it isn't.",
         coheres: "no",
         isResidual: true,
       },
