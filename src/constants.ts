@@ -18,14 +18,6 @@ export const SCENARIOS: Scenario[] = [
     url: "https://worldhappiness.report/"
   },
   {
-    id: "ai-sustainability-kaggle",
-    title: "AI Sustainability- Kaggle",
-    description: "Analyzing the environmental and systemic impact of large-scale AI models.",
-    context: "AI training costs and energy efficiency. Focus on: 'Compute-Intensity' vs 'Energy-Efficiency'.",
-    outcomes: ["Sustainable Innovation", "Ecological Debt"],
-    url: "https://www.kaggle.com/datasets"
-  },
-  {
     id: "gpts-are-gpts",
     title: "GPTs are GPTs (OpenAI/Penn)",
     description: "The structural auditing of AI exposure across 923 US occupations based on human and model ratings.",
