@@ -26,14 +26,6 @@ export const SCENARIOS: Scenario[] = [
     url: "https://arxiv.org/abs/2303.10130"
   },
   {
-    id: "gss-life-survey",
-    title: "General Social Survey (GSS) 1972-2022",
-    description: "The gold standard of American social trends and life satisfaction since 1972.",
-    context: "Longitudinal survey on happiness and financial satisfaction. Focus on: 'American Dream' vs 'Modern Isolation'.",
-    outcomes: ["Life Satisfaction", "Social Fragmentation"],
-    url: "https://gss.norc.org/"
-  },
-  {
     id: "candy-power-ranking",
     title: "Candy Power Ranking (FiveThirtyEight)",
     description: "85 real candies, each rated in thousands of randomized online head-to-head matchups.",
