@@ -246,7 +246,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft
 
   <div class="concept">
     <div class="concept-head"><span class="concept-name">Calibrated Handle</span></div>
-    <div class="concept-body"><p>A concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from. <code>The Wealthy Surcharge</code> names a mechanism (systematic price premium driven by the Balassa-Samuelson effect), compresses a pattern across 50+ countries, and creates structural tension against its pseudo-antonym. <code>Countries that are rich</code> is not a calibrated handle — it describes a category, implies no mechanism, and generates no analytical direction.</p></div>
+    <div class="concept-body"><p>A concept at the right level of abstraction: precise enough to be grounded in evidence, general enough to reason from. <code>Northern European Premium</code> names a mechanism (a price premium surviving GDP-adjustment in a specific six-country cluster), compresses a pattern that spans that cluster, and creates structural tension against its pseudo-antonym. <code>Countries that are rich</code> is not a calibrated handle — it describes a category, implies no mechanism, generates no analytical direction, and would overclaim, since most high-GDP countries don't actually show the pattern.</p></div>
   </div>
 
   <div class="concept">
@@ -255,9 +255,24 @@ code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft
   </div>
 
   <div class="concept">
+    <div class="concept-head"><span class="concept-name">Concept (Glaser &amp; Strauss, 1967)</span></div>
+    <div class="concept-body"><p>A label earns concept status only once multiple, diverse indicators converge on the same underlying mechanism. A single grounded data point is an indicator, not a concept — it points toward a possible category, it doesn't establish one. Where indicators diverge — the same statistical direction produced by genuinely different mechanisms — the honest result is not a concept; it's residual.</p></div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Theoretical Saturation</span></div>
+    <div class="concept-body"><p>The signal to stop refining a concept, or to stop generating new ones. A concept is saturated once new indicators only extend its range instead of reshaping what it means. A board is complete, for the evidence at hand, not when every data point has a label, but when the next candidate grouping fails the convergence test — that failure is the stopping signal, named honestly in the residual rather than forced into a manufactured concept.</p></div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-head"><span class="concept-name">Core Category</span></div>
+    <div class="concept-body"><p>Among a board's concepts, the one with the greatest explanatory reach — not just central, but the pattern the others are read as deviations from. Distinct from Dominant centrality, a per-concept weight: a board can have several Dominant concepts, but only one plays this organizing role relative to the rest.</p></div>
+  </div>
+
+  <div class="concept">
     <div class="concept-head"><span class="concept-name">Semantic Weight</span></div>
     <div class="concept-body">
-      <p>Centrality of a concept in the evidence base. Three levels:</p>
+      <p>Centrality of a concept in the evidence base — in Glaser &amp; Strauss's terms, a property, with each concept's Dominant/Present/Edge Case rating as its dimension: a specific position on that property's range, not a fixed identity. Three levels:</p>
       <div class="weights">
         <span class="w-pill w-dom">DOMINANT — primary causal driver</span>
         <span class="w-pill w-pre">PRESENT — real but not decisive</span>
@@ -511,7 +526,7 @@ Workflow:
   <div class="section-mono">Theoretical Anchors</div>
   <h2>Where this connects</h2>
   <div class="ref"><strong>Pearl, J. & Mackenzie, D. (2018).</strong> <em>The Book of Why.</em> Basic Books. — The ladder of causation. The Data Board addresses the prerequisite Pearl assumes: knowing which concepts belong before building the causal model.</div>
-  <div class="ref"><strong>Glaser, B. & Strauss, A. (1967).</strong> <em>The Discovery of Grounded Theory.</em> Aldine. — Open coding and axial coding are the qualitative precedents. The Data Board operationalises these steps computationally — weeks compressed into a session.</div>
+  <div class="ref"><strong>Glaser, B. & Strauss, A. (1967).</strong> <em>The Discovery of Grounded Theory.</em> Aldine. — The Concept-Indicator Model: a concept is only validated once multiple, diverse indicators converge on it; a single data point is an indicator, not a concept. The Data Board's definition of "Concept" is this model applied directly, including its stopping rule — comparison ends when new data stops changing what a category means (theoretical saturation), and a grouping that fails to converge on one mechanism is reported as residual, not forced into a concept.</div>
   <div class="ref"><strong>Wittgenstein, L. (1922).</strong> <em>Tractatus Logico-Philosophicus.</em> — "The limits of my language are the limits of my world." The Data Board is a formal process for extending the analytical vocabulary — and therefore the analytical world.</div>
   <div class="ref"><strong>Luhn, H.P. (1958).</strong> "A Business Intelligence System." <em>IBM Journal of Research and Development.</em> — Intelligence as guiding action toward a desired goal. The Data Board formalises the naming step that makes the goal speakable.</div>
 </section>
