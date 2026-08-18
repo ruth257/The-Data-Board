@@ -3,7 +3,7 @@ import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 // Bump this whenever CACHED_BOARDS content changes meaningfully. The app
 // clears any locally-saved board that predates this version, so returning
 // visitors see fresh cached data instead of a permanently stale local copy.
-export const CACHED_DATA_VERSION = "8";
+export const CACHED_DATA_VERSION = "9";
 
 export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
@@ -740,6 +740,70 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         { source: "Life Sciences Buffer", target: "Physical Anchor", label: "Anchors" },
         { source: "Projection Gap", target: "Syntactic Sandbox", label: "Tensions" }
       ],
+      synthesisSuggestions: []
+    }
+  },
+  "tel-aviv-106-hotline": {
+    tiles: [
+      {
+        id: "ta106-1",
+        word: "Crisis Anchor",
+        centrality: Centrality.DOMINANT,
+        explanation: "Under acute stress, people default to the most familiar number they already have saved — not the technically correct emergency channel. A real pattern in crisis-communication behavior, not just 'there's a lot of emergency-tagged volume.'",
+        dataInsight: "Emergency-cluster labels total 116,021 requests (9.4% of all 1,238,766 contacts in the dataset), led by \"חירום - אזרחים ותיקים\" (Emergency – Senior Citizens, 85,013) — the second-largest single label of all 704. Caveat: 73% of this concept's volume rests on that one label, and its precise meaning (general emergency intake routed through a senior-citizens queue, vs. a dedicated senior-emergency welfare service) can't be resolved from the label text alone. The supporting cluster (shelters, evacuees, checkpoints, missile-attack reports) independently confirms a real crisis-channel signal regardless of that ambiguity.",
+        evidenceGrounded: true,
+        source: "Tel Aviv Municipality 106 call center, 704 level-3 request labels with incident volumes, 2025-2026",
+        category: "Civic Behavior",
+        logic: `concept "Crisis Anchor"
+  is a: driver
+  context: "Municipal hotline traffic composition during an acute security/emergency period"
+  mechanism: "under acute stress, callers default to the most familiar known number rather than searching for the technically correct specialized channel"
+  evidence: "Emergency-cluster labels sum to 116,021 of 1,238,766 total contacts (9.4%); single largest driver is a label whose exact scope is ambiguous"
+  covers:
+    explains: [hotline_traffic_composition]
+  relation:
+    direction: upstream
+    of: "Affected-Party Bias"
+    via: reporting_channel_structure
+  scope: dataset-specific`
+      },
+      {
+        id: "ta106-2",
+        word: "Affected-Party Bias",
+        centrality: Centrality.PRESENT,
+        explanation: "Citizen-reporting systems structurally over-represent complaints that acutely, personally inconvenience the reporter, versus diffuse violations with no immediate victim — a documented pattern in civic-reporting (311-style) literature, with a real downstream consequence: resource allocation driven by this reporting mix under-serves issues nobody personally suffers enough to report.",
+        dataInsight: "Access-obstruction parking complaints (car parked on sidewalk, blocking entrance/parking, obstructing traffic) total 84,934 requests (6.9%) — nine times the volume of permit/fee-type violations (disabled parking, ticket appeals: 9,293, 0.8%). The claim isn't 'there's a lot of blocked parking' — it's that the reporting channel itself is skewed toward whoever is personally affected right now.",
+        evidenceGrounded: true,
+        source: "Tel Aviv Municipality 106 call center, 704 level-3 request labels with incident volumes, 2025-2026",
+        category: "Civic Behavior",
+        logic: `concept "Affected-Party Bias"
+  is a: structural_bias
+  context: "Composition of parking-enforcement demand"
+  mechanism: "citizen-reporting channels over-sample complaints with an immediate personal impact on the reporter, under-sampling diffuse or victimless violations"
+  evidence: "Access-obstruction labels sum to 84,934 vs. 9,293 for permit/fee violations — a 9:1 ratio"
+  covers:
+    explains: [parking_enforcement_demand_mix]
+  relation:
+    direction: downstream
+    of: "Crisis Anchor"
+    via: reporting_channel_structure
+  scope: dataset-specific`
+      }
+    ],
+    threads: [
+      {
+        id: "ta106-thread-unaddressed",
+        title: "Unaddressed",
+        conceptWords: [],
+        synthesis: "The dataset's single largest label of all 704 (\"פינוי גזם ואשפה חריגה\" / excess garden-waste & garbage collection, 102,589) isn't claimed by either concept above — the data can't distinguish whether its size reflects real severity or just routine, low-effort, high-frequency demand, which is exactly the confound check a 'garbage is the city's biggest problem' claim would need to pass and can't from this data alone. A third candidate ('Routing Noise' — wrong numbers and disconnects, 45,532, 3.7%, the third-largest single label) was tested and rejected: a real fact, but not a serious, non-obvious claim — a mundane observation in academic dress. 682 of 704 labels (55.7% of total volume) remain deliberately unclaimed — a Deducible Space is the minimal set that survives the check, not an exhaustive classification of the input.",
+        coheres: "no",
+        isResidual: true,
+      },
+    ],
+    metrics: {
+      explanation: "Two grounded mechanisms surface above the noise of Tel Aviv's 106 hotline, 2025-2026: an emergency-driven default in caller behavior, and a structural bias in what parking violations get reported. Most of the dataset is deliberately left unclaimed rather than force-sorted into a category.",
+      synthesis: "Contact with Tel Aviv's municipal hotline is shaped less by 'what needs fixing in the city' than by two structural mechanisms: what number people default to under stress, and who gets hurt personally enough to bother reporting.",
+      emergentPatterns: ["Crisis behavior reshapes a routine-service channel's traffic mix", "Citizen-reporting systems are not a neutral sample of city problems"],
       synthesisSuggestions: []
     }
   }

@@ -33,4 +33,11 @@ export const SCENARIOS: Scenario[] = [
     outcomes: ["High Win Rate", "Low Win Rate"],
     url: "https://github.com/fivethirtyeight/data/tree/master/candy-power-ranking"
   },
+  {
+    id: "tel-aviv-106-hotline",
+    title: "Tel Aviv 106 Municipal Hotline (2025-2026)",
+    description: "704 real level-3 service-request labels from Tel Aviv's municipal call center, each with total incident volume — no free text, no per-call detail.",
+    context: "Every row is one service-request category actually used by Tel Aviv's 106 call center between 2025 and 2026, with its total incident count. Question: what real, checkable mechanisms — not just department-shaped categories — explain how residents actually use this line?",
+    outcomes: ["Crisis-Driven Contact", "Structural Reporting Bias"],
+  },
 ];
