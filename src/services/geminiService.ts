@@ -185,27 +185,19 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
 
       Return JSON: correctedWord, centrality, explanation, dataInsight, evidenceGrounded, source, category, logic.
 
-      LOGIC MARKUP (A Posteriori Ontology):
-      The 'logic' field must be a Mermaid-like structured text block.
-      CRITICAL: Every field (tag) MUST start on a new line.
+      LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
+      CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
+      clause or a bare stat, never a sentence. The full explanation belongs in
+      "dataInsight", not here.
       concept "[word]"
-        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
-        context: "[optional: the specific situational context for this concept]"
-        mechanism: "[the causal/structural how]"
-        evidence: "[the empirical/data grounding why]"
-        covers:
-          explains: [variables it explains]
-          aggregates: [variables it combines]
-          replaces: [statistical term it supersedes]
-        relation:
-          direction: [upstream | downstream]
-          of: "[other concept]"
-          via: "[causal mechanism]"
+        seed: "[the plain literal term this was calibrated from, e.g. "Income" — not the Handle itself]"
+        is_a: [norm | baseline | buffer | driver | constraint | lag | tension | risk | structural_bias | regional_pattern | stabilizer]
+        mechanism: "[the causal how, one short clause]"
+        evidence: "[a bare stat or fact, e.g. "r=0.745, n=147" — not a sentence]"
+        downstream: "[OPTIONAL — the concept this feeds into, only if one is actually on this board]"
+        upstream: "[OPTIONAL — the concept this comes from, only if one is actually on this board; use downstream OR upstream, not both]"
         contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
-        valid_when:
-          - [condition 1]
-          - [condition 2]
 
       Do NOT invent a numeric confidence/fidelity/specificity score for this concept — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
     `,
@@ -291,27 +283,19 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
 
       Return JSON array: word, centrality, explanation, dataInsight, evidenceGrounded, source, category, isAIConfirmed, logic.
 
-      LOGIC MARKUP (A Posteriori Ontology):
-      The 'logic' field for each tile must be a Mermaid-like structured text block.
-      CRITICAL: Every field (tag) MUST start on a new line.
+      LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
+      CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
+      clause or a bare stat, never a sentence. The full explanation belongs in
+      "dataInsight", not here.
       concept "[word]"
-        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
-        context: "[optional: the specific situational context for this concept]"
-        mechanism: "[the causal/structural how]"
-        evidence: "[the empirical/data grounding why]"
-        covers:
-          explains: [variables it explains]
-          aggregates: [variables it combines]
-          replaces: [statistical term it supersedes]
-        relation:
-          direction: [upstream | downstream]
-          of: "[other concept]"
-          via: "[causal mechanism]"
+        seed: "[the plain literal term this was calibrated from, e.g. "Income" — not the Handle itself]"
+        is_a: [norm | baseline | buffer | driver | constraint | lag | tension | risk | structural_bias | regional_pattern | stabilizer]
+        mechanism: "[the causal how, one short clause]"
+        evidence: "[a bare stat or fact, e.g. "r=0.745, n=147" — not a sentence]"
+        downstream: "[OPTIONAL — the concept this feeds into, only if one is actually among the tiles you're returning]"
+        upstream: "[OPTIONAL — the concept this comes from, only if one is actually among the tiles you're returning; use downstream OR upstream, not both]"
         contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
-        valid_when:
-          - [condition 1]
-          - [condition 2]
 
       Do NOT invent a numeric confidence/fidelity/relevance/specificity score for any tile — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
 
@@ -437,27 +421,19 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
         "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "evidenceGrounded": true, "category": "...", "logic": "..." } ]
       }
 
-      LOGIC MARKUP (A Posteriori Ontology):
-      The 'logic' field for each tile must be a Mermaid-like structured text block.
-      CRITICAL: Every field (tag) MUST start on a new line.
+      LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
+      CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
+      clause or a bare stat, never a sentence. The full explanation belongs in
+      "dataInsight", not here.
       concept "[word]"
-        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
-        context: "[optional: the specific situational context for this concept]"
-        mechanism: "[the causal/structural how]"
-        evidence: "[the empirical/data grounding why]"
-        covers:
-          explains: [variables it explains]
-          aggregates: [variables it combines]
-          replaces: [statistical term it supersedes]
-        relation:
-          direction: [upstream | downstream]
-          of: "[other concept]"
-          via: "[causal mechanism]"
+        seed: "[the plain literal term this was calibrated from, e.g. "Income" — not the Handle itself]"
+        is_a: [norm | baseline | buffer | driver | constraint | lag | tension | risk | structural_bias | regional_pattern | stabilizer]
+        mechanism: "[the causal how, one short clause]"
+        evidence: "[a bare stat or fact, e.g. "r=0.745, n=147" — not a sentence]"
+        downstream: "[OPTIONAL — the concept this feeds into, only if one is actually among the tiles you're returning]"
+        upstream: "[OPTIONAL — the concept this comes from, only if one is actually among the tiles you're returning; use downstream OR upstream, not both]"
         contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
-        valid_when:
-          - [condition 1]
-          - [condition 2]
 
       Do NOT invent a numeric confidence/fidelity score for any tile — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
     `,

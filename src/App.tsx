@@ -370,17 +370,13 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
               </div>
               <pre className="p-6 font-mono text-xs text-white/75 leading-relaxed overflow-x-auto whitespace-pre">
 {`concept "Social Cohesion"
-  is a: driver
-  context: "Social support systems"
-  mechanism: "trusted social networks provide emotional and material safety nets"
-  evidence: "Gallup World Poll social support metrics"
-  covers:
-    explains: [national_happiness_variance]
-    aggregates: [social_support_score]
-  contrasts_with: "Atomized Autonomy"   ← pseudo-antonym link
-  valid_when:
-    - "strong community ties"
-    - "institutional stability"          ← scope conditions`}
+  seed: "Social Support"                ← the plain term this was calibrated from
+  is_a: driver
+  mechanism: "trusted networks provide a safety net"
+  evidence: "r=0.81, n=147"              ← bare stat, full citation lives in dataInsight
+  downstream: "Life Satisfaction"        ← what this feeds into
+  contrasts_with: "Atomized Autonomy"    ← pseudo-antonym link
+  scope: global`}
               </pre>
             </div>
           </section>
@@ -1115,7 +1111,7 @@ const LogicEditorModal = ({
               value={logic}
               onChange={(e) => setLogic(e.target.value)}
               className="w-full h-64 bg-ink text-bg p-4 mono text-sm focus:outline-none border-2 border-ink focus:border-databoard-yellow transition-colors resize-none"
-              placeholder={`concept "${tile.word}"\n  is a: driver\n  context: "..."\n  mechanism: "..."\n  evidence: "..."\n  relation: direction, of, via`}
+              placeholder={`concept "${tile.word}"\n  seed: "..."\n  is_a: driver\n  mechanism: "..."\n  evidence: "..."\n  downstream: "..."`}
             />
           </div>
 
