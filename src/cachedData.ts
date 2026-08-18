@@ -17,8 +17,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Economics",
-        specificityScore: 94,
-        fidelity: 0.96,
         logic: `concept "Resource Elasticity"
   is a: baseline
   context: "Capacity for choice vs raw wealth"
@@ -32,8 +30,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Life Satisfaction"
     via: resource_access
-  scope: global
-  fidelity: 0.96`
+  scope: global`
       },
       {
         id: "h-2",
@@ -44,8 +41,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Social",
-        specificityScore: 88,
-        fidelity: 0.93,
         logic: `concept "Communal Insulation"
   is a: buffer
   context: "Communal safety nets"
@@ -59,8 +54,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Emotional Security"
     via: relational_density
-  scope: global
-  fidelity: 0.93`
+  scope: global`
       },
       {
         id: "h-3",
@@ -71,8 +65,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Governance",
-        specificityScore: 90,
-        fidelity: 0.91,
         logic: `concept "Institutional Predictability"
   is a: foundation
   context: "Predictability of social contract"
@@ -86,8 +78,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Systemic Agency"
     via: rule_of_law
-  scope: global
-  fidelity: 0.91`
+  scope: global`
       },
       {
         id: "h-4",
@@ -98,8 +89,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Health",
-        specificityScore: 85,
-        fidelity: 0.94,
         logic: `concept "Biological Vitality"
   is a: prerequisite
   context: "Physical capacity for life satisfaction"
@@ -113,8 +102,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Life Satisfaction"
     via: physical_agency
-  scope: global
-  fidelity: 0.94`
+  scope: global`
       },
       {
         id: "h-5",
@@ -125,8 +113,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Rights",
-        specificityScore: 92,
-        fidelity: 0.89,
         logic: `concept "Agency Capacity"
   is a: driver
   context: "Autonomy in life decisions"
@@ -140,8 +126,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Resource Elasticity"
     via: choice_capability
-  scope: global
-  fidelity: 0.89`
+  scope: global`
       },
       {
         id: "h-6",
@@ -152,8 +137,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Tension",
-        specificityScore: 95,
-        fidelity: 0.94,
         logic: `concept "Agency-Resource Gap"
   is a: tension
   context: "Hollow vs functional freedom"
@@ -167,8 +150,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Resource Elasticity"
     via: structural_friction
-  scope: global
-  fidelity: 0.94`
+  scope: global`
       },
       {
         id: "h-7",
@@ -179,8 +161,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: false,
         source: "General domain knowledge — not verified against the WHR 2025 panel used for this board",
         category: "Technology",
-        specificityScore: 92,
-        fidelity: 0.94,
         logic: `concept "Digital Fragmentation"
   is a: risk
   context: "Social side-effects of digital immersion"
@@ -194,8 +174,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     of: "Communal Insulation"
     via: community_erosion
   contrasts_with: "Cultural Anchoring"
-  scope: global
-  fidelity: 0.94`
+  scope: global`
       },
       {
         id: "h-8",
@@ -206,8 +185,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Culture",
-        specificityScore: 94,
-        fidelity: 0.91,
         logic: `concept "Cultural Anchoring"
   is a: stabilizer
   context: "Existential meaning structures"
@@ -221,8 +198,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     of: "Social Cohesion"
     via: shared_meaning
   contrasts_with: "Digital Fragmentation"
-  scope: global
-  fidelity: 0.91`
+  scope: global`
       }
     ],
     cachedExpansion: [],
@@ -289,8 +265,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan-Jul 2026 comparison",
         category: "Currency Dynamics",
         isAIConfirmed: true,
-        relevanceScore: 90,
-        specificityScore: 88,
         logic: `concept "Parity Reversion"
   is a: core_category
   context: "Baseline currency-price relationship across the panel"
@@ -302,8 +276,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Northern European Premium, Asian Currency Suppression, Defensive Currency Premium"
     via: baseline_against_which_deviations_are_visible
-  scope: global
-  fidelity: 0.96`
+  scope: global`
       },
       {
         id: "bm-8",
@@ -315,8 +288,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, full 52-country panel",
         category: "Monetary Policy",
         isAIConfirmed: true,
-        relevanceScore: 94,
-        specificityScore: 93,
         logic: `concept "Asian Currency Suppression"
   is a: regional_pattern
   context: "Currency valuation independent of productivity, concentrated in one region"
@@ -329,8 +300,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Parity Reversion"
     via: sustained_deviation
-  scope: regional
-  fidelity: 0.9`
+  scope: regional`
       },
       {
         id: "bm-2",
@@ -342,8 +312,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, GDP-adjusted",
         category: "Economic Status",
         isAIConfirmed: true,
-        relevanceScore: 88,
-        specificityScore: 90,
         logic: `concept "Northern European Premium"
   is a: regional_pattern
   context: "High-income economy price dynamics, Northern/Western Europe specifically"
@@ -356,8 +324,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Parity Reversion"
     via: sustained_deviation
-  scope: regional
-  fidelity: 0.85`
+  scope: regional`
       },
       {
         id: "bm-9",
@@ -369,8 +336,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, full panel sweep",
         category: "Currency Dynamics",
         isAIConfirmed: true,
-        relevanceScore: 82,
-        specificityScore: 88,
         logic: `concept "Defensive Currency Premium"
   is a: tension
   context: "Currency premium decoupled from income level"
@@ -383,8 +348,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Parity Reversion"
     via: sustained_deviation
-  scope: dataset-specific
-  fidelity: 0.68`
+  scope: dataset-specific`
       },
       {
         id: "bm-5",
@@ -396,8 +360,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), 2024-2026 time series",
         category: "Analysis Metrics",
         isAIConfirmed: true,
-        relevanceScore: 90,
-        specificityScore: 88,
         logic: `concept "Monetary Inertia"
   is a: lag
   context: "Short-term FX volatility"
@@ -411,8 +373,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     of: "Parity Reversion"
     via: speculative_friction
   contrasts_with: "Defensive Currency Premium"
-  scope: global
-  fidelity: 0.91`
+  scope: global`
       },
       {
         id: "bm-6",
@@ -424,8 +385,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "Geopolitical Groups (unverified claim, not re-checked)",
         category: "Geopolitical Groups",
         isAIConfirmed: true,
-        relevanceScore: 60,
-        specificityScore: 85,
         logic: `concept "Integrated Parity"
   is a: stabilizer
   context: "Trade bloc price convergence"
@@ -438,8 +397,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Monetary Inertia"
     via: market_fluidity
-  scope: regional
-  fidelity: 0.3`
+  scope: regional`
       }
     ],
     cachedExpansion: [
@@ -453,16 +411,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index Adjusted methodology (github.com/TheEconomist/big-mac-data), Jul 2026",
         category: "Method",
         isAIConfirmed: true,
-        relevanceScore: 85,
-        specificityScore: 98,
         logic: `concept "Development-Adjusted PPP"
   is a: method
   context: "Separating productivity-driven price levels from residual currency effects"
   mechanism: "regressing price on GDP per capita and reading the residual, rather than reading raw price gaps directly"
   evidence: "Used throughout this board: Asian Currency Suppression, Northern European Premium, and Defensive Currency Premium are all defined on the GDP-adjusted residual, not raw price"
   covers:
-    explains: [productivity_stripped_valuation]
-  fidelity: 0.97`
+    explains: [productivity_stripped_valuation]`
       },
       {
         id: "bm-exp-2",
@@ -474,15 +429,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "Global Commodity Audit (unverified, contradicted by this session's re-grounding)",
         category: "Input Costs",
         isAIConfirmed: false,
-        relevanceScore: 40,
-        specificityScore: 92,
         logic: `concept "The Commodity Floor"
   is a: baseline
   context: "Tradable vs Non-tradable inputs"
   mechanism: "globalized supply chains for food staples create a theoretical price floor that is violated by local productivity gaps — asserted, not verified"
   evidence: "No direct check performed; the specific '60% from labor/rent' figure is contradicted by this board's Asian Currency Suppression finding (GDP/labor explains ≤25% of the equivalent gap)"
-  replaces: "The Google Index"
-  fidelity: 0.15`
+  replaces: "The Google Index"`
       },
       {
         id: "bm-3-exp",
@@ -494,15 +446,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "Capital Flow Audit (unverified)",
         category: "Market",
         isAIConfirmed: false,
-        relevanceScore: 45,
-        specificityScore: 95,
         logic: `concept "Capital Flow Friction"
   is a: noise_driver
   context: "Volatility-driven decoupling"
   mechanism: "speculative capital moves faster than price indices, creating short-term statistical artifacts — asserted, not verified"
   evidence: "No data check performed"
-  replaces: "Currency Pegs"
-  fidelity: 0.2`
+  replaces: "Currency Pegs"`
       }
     ],
     threads: [
@@ -557,8 +506,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
-        specificityScore: 98,
-        fidelity: 0.98,
         logic: `concept "Syntactic Sandbox"
   is a: driver
   context: "Alphanumeric cognitive workflows"
@@ -573,8 +520,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     of: "Semantic Automation"
     via: syntactic_transference
   contrasts_with: "Physical Anchor"
-  scope: global
-  fidelity: 0.98`
+  scope: global`
       },
       {
         id: "gg-2",
@@ -585,8 +531,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Physical",
-        specificityScore: 95,
-        fidelity: 0.96,
         logic: `concept "Physical Anchor"
   is a: barrier
   context: "Manual and physical labor routines"
@@ -601,8 +545,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     of: "Syntactic Sandbox"
     via: spatial_shielding
   contrasts_with: "Syntactic Sandbox"
-  scope: global
-  fidelity: 0.96`
+  scope: global`
       },
       {
         id: "gg-3",
@@ -613,8 +556,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
-        specificityScore: 92,
-        fidelity: 0.92,
         logic: `concept "Projection Gap"
   is a: tension
   context: "Human self-rating vs model capability-rating"
@@ -628,8 +569,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Transition Friction"
     via: cognitive_dissonance
-  scope: global
-  fidelity: 0.92`
+  scope: global`
       },
       {
         id: "gg-4",
@@ -640,8 +580,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Trust",
-        specificityScore: 90,
-        fidelity: 0.91,
         logic: `concept "Relational Shield"
   is a: constraint
   context: "Legal and clinical judgment roles"
@@ -655,8 +593,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Automation Ceiling"
     via: legal_responsibility
-  scope: global
-  fidelity: 0.91`
+  scope: global`
       },
       {
         id: "gg-5",
@@ -667,8 +604,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Creative",
-        specificityScore: 94,
-        fidelity: 0.89,
         logic: `concept "AI Overconfidence"
   is a: risk
   context: "Creative and artistic outputs"
@@ -682,8 +617,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Cultural Commoditization"
     via: stylistic_imitation
-  scope: global
-  fidelity: 0.89`
+  scope: global`
       },
       {
         id: "gg-6",
@@ -694,8 +628,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Physical",
-        specificityScore: 88,
-        fidelity: 0.90,
         logic: `concept "Life Sciences Buffer"
   is a: stabilizer
   context: "Life sciences and laboratory sciences"
@@ -709,8 +641,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: downstream
     of: "Physical Anchor"
     via: biological_friction
-  scope: global
-  fidelity: 0.90`
+  scope: global`
       },
       {
         id: "gg-7",
@@ -721,8 +652,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
-        specificityScore: 95,
-        fidelity: 0.94,
         logic: `concept "Programming Exposure"
   is a: driver
   context: "Formal logic and programming sandboxes"
@@ -736,8 +665,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Syntactic Sandbox"
     via: sandbox_loops
-  scope: global
-  fidelity: 0.94`
+  scope: global`
       },
       {
         id: "gg-8",
@@ -748,8 +676,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Translate",
-        specificityScore: 91,
-        fidelity: 0.91,
         logic: `concept "Semantic Transference"
   is a: risk
   context: "Information translation and structure"
@@ -763,8 +689,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
     direction: upstream
     of: "Syntactic Sandbox"
     via: direct_mapping
-  scope: global
-  fidelity: 0.91`
+  scope: global`
       }
     ],
     cachedExpansion: [],

@@ -389,8 +389,8 @@ code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft
 <section id="yaml">
   <div class="section-mono">Logic Layer</div>
   <h2>The YAML audit trail</h2>
-  <p>Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, the fidelity score, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes.</p>
-  <p>The <code>contrasts_with</code> field is the pseudo-antonym link. The <code>valid_when</code> conditions define when the concept holds and when it breaks down. The <code>fidelity</code> score (0–1) measures how well the concept survived the logic audit.</p>
+  <p>Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes — deliberately without a numeric confidence score, since no measurement backs one.</p>
+  <p>The <code>contrasts_with</code> field is the pseudo-antonym link. The <code>valid_when</code> conditions define when the concept holds and when it breaks down.</p>
 
   <div class="yaml-wrap">
     <div class="yaml-head"><span class="yaml-label">YAML Logic Block — Social Cohesion</span></div>
@@ -403,8 +403,6 @@ code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft
     <span class="yk">explains</span><span class="yv">: [national_happiness_variance]</span>
     <span class="yk">aggregates</span><span class="yv">: [social_support_score]</span>
   <span class="yk">contrasts_with</span><span class="yv">: </span><span class="ys">"Atomized Autonomy"</span>   <span class="yc">← pseudo-antonym link</span>
-  <span class="yk">fidelity</span><span class="yv">: 0.92</span>                        <span class="yc">← survives the logic audit</span>
-  <span class="yk">fidelity_basis</span><span class="yv">: empirical_test</span>
   <span class="yk">valid_when</span><span class="yv">:</span>
     <span class="yv">- </span><span class="ys">"strong community ties"</span>
     <span class="yv">- </span><span class="ys">"institutional stability"</span>          <span class="yc">← scope conditions</span></div>

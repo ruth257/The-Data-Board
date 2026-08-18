@@ -362,7 +362,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-2">Logic Layer</div>
             <h2 className="text-3xl font-[900] uppercase tracking-tight mb-6 leading-tight">The YAML audit trail</h2>
             <p className="text-sm opacity-80 leading-relaxed mb-6 max-w-3xl">
-              Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, the fidelity score, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes.
+              Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes — deliberately without a numeric confidence score, since no measurement backs one.
             </p>
             <div className="bg-[#141414] border-2 border-[#141414] shadow-[6px_6px_0_0_#141414] overflow-hidden">
               <div className="px-5 py-3 border-b border-white/10 font-mono text-[9px] font-bold text-[#D4B84A] uppercase tracking-widest">
@@ -378,8 +378,6 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
     explains: [national_happiness_variance]
     aggregates: [social_support_score]
   contrasts_with: "Atomized Autonomy"   ← pseudo-antonym link
-  fidelity: 0.92                        ← survives the logic audit
-  fidelity_basis: empirical_test
   valid_when:
     - "strong community ties"
     - "institutional stability"          ← scope conditions`}
@@ -780,7 +778,6 @@ const LogicBoard = ({
           is_a: t.category?.toLowerCase() || "driver",
           mechanism: t.explanation || "",
           evidence: t.dataInsight || "",
-          fidelity: 0.90
         };
 
         if (t.logic) {
@@ -989,12 +986,12 @@ const TileCard = React.memo(({
               {getCentralityLabel(tile.centrality)}
             </div>
             <div className="flex items-center gap-1">
-              {tile.specificityScore > 70 && (
+              {tile.evidenceGrounded && (
                 <Zap className="w-3 h-3 text-databoard-green fill-databoard-green" />
               )}
             </div>
           </div>
-          
+
           <div className="mt-8">
             <h4 className="text-base font-bold uppercase leading-tight tracking-tight break-words group-hover:underline decoration-1 underline-offset-4">
               {tile.word}
@@ -1002,12 +999,7 @@ const TileCard = React.memo(({
           </div>
 
           <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-1">
-              <div className="w-8 h-1 bg-ink/10 rounded-full overflow-hidden">
-                <div className="h-full bg-ink/40" style={{ width: `${tile.specificityScore}%` }} />
-              </div>
-              <span className="text-[7px] mono opacity-30 uppercase">Sharpness</span>
-            </div>
+            <span className="text-[7px] mono opacity-30 uppercase truncate max-w-[60%]">{tile.category}</span>
             <div className="opacity-0 group-hover:opacity-100 transition-opacity">
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -1067,7 +1059,7 @@ const TileCard = React.memo(({
                 Logic Board
               </button>
             </div>
-            <span>{tile.specificityScore}% Sharp</span>
+            <span>{tile.category}</span>
           </div>
         </div>
       </motion.div>
@@ -1123,7 +1115,7 @@ const LogicEditorModal = ({
               value={logic}
               onChange={(e) => setLogic(e.target.value)}
               className="w-full h-64 bg-ink text-bg p-4 mono text-sm focus:outline-none border-2 border-ink focus:border-databoard-yellow transition-colors resize-none"
-              placeholder={`concept "${tile.word}"\n  is a: driver\n  context: "..."\n  mechanism: "..."\n  evidence: "..."\n  relation: direction, of, via\n  fidelity: 0.95`}
+              placeholder={`concept "${tile.word}"\n  is a: driver\n  context: "..."\n  mechanism: "..."\n  evidence: "..."\n  relation: direction, of, via`}
             />
           </div>
 
