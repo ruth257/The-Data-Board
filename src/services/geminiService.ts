@@ -183,31 +183,23 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing Board: ${existingWords.join(", ")}
 
-      Return JSON: correctedWord, centrality, explanation, dataInsight, evidenceGrounded, source, category, specificityScore, fidelity, logic.
+      Return JSON: correctedWord, centrality, explanation, dataInsight, evidenceGrounded, source, category, logic.
 
-      LOGIC MARKUP (A Posteriori Ontology):
-      The 'logic' field must be a Mermaid-like structured text block.
-      CRITICAL: Every field (tag) MUST start on a new line.
+      LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
+      CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
+      clause or a bare stat, never a sentence. The full explanation belongs in
+      "dataInsight", not here.
       concept "[word]"
-        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
-        context: "[optional: the specific situational context for this concept]"
-        mechanism: "[the causal/structural how]"
-        evidence: "[the empirical/data grounding why]"
-        covers:
-          explains: [variables it explains]
-          aggregates: [variables it combines]
-          replaces: [statistical term it supersedes]
-        relation:
-          direction: [upstream | downstream]
-          of: "[other concept]"
-          via: "[causal mechanism]"
+        seed: "[the plain literal term this was calibrated from, e.g. "Income" — not the Handle itself]"
+        is_a: [norm | baseline | buffer | driver | constraint | lag | tension | risk | structural_bias | regional_pattern | stabilizer]
+        mechanism: "[the causal how, one short clause]"
+        evidence: "[a bare stat or fact, e.g. "r=0.745, n=147" — not a sentence]"
+        downstream: "[OPTIONAL — the concept this feeds into, only if one is actually on this board]"
+        upstream: "[OPTIONAL — the concept this comes from, only if one is actually on this board; use downstream OR upstream, not both]"
         contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
-        fidelity: [0.0-1.0]
-        fidelity_basis: [semantic_density | expert_judgment | empirical_test]
-        valid_when:
-          - [condition 1]
-          - [condition 2]
+
+      Do NOT invent a numeric confidence/fidelity/specificity score for this concept — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
     `,
     {
       responseMimeType: "application/json",
@@ -221,11 +213,9 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
           evidenceGrounded: { type: Type.BOOLEAN },
           source: { type: Type.STRING },
           category: { type: Type.STRING },
-          specificityScore: { type: Type.NUMBER },
-          fidelity: { type: Type.NUMBER },
           logic: { type: Type.STRING },
         },
-        required: ["correctedWord", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "specificityScore", "fidelity", "logic"],
+        required: ["correctedWord", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "logic"],
       },
     }
   );
@@ -241,8 +231,6 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
     evidenceGrounded: result.evidenceGrounded ?? false,
     source: result.source || "General Knowledge",
     category: result.category || "General",
-    specificityScore: result.specificityScore || 50,
-    fidelity: result.fidelity || 0.85,
     logic: result.logic,
   };
 }
@@ -293,32 +281,24 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing: ${existingWords.join(", ")}
 
-      Return JSON array: word, centrality, explanation, dataInsight, evidenceGrounded, source, category, isAIConfirmed, relevanceScore, specificityScore, fidelity, logic.
+      Return JSON array: word, centrality, explanation, dataInsight, evidenceGrounded, source, category, isAIConfirmed, logic.
 
-      LOGIC MARKUP (A Posteriori Ontology):
-      The 'logic' field for each tile must be a Mermaid-like structured text block.
-      CRITICAL: Every field (tag) MUST start on a new line.
+      LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
+      CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
+      clause or a bare stat, never a sentence. The full explanation belongs in
+      "dataInsight", not here.
       concept "[word]"
-        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
-        context: "[optional: the specific situational context for this concept]"
-        mechanism: "[the causal/structural how]"
-        evidence: "[the empirical/data grounding why]"
-        covers:
-          explains: [variables it explains]
-          aggregates: [variables it combines]
-          replaces: [statistical term it supersedes]
-        relation:
-          direction: [upstream | downstream]
-          of: "[other concept]"
-          via: "[causal mechanism]"
+        seed: "[the plain literal term this was calibrated from, e.g. "Income" — not the Handle itself]"
+        is_a: [norm | baseline | buffer | driver | constraint | lag | tension | risk | structural_bias | regional_pattern | stabilizer]
+        mechanism: "[the causal how, one short clause]"
+        evidence: "[a bare stat or fact, e.g. "r=0.745, n=147" — not a sentence]"
+        downstream: "[OPTIONAL — the concept this feeds into, only if one is actually among the tiles you're returning]"
+        upstream: "[OPTIONAL — the concept this comes from, only if one is actually among the tiles you're returning; use downstream OR upstream, not both]"
         contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
-        fidelity: [0.0-1.0]
-        fidelity_basis: [semantic_density | expert_judgment | empirical_test]
-        valid_when:
-          - [condition 1]
-          - [condition 2]
-      
+
+      Do NOT invent a numeric confidence/fidelity/relevance/specificity score for any tile — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
+
       CRITICAL: You MUST return at least 5 unique human-readable handles.
     `,
     {
@@ -336,12 +316,9 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
             source: { type: Type.STRING },
             category: { type: Type.STRING },
             isAIConfirmed: { type: Type.BOOLEAN },
-            relevanceScore: { type: Type.NUMBER },
-            specificityScore: { type: Type.NUMBER },
-            fidelity: { type: Type.NUMBER },
             logic: { type: Type.STRING },
           },
-          required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "isAIConfirmed", "relevanceScore", "specificityScore", "fidelity", "logic"],
+          required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "isAIConfirmed", "logic"],
         },
       },
     }
@@ -368,9 +345,6 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
     source: result.source || "General Knowledge",
     category: result.category || "General",
     isAIConfirmed: result.isAIConfirmed ?? true,
-    relevanceScore: result.relevanceScore || 50,
-    specificityScore: result.specificityScore || 50,
-    fidelity: result.fidelity || 0.85,
     logic: result.logic,
   }));
 }
@@ -444,32 +418,24 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       Return JSON:
       {
         "scenario": { "title": "...", "description": "...", "context": "...", "outcomes": ["...", "..."] },
-        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "evidenceGrounded": true, "category": "...", "fidelity": "0.0-1.0", "logic": "..." } ]
+        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "evidenceGrounded": true, "category": "...", "logic": "..." } ]
       }
-      
-      LOGIC MARKUP (A Posteriori Ontology):
-      The 'logic' field for each tile must be a Mermaid-like structured text block.
-      CRITICAL: Every field (tag) MUST start on a new line.
+
+      LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
+      CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
+      clause or a bare stat, never a sentence. The full explanation belongs in
+      "dataInsight", not here.
       concept "[word]"
-        is a: [norm | benchmark | driver | constraint | lag | grouping | outlier | risk | structural]
-        context: "[optional: the specific situational context for this concept]"
-        mechanism: "[the causal/structural how]"
-        evidence: "[the empirical/data grounding why]"
-        covers:
-          explains: [variables it explains]
-          aggregates: [variables it combines]
-          replaces: [statistical term it supersedes]
-        relation:
-          direction: [upstream | downstream]
-          of: "[other concept]"
-          via: "[causal mechanism]"
+        seed: "[the plain literal term this was calibrated from, e.g. "Income" — not the Handle itself]"
+        is_a: [norm | baseline | buffer | driver | constraint | lag | tension | risk | structural_bias | regional_pattern | stabilizer]
+        mechanism: "[the causal how, one short clause]"
+        evidence: "[a bare stat or fact, e.g. "r=0.745, n=147" — not a sentence]"
+        downstream: "[OPTIONAL — the concept this feeds into, only if one is actually among the tiles you're returning]"
+        upstream: "[OPTIONAL — the concept this comes from, only if one is actually among the tiles you're returning; use downstream OR upstream, not both]"
         contrasts_with: "[OPTIONAL — only if a genuine structural opposite exists in this domain; omit the line entirely otherwise]"
         scope: [global | regional | dataset-specific]
-        fidelity: [0.0-1.0]
-        fidelity_basis: [semantic_density | expert_judgment | empirical_test]
-        valid_when:
-          - [condition 1]
-          - [condition 2]
+
+      Do NOT invent a numeric confidence/fidelity score for any tile — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
     `,
     {
       responseMimeType: "application/json",
@@ -497,10 +463,9 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
                 dataInsight: { type: Type.STRING },
                 evidenceGrounded: { type: Type.BOOLEAN },
                 category: { type: Type.STRING },
-                fidelity: { type: Type.NUMBER },
                 logic: { type: Type.STRING }
               },
-              required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "category", "fidelity", "logic"]
+              required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "category", "logic"]
             }
           }
         },

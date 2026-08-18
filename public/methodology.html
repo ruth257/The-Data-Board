@@ -389,25 +389,19 @@ code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--soft
 <section id="yaml">
   <div class="section-mono">Logic Layer</div>
   <h2>The YAML audit trail</h2>
-  <p>Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, the fidelity score, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes.</p>
-  <p>The <code>contrasts_with</code> field is the pseudo-antonym link. The <code>valid_when</code> conditions define when the concept holds and when it breaks down. The <code>fidelity</code> score (0–1) measures how well the concept survived the logic audit.</p>
+  <p>Every accepted concept has a formal machine-readable representation — the YAML logic block. This is what separates the Data Board from a sticky-note exercise. The YAML makes each concept auditable: it documents the mechanism, the evidence, the scope conditions, and the pseudo-antonym relationship. It is the reproducible, citable record of every analytical decision the board makes — deliberately without a numeric confidence score, since no measurement backs one.</p>
+  <p>The <code>seed</code> field names the plain literal term this concept was calibrated from. The <code>contrasts_with</code> field is the pseudo-antonym link. <code>downstream</code>/<code>upstream</code> name what this concept feeds into or comes from, only when that concept is actually on the same board.</p>
 
   <div class="yaml-wrap">
     <div class="yaml-head"><span class="yaml-label">YAML Logic Block — Social Cohesion</span></div>
     <div class="yaml-body"><span class="yk">concept</span> <span class="ys">"Social Cohesion"</span>
-  <span class="yk">is a</span><span class="yv">: driver</span>
-  <span class="yk">context</span><span class="yv">: </span><span class="ys">"Social support systems"</span>
-  <span class="yk">mechanism</span><span class="yv">: </span><span class="ys">"trusted social networks provide emotional and material safety nets"</span>
-  <span class="yk">evidence</span><span class="yv">: </span><span class="ys">"Gallup World Poll social support metrics"</span>
-  <span class="yk">covers</span><span class="yv">:</span>
-    <span class="yk">explains</span><span class="yv">: [national_happiness_variance]</span>
-    <span class="yk">aggregates</span><span class="yv">: [social_support_score]</span>
+  <span class="yk">seed</span><span class="yv">: </span><span class="ys">"Social Support"</span>   <span class="yc">← the plain term this was calibrated from</span>
+  <span class="yk">is_a</span><span class="yv">: driver</span>
+  <span class="yk">mechanism</span><span class="yv">: </span><span class="ys">"trusted networks provide a safety net"</span>
+  <span class="yk">evidence</span><span class="yv">: </span><span class="ys">"r=0.81, n=147"</span>   <span class="yc">← bare stat, full citation lives in dataInsight</span>
+  <span class="yk">downstream</span><span class="yv">: </span><span class="ys">"Life Satisfaction"</span>   <span class="yc">← what this feeds into</span>
   <span class="yk">contrasts_with</span><span class="yv">: </span><span class="ys">"Atomized Autonomy"</span>   <span class="yc">← pseudo-antonym link</span>
-  <span class="yk">fidelity</span><span class="yv">: 0.92</span>                        <span class="yc">← survives the logic audit</span>
-  <span class="yk">fidelity_basis</span><span class="yv">: empirical_test</span>
-  <span class="yk">valid_when</span><span class="yv">:</span>
-    <span class="yv">- </span><span class="ys">"strong community ties"</span>
-    <span class="yv">- </span><span class="ys">"institutional stability"</span>          <span class="yc">← scope conditions</span></div>
+  <span class="yk">scope</span><span class="yv">: global</span></div>
   </div>
 </section>
 

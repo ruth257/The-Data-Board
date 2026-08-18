@@ -1,4 +1,4 @@
-# THE DATA BOARD: OPEN METHODOLOGY v4.0
+# THE DATA BOARD: OPEN METHODOLOGY v4.1
 
 ### "Given a good enough set of semantics — can we use language to represent data?"
 
@@ -43,6 +43,23 @@ flowchart TD
     L --> N["Unaddressed<br/>Name what the accepted<br/>concepts don't explain"]
     L --> M["Synthesis"]
 ```
+
+---
+
+## THE OPERATING PROCEDURE
+
+The six frozen steps state *what* has to happen. This procedure states *how* — the checks that make each step self-auditing rather than a matter of judgment call, adjusted from Glaser & Strauss's constant comparative method for a single-pass, LLM-driven analyst rather than a research team working over months. The axis-declaration and confound sub-checklist below have no direct precedent in the original: Glaser & Strauss's process assumes the research question emerges openly over extended fieldwork. Ours is usually handed a specific question up front — a scenario, a professor's assignment, a dataset's stated focus — so comparing on the wrong axis is a live, recurring risk, not a hypothetical one.
+
+1. **Open code before naming.** For every instance, extract literal descriptors — what it says, not what it means. No Handle gets proposed from this pass; it only produces the raw material the next steps compare and, later, cite as grounding.
+2. **Declare the comparison axis.** Before comparing instances to each other, state explicitly what property is being compared — content, mechanism, genre, direction of a measured effect — and check that axis against the actual question being asked. A Handle can be well-grounded and still wrong, if it answers a different question than the one asked.
+3. **Compare, then apply the calibration test.** Group instances that converge on the declared axis. Before naming the group, ask: does this label say something none of the individual instances says alone? If not, it's a category — a useful compression of what's already visible, but not a Handle, and it doesn't advance to the next step.
+4. **Count the indicators, and their diversity.** State how many instances support a candidate Concept, and whether they converge from genuinely different angles — different sub-domains, methods, sources — or restate one thing. A single indicator stays flagged, not promoted, regardless of how well it's worded.
+5. **Run the full confound check, every time, three questions.** Could this pattern be an artifact of how the instance set was selected, not a property of the wider domain? Are the "independent" indicators actually one shared source restated (same author, same school, same instrument)? Does an already-accepted concept already explain it? None of the three is optional. A concept presented without this run is presented incomplete, not settled.
+6. **Pseudo-Antonym pairing defaults to none.** Only pair two concepts if the shared, grounded axis they oppose on can be stated in one sentence, and both sides are independently grounded moving in *different directions* on that same axis. Two concepts about the same topic in different eras or from different angles are not, on that basis alone, opposites. If the one-sentence axis can't be written, there is no pairing — that's the correct, expected outcome for most concepts, not a gap to fill.
+7. **State the residual honestly.** What fraction of instances no promoted concept accounts for, named plainly — not folded into an existing concept just to make coverage look more complete than it is.
+8. **Revise, or name the next question.** A failed confound check or a named residual either changes or retires the concept. Where comparison instead surfaces something genuinely new rather than a settled answer, that becomes a named open question for the next round of comparison (theoretical sampling) — not folded quietly into a mechanism field as if it were already resolved.
+
+Mapped onto the frozen core: steps 1-3 operationalize **Propose**; the descriptors from step 1 are what **Ground** actually cites; step 5 is **Check confounds** made mandatory and specific; steps 6 and 8 are **Revise**; step 7 is **State the residual**.
 
 ---
 

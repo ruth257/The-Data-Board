@@ -3,7 +3,7 @@ import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 // Bump this whenever CACHED_BOARDS content changes meaningfully. The app
 // clears any locally-saved board that predates this version, so returning
 // visitors see fresh cached data instead of a permanently stale local copy.
-export const CACHED_DATA_VERSION = "8";
+export const CACHED_DATA_VERSION = "10";
 
 export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
@@ -17,23 +17,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Economics",
-        specificityScore: 94,
-        fidelity: 0.96,
         logic: `concept "Resource Elasticity"
-  is a: baseline
-  context: "Capacity for choice vs raw wealth"
-  mechanism: "financial liquidity provides a buffer against external shocks and enables life alignment"
-  evidence: "Linear correlation between GDP per capita and Cantril Ladder scores"
-  covers:
-    explains: [life_satisfaction_floor]
-    aggregates: [gdp_per_capita]
-    replaces: "Material Agency"
-  relation:
-    direction: upstream
-    of: "Life Satisfaction"
-    via: resource_access
-  scope: global
-  fidelity: 0.96`
+  seed: "Income"
+  is_a: baseline
+  mechanism: "wealth buys agency, not just survival"
+  evidence: "r=0.745, n=147"
+  downstream: "Life Satisfaction"
+  scope: global`
       },
       {
         id: "h-2",
@@ -44,23 +34,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Social",
-        specificityScore: 88,
-        fidelity: 0.93,
         logic: `concept "Communal Insulation"
-  is a: buffer
-  context: "Communal safety nets"
-  mechanism: "Trusted social networks reduce the psychological burden of crisis and improve recovery speed."
-  evidence: "Support scores in high-trust nations (Iceland, Israel, Finland)"
-  covers:
-    explains: [national_resilience]
-    aggregates: [social_support_score]
-    replaces: "Social Cohesion"
-  relation:
-    direction: upstream
-    of: "Emotional Security"
-    via: relational_density
-  scope: global
-  fidelity: 0.93`
+  seed: "Social Support"
+  is_a: buffer
+  mechanism: "trusted networks buffer the psychological cost of crisis"
+  evidence: "r=0.805, n=147 — strongest of six factors"
+  downstream: "Emotional Security"
+  scope: global`
       },
       {
         id: "h-3",
@@ -71,23 +51,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Governance",
-        specificityScore: 90,
-        fidelity: 0.91,
         logic: `concept "Institutional Predictability"
-  is a: foundation
-  context: "Predictability of social contract"
-  mechanism: "Transparent institutions reduce systemic anxiety and improve collective cooperation."
-  evidence: "Corruption perception scores (Finland/Denmark leading clusters)"
-  covers:
-    explains: [institutional_trust]
-    aggregates: [corruption_score]
-    replaces: "Institutional Trust"
-  relation:
-    direction: upstream
-    of: "Systemic Agency"
-    via: rule_of_law
-  scope: global
-  fidelity: 0.91`
+  seed: "Corruption"
+  is_a: foundation
+  mechanism: "transparent institutions reduce systemic anxiety"
+  evidence: "r=0.392, n=147 — weakest of five major factors"
+  downstream: "Systemic Agency"
+  scope: global`
       },
       {
         id: "h-4",
@@ -98,23 +68,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Health",
-        specificityScore: 85,
-        fidelity: 0.94,
         logic: `concept "Biological Vitality"
-  is a: prerequisite
-  context: "Physical capacity for life satisfaction"
-  mechanism: "absence of chronic pain and mobility limits enables active participation in society"
-  evidence: "WHO Healthy Life Expectancy (HALE) metrics"
-  covers:
-    explains: [long_term_well_being]
-    aggregates: [healthy_life_expectancy]
-    replaces: "Biological Baseline"
-  relation:
-    direction: upstream
-    of: "Life Satisfaction"
-    via: physical_agency
-  scope: global
-  fidelity: 0.94`
+  seed: "Life Expectancy"
+  is_a: prerequisite
+  mechanism: "physical health enables active participation"
+  evidence: "r=0.678, n=147"
+  downstream: "Life Satisfaction"
+  scope: global`
       },
       {
         id: "h-5",
@@ -125,23 +85,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Rights",
-        specificityScore: 92,
-        fidelity: 0.89,
         logic: `concept "Agency Capacity"
-  is a: driver
-  context: "Autonomy in life decisions"
-  mechanism: "the capacity to align personal values with action reduces psychological friction"
-  evidence: "Gallup 'Freedom to make life choices' metric"
-  covers:
-    explains: [life_autonomy]
-    aggregates: [freedom_score]
-    replaces: "Optionality Drift"
-  relation:
-    direction: downstream
-    of: "Resource Elasticity"
-    via: choice_capability
-  scope: global
-  fidelity: 0.89`
+  seed: "Freedom"
+  is_a: driver
+  mechanism: "aligning values with action reduces friction"
+  evidence: "Viet Nam 1.147 (highest); Singapore 0.980 (rank 50/146)"
+  upstream: "Resource Elasticity"
+  scope: global`
       },
       {
         id: "h-6",
@@ -152,23 +102,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Tension",
-        specificityScore: 95,
-        fidelity: 0.94,
         logic: `concept "Agency-Resource Gap"
-  is a: tension
-  context: "Hollow vs functional freedom"
-  mechanism: "formal rights are psychologically hollow without the economic agency or social permissions to exercise them"
-  evidence: "Freedom score vs income deciles in high-wealth, high-pressure societies"
-  covers:
-    explains: [hollow_autonomy]
-    aggregates: [freedom_score, gdp_per_capita]
-    replaces: "Civil liberties"
-  relation:
-    direction: downstream
-    of: "Resource Elasticity"
-    via: structural_friction
-  scope: global
-  fidelity: 0.94`
+  seed: "Freedom vs. Income"
+  is_a: tension
+  mechanism: "formal rights are hollow without real means to use them"
+  evidence: "Singapore: GDP #1, freedom rank 50/146"
+  upstream: "Resource Elasticity"
+  scope: global`
       },
       {
         id: "h-7",
@@ -179,23 +119,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: false,
         source: "General domain knowledge — not verified against the WHR 2025 panel used for this board",
         category: "Technology",
-        specificityScore: 92,
-        fidelity: 0.94,
         logic: `concept "Digital Fragmentation"
-  is a: risk
-  context: "Social side-effects of digital immersion"
-  mechanism: "algorithmic sorting reduces shared physical experiences and erodes local social trust"
-  evidence: "Inverse correlation between internet usage density and social trust (OECD 2025 data)"
-  covers:
-    explains: [social_atomization, youth_happiness_drop]
-    aggregates: [screen_time_averages]
-  relation:
-    direction: downstream
-    of: "Communal Insulation"
-    via: community_erosion
+  seed: "Screen Time"
+  is_a: risk
+  mechanism: "algorithmic sorting erodes shared physical experience"
+  evidence: "not verified — no internet-usage columns in this panel"
+  upstream: "Communal Insulation"
   contrasts_with: "Cultural Anchoring"
-  scope: global
-  fidelity: 0.94`
+  scope: global`
       },
       {
         id: "h-8",
@@ -206,23 +137,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "World Happiness Report 2025 panel data (2011-2025), Gallup World Poll",
         category: "Culture",
-        specificityScore: 94,
-        fidelity: 0.91,
         logic: `concept "Cultural Anchoring"
-  is a: stabilizer
-  context: "Existential meaning structures"
-  mechanism: "shared narratives and rituals provide a psychological buffer against societal change"
-  evidence: "High 'Community Support' scores in traditional or religious clusters (Israel, Mexico)"
-  covers:
-    explains: [existential_stability]
-    aggregates: [cultural_values]
-  relation:
-    direction: upstream
-    of: "Social Cohesion"
-    via: shared_meaning
+  seed: "Tradition"
+  is_a: stabilizer
+  mechanism: "shared ritual buffers against societal change"
+  evidence: "Israel #8, Mexico #12"
+  downstream: "Social Cohesion"
   contrasts_with: "Digital Fragmentation"
-  scope: global
-  fidelity: 0.91`
+  scope: global`
       }
     ],
     cachedExpansion: [],
@@ -289,21 +211,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jan-Jul 2026 comparison",
         category: "Currency Dynamics",
         isAIConfirmed: true,
-        relevanceScore: 90,
-        specificityScore: 88,
         logic: `concept "Parity Reversion"
-  is a: core_category
-  context: "Baseline currency-price relationship across the panel"
-  mechanism: "currencies adjust to offset domestic price changes, consistent with short-run purchasing power parity holding at the panel level"
-  evidence: "r=-0.944 correlation between local price change and currency change, Jan-Jul 2026, n=53"
-  covers:
-    explains: [background_self_correction]
-  relation:
-    direction: upstream
-    of: "Northern European Premium, Asian Currency Suppression, Defensive Currency Premium"
-    via: baseline_against_which_deviations_are_visible
-  scope: global
-  fidelity: 0.96`
+  seed: "PPP"
+  is_a: core_category
+  mechanism: "currencies offset domestic price changes (short-run PPP)"
+  evidence: "r=-0.944, n=53"
+  downstream: "Northern European Premium, Asian Currency Suppression, Defensive Currency Premium"
+  scope: global`
       },
       {
         id: "bm-8",
@@ -315,22 +229,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, full 52-country panel",
         category: "Monetary Policy",
         isAIConfirmed: true,
-        relevanceScore: 94,
-        specificityScore: 93,
         logic: `concept "Asian Currency Suppression"
-  is a: regional_pattern
-  context: "Currency valuation independent of productivity, concentrated in one region"
-  mechanism: "unconfirmed — plausibly deliberate export-currency policy or structural export orientation; not independently verified against real policy data"
-  evidence: "13/13 Asian economies in the panel show negative GDP-adjusted valuation, spanning a 40x GDP range ($2.7k-$108k); mean -37.1% vs +6.1% elsewhere"
-  covers:
-    explains: [regional_undervaluation]
-    replaces: "The Emerging Discount, Managed Currency Gap"
-  relation:
-    direction: downstream
-    of: "Parity Reversion"
-    via: sustained_deviation
-  scope: regional
-  fidelity: 0.9`
+  seed: "Undervaluation"
+  is_a: regional_pattern
+  mechanism: "unconfirmed — policy or structural export orientation"
+  evidence: "13/13 Asian economies negative; mean -37.1% vs +6.1%"
+  upstream: "Parity Reversion"
+  scope: regional`
       },
       {
         id: "bm-2",
@@ -342,22 +247,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, GDP-adjusted",
         category: "Economic Status",
         isAIConfirmed: true,
-        relevanceScore: 88,
-        specificityScore: 90,
         logic: `concept "Northern European Premium"
-  is a: regional_pattern
-  context: "High-income economy price dynamics, Northern/Western Europe specifically"
-  mechanism: "unconfirmed beyond productivity — plausibly wage-floor regulation or non-tradable service structure common to this cluster, not independently verified"
-  evidence: "6-country cluster (Switzerland, Norway, Britain, Euro area, Sweden, Denmark) all show +20% to +49% premium after GDP-adjustment"
-  covers:
-    explains: [regional_price_premium]
-    replaces: "The Wealthy Surcharge"
-  relation:
-    direction: downstream
-    of: "Parity Reversion"
-    via: sustained_deviation
-  scope: regional
-  fidelity: 0.85`
+  seed: "Rich Countries"
+  is_a: regional_pattern
+  mechanism: "unconfirmed — wage-floor regulation or service structure"
+  evidence: "6 countries, +20% to +49% post-adjustment"
+  upstream: "Parity Reversion"
+  scope: regional`
       },
       {
         id: "bm-9",
@@ -369,22 +265,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), Jul 2026, full panel sweep",
         category: "Currency Dynamics",
         isAIConfirmed: true,
-        relevanceScore: 82,
-        specificityScore: 88,
         logic: `concept "Defensive Currency Premium"
-  is a: tension
-  context: "Currency premium decoupled from income level"
-  mechanism: "unconfirmed — plausibly defensive interest-rate policy (rate hikes to fight inflation) common across each member's recent history, not independently verified against real rate data"
-  evidence: "8 countries (Uruguay, Colombia, Turkey, Costa Rica, Israel, Mexico, Argentina, Poland), GDP $8.4k-$56k, all +19% to +77% after GDP-adjustment"
-  covers:
-    explains: [income_independent_premium]
-    replaces: "Contractionary Strength, Logistical Premia"
-  relation:
-    direction: downstream
-    of: "Parity Reversion"
-    via: sustained_deviation
-  scope: dataset-specific
-  fidelity: 0.68`
+  seed: "Inflation"
+  is_a: tension
+  mechanism: "unconfirmed — plausibly defensive rate hikes"
+  evidence: "8 countries, +19% to +77% post-adjustment"
+  upstream: "Parity Reversion"
+  scope: dataset-specific`
       },
       {
         id: "bm-5",
@@ -396,23 +283,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index (github.com/TheEconomist/big-mac-data), 2024-2026 time series",
         category: "Analysis Metrics",
         isAIConfirmed: true,
-        relevanceScore: 90,
-        specificityScore: 88,
         logic: `concept "Monetary Inertia"
-  is a: lag
-  context: "Short-term FX volatility"
-  mechanism: "capital flight and interest rate spreads dominate exchange rates in the short term, bypassing PPP"
-  evidence: "Temporal lag in hyper-volatile markets (Argentina, Turkey)"
-  covers:
-    explains: [short_term_undervaluation]
-    replaces: "Market Lag"
-  relation:
-    direction: downstream
-    of: "Parity Reversion"
-    via: speculative_friction
-  contrasts_with: "Defensive Currency Premium"
-  scope: global
-  fidelity: 0.91`
+  seed: "Volatility"
+  is_a: lag
+  mechanism: "capital flight and rate spreads bypass PPP short-term"
+  evidence: "Argentina: -32.6% → +20.1% → -9.6% (2024-2026)"
+  upstream: "Parity Reversion"
+  scope: global`
       },
       {
         id: "bm-6",
@@ -424,22 +301,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "Geopolitical Groups (unverified claim, not re-checked)",
         category: "Geopolitical Groups",
         isAIConfirmed: true,
-        relevanceScore: 60,
-        specificityScore: 85,
         logic: `concept "Integrated Parity"
-  is a: stabilizer
-  context: "Trade bloc price convergence"
-  mechanism: "market integration and shared regulatory frameworks force price transparency and competition"
-  evidence: "Eurozone price distribution clustering — asserted, not independently checkable from this dataset"
-  covers:
-    explains: [regional_price_clusters]
-    replaces: "Neighboring Parity"
-  relation:
-    direction: upstream
-    of: "Monetary Inertia"
-    via: market_fluidity
-  scope: regional
-  fidelity: 0.3`
+  seed: "Trade Blocs"
+  is_a: stabilizer
+  mechanism: "market integration forces price transparency"
+  evidence: "not independently checkable — Euro area reported as one row"
+  downstream: "Monetary Inertia"
+  scope: regional`
       }
     ],
     cachedExpansion: [
@@ -453,16 +321,11 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "The Economist Big Mac Index Adjusted methodology (github.com/TheEconomist/big-mac-data), Jul 2026",
         category: "Method",
         isAIConfirmed: true,
-        relevanceScore: 85,
-        specificityScore: 98,
         logic: `concept "Development-Adjusted PPP"
-  is a: method
-  context: "Separating productivity-driven price levels from residual currency effects"
-  mechanism: "regressing price on GDP per capita and reading the residual, rather than reading raw price gaps directly"
-  evidence: "Used throughout this board: Asian Currency Suppression, Northern European Premium, and Defensive Currency Premium are all defined on the GDP-adjusted residual, not raw price"
-  covers:
-    explains: [productivity_stripped_valuation]
-  fidelity: 0.97`
+  seed: "GDP Adjustment"
+  is_a: method
+  mechanism: "regress price on GDP, read the residual"
+  evidence: "used to derive every GDP-adjusted figure on this board"`
       },
       {
         id: "bm-exp-2",
@@ -474,15 +337,11 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "Global Commodity Audit (unverified, contradicted by this session's re-grounding)",
         category: "Input Costs",
         isAIConfirmed: false,
-        relevanceScore: 40,
-        specificityScore: 92,
         logic: `concept "The Commodity Floor"
-  is a: baseline
-  context: "Tradable vs Non-tradable inputs"
-  mechanism: "globalized supply chains for food staples create a theoretical price floor that is violated by local productivity gaps — asserted, not verified"
-  evidence: "No direct check performed; the specific '60% from labor/rent' figure is contradicted by this board's Asian Currency Suppression finding (GDP/labor explains ≤25% of the equivalent gap)"
-  replaces: "The Google Index"
-  fidelity: 0.15`
+  seed: "Input Costs"
+  is_a: baseline
+  mechanism: "asserted price floor from tradable input costs"
+  evidence: "unverified; contradicted by Asian Currency Suppression (≤25% not 60%)"`
       },
       {
         id: "bm-3-exp",
@@ -494,15 +353,11 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         source: "Capital Flow Audit (unverified)",
         category: "Market",
         isAIConfirmed: false,
-        relevanceScore: 45,
-        specificityScore: 95,
         logic: `concept "Capital Flow Friction"
-  is a: noise_driver
-  context: "Volatility-driven decoupling"
-  mechanism: "speculative capital moves faster than price indices, creating short-term statistical artifacts — asserted, not verified"
-  evidence: "No data check performed"
-  replaces: "Currency Pegs"
-  fidelity: 0.2`
+  seed: "Hot Money"
+  is_a: noise_driver
+  mechanism: "speculative capital moves faster than price indices"
+  evidence: "no data check performed"`
       }
     ],
     threads: [
@@ -557,24 +412,14 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
-        specificityScore: 98,
-        fidelity: 0.98,
         logic: `concept "Syntactic Sandbox"
-  is a: driver
-  context: "Alphanumeric cognitive workflows"
-  mechanism: "purely symbolic data processing has zero mechanical inertia and can be fully ingested by LLMs"
-  evidence: "100% mid/high exposure ratings for Correspondence Clerks and Proofreaders in both human and model metrics"
-  covers:
-    explains: [automation_vulnerability]
-    aggregates: [AI_Exposure_Human_High, AI_Exposure_Model_High]
-    replaces: "Administrative tasks"
-  relation:
-    direction: upstream
-    of: "Semantic Automation"
-    via: syntactic_transference
+  seed: "Clerical Work"
+  is_a: driver
+  mechanism: "symbolic text has zero mechanical inertia for LLMs"
+  evidence: "Correspondence Clerks, Proofreaders: 0.95-1.00 model, agree only at broadest tier"
+  upstream: "Programming Exposure, Semantic Transference"
   contrasts_with: "Physical Anchor"
-  scope: global
-  fidelity: 0.98`
+  scope: global`
       },
       {
         id: "gg-2",
@@ -585,24 +430,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Physical",
-        specificityScore: 95,
-        fidelity: 0.96,
         logic: `concept "Physical Anchor"
-  is a: barrier
-  context: "Manual and physical labor routines"
-  mechanism: "embodied actions require expensive mechanical robotics and spatial navigation that cannot be simulated purely by text models"
-  evidence: "Low AI exposure ratings for Concierges, Animal/Soil/Plant Scientists, and hands-on maintenance workers"
-  covers:
-    explains: [employment_resilience]
-    aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
-    replaces: "Manual labor"
-  relation:
-    direction: downstream
-    of: "Syntactic Sandbox"
-    via: spatial_shielding
+  seed: "Manual Labor"
+  is_a: barrier
+  mechanism: "embodied action needs robotics text models can't simulate"
+  evidence: "160/923 occupations (17%) below 0.05 exposure on both scales"
   contrasts_with: "Syntactic Sandbox"
-  scope: global
-  fidelity: 0.96`
+  scope: global`
       },
       {
         id: "gg-3",
@@ -613,23 +447,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
-        specificityScore: 92,
-        fidelity: 0.92,
         logic: `concept "Projection Gap"
-  is a: tension
-  context: "Human self-rating vs model capability-rating"
-  mechanism: "the gap runs in both directions depending on the occupation: models overrate their own exposure where verified/certified accuracy is the real bottleneck, and underrate it where field presence or regulatory judgment matters"
-  evidence: "Survey Researchers (human 0.75 vs model 0.25) and Court Reporters (model 0.92 vs human 0.12) show the gap running in opposite directions"
-  covers:
-    explains: [automation_surprise]
-    aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
-    replaces: "Confidence variance"
-  relation:
-    direction: upstream
-    of: "Transition Friction"
-    via: cognitive_dissonance
-  scope: global
-  fidelity: 0.92`
+  seed: "Rater Disagreement"
+  is_a: tension
+  mechanism: "gap runs both directions depending on the occupation"
+  evidence: "r=0.435; Court Reporters 0.92 vs 0.12, Survey Researchers 0.25 vs 0.75"
+  scope: global`
       },
       {
         id: "gg-4",
@@ -640,23 +463,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Trust",
-        specificityScore: 90,
-        fidelity: 0.91,
         logic: `concept "Relational Shield"
-  is a: constraint
-  context: "Legal and clinical judgment roles"
-  mechanism: "legal liability and hands-on clinical judgment mean neither model nor human raters treat these roles as automatable, regardless of cognitive complexity"
-  evidence: "Judges & Magistrates, Physician Assistants, and Nurse Anesthetists all show near-zero direct exposure on both model and human scales"
-  covers:
-    explains: [retention_index]
-    aggregates: [AI_Exposure_Human_Mid]
-    replaces: "Soft skills"
-  relation:
-    direction: upstream
-    of: "Automation Ceiling"
-    via: legal_responsibility
-  scope: global
-  fidelity: 0.91`
+  seed: "Legal Judgment"
+  is_a: constraint
+  mechanism: "liability and clinical judgment resist automation on both scales"
+  evidence: "Judges, Physician Assistants, Nurse Anesthetists: ~0.00 both raters"
+  scope: global`
       },
       {
         id: "gg-5",
@@ -667,23 +479,12 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Creative",
-        specificityScore: 94,
-        fidelity: 0.89,
         logic: `concept "AI Overconfidence"
-  is a: risk
-  context: "Creative and artistic outputs"
-  mechanism: "lossy statistical patterns are mistranslated by reinforcement loops as equivalent to original human cultural creation"
-  evidence: "Poets, Lyricists and Creative Writers showing flat 0.889 exposure on all high-level model columns"
-  covers:
-    explains: [artistic_dilution]
-    aggregates: [AI_Exposure_Model_High]
-    replaces: "Creative automation"
-  relation:
-    direction: upstream
-    of: "Cultural Commoditization"
-    via: stylistic_imitation
-  scope: global
-  fidelity: 0.89`
+  seed: "Creativity"
+  is_a: risk
+  mechanism: "the model rates its own creative output higher than humans do"
+  evidence: "model 0.89 vs human 0.67 (direct-exposure tier); r=0.88-0.91 board-wide"
+  scope: global`
       },
       {
         id: "gg-6",
@@ -694,23 +495,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Physical",
-        specificityScore: 88,
-        fidelity: 0.90,
         logic: `concept "Life Sciences Buffer"
-  is a: stabilizer
-  context: "Life sciences and laboratory sciences"
-  mechanism: "unresolved — the model rates fieldwork as low-exposure, but human raters disagree; no confirmed mechanism survives the confound check"
-  evidence: "Model rates Animal/Soil/Plant Scientists as low exposure (0.00-0.12), but human raters rate the same occupations moderate-to-high (0.43-0.75) — a genuine rater disagreement, not a confirmed buffer"
-  covers:
-    explains: [field_resilience]
-    aggregates: [AI_Exposure_Human_Low, AI_Exposure_Model_Low]
-    replaces: "Scientific isolation"
-  relation:
-    direction: downstream
-    of: "Physical Anchor"
-    via: biological_friction
-  scope: global
-  fidelity: 0.90`
+  seed: "Fieldwork"
+  is_a: stabilizer
+  mechanism: "unresolved — model and human raters disagree, confound not cleared"
+  evidence: "model 0.00-0.12 vs human 0.43-0.75 for the same occupations"
+  upstream: "Physical Anchor"
+  scope: global`
       },
       {
         id: "gg-7",
@@ -721,23 +512,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Cognitive",
-        specificityScore: 95,
-        fidelity: 0.94,
         logic: `concept "Programming Exposure"
-  is a: driver
-  context: "Formal logic and programming sandboxes"
-  mechanism: "languages with rigid compilation rules offer infinite programmatic validation loops, speeding up AI auto-correction"
-  evidence: "Web Designers and Computer Programmers showing high-frequency cognitive automation in both human and model columns"
-  covers:
-    explains: [developer_leverage]
-    aggregates: [AI_Exposure_Model_High]
-    replaces: "Software engineering baseline"
-  relation:
-    direction: upstream
-    of: "Syntactic Sandbox"
-    via: sandbox_loops
-  scope: global
-  fidelity: 0.94`
+  seed: "Coding"
+  is_a: driver
+  mechanism: "rigid compilation rules speed up AI auto-correction"
+  evidence: "model 0.93-0.95 (beta tier); human ratings lower and mixed (0.63-0.68)"
+  downstream: "Syntactic Sandbox"
+  scope: global`
       },
       {
         id: "gg-8",
@@ -748,23 +529,13 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         evidenceGrounded: true,
         source: "Eloundou et al. (2023), github.com/openai/GPTs-are-GPTs, occ_level.csv",
         category: "Translate",
-        specificityScore: 91,
-        fidelity: 0.91,
         logic: `concept "Semantic Transference"
-  is a: risk
-  context: "Information translation and structure"
-  mechanism: "pure semantic conversion of pre-existing documents requires no real-world agency, matching LLM's core transformers"
-  evidence: "Interpreters and Translators scoring above 0.80 exposure on both Human and Model scales"
-  covers:
-    explains: [translation_displacement]
-    aggregates: [AI_Exposure_Human_High]
-    replaces: "Bilingual translation"
-  relation:
-    direction: upstream
-    of: "Syntactic Sandbox"
-    via: direct_mapping
-  scope: global
-  fidelity: 0.91`
+  seed: "Translation"
+  is_a: risk
+  mechanism: "pure text conversion needs no real-world agency"
+  evidence: "Interpreters/Translators: 0.88 model, 0.80 human"
+  downstream: "Syntactic Sandbox"
+  scope: global`
       }
     ],
     cachedExpansion: [],
@@ -815,6 +586,58 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
         { source: "Life Sciences Buffer", target: "Physical Anchor", label: "Anchors" },
         { source: "Projection Gap", target: "Syntactic Sandbox", label: "Tensions" }
       ],
+      synthesisSuggestions: []
+    }
+  },
+  "tel-aviv-106-hotline": {
+    tiles: [
+      {
+        id: "ta106-1",
+        word: "Crisis Anchor",
+        centrality: Centrality.DOMINANT,
+        explanation: "Under acute stress, people default to the most familiar number they already have saved — not the technically correct emergency channel. A real pattern in crisis-communication behavior, not just 'there's a lot of emergency-tagged volume.'",
+        dataInsight: "Emergency-cluster labels total 116,021 requests (9.4% of all 1,238,766 contacts in the dataset), led by \"חירום - אזרחים ותיקים\" (Emergency – Senior Citizens, 85,013) — the second-largest single label of all 704. Caveat: 73% of this concept's volume rests on that one label, and its precise meaning (general emergency intake routed through a senior-citizens queue, vs. a dedicated senior-emergency welfare service) can't be resolved from the label text alone. The supporting cluster (shelters, evacuees, checkpoints, missile-attack reports) independently confirms a real crisis-channel signal regardless of that ambiguity.",
+        evidenceGrounded: true,
+        source: "Tel Aviv Municipality 106 call center, 704 level-3 request labels with incident volumes, 2025-2026",
+        category: "Civic Behavior",
+        logic: `concept "Crisis Anchor"
+  seed: "Emergency Calls"
+  is_a: driver
+  mechanism: "under stress, callers default to the number they already know"
+  evidence: "116,021 / 1,238,766 (9.4%); 73% rests on one ambiguous label"
+  scope: dataset-specific`
+      },
+      {
+        id: "ta106-2",
+        word: "Affected-Party Bias",
+        centrality: Centrality.PRESENT,
+        explanation: "Citizen-reporting systems structurally over-represent complaints that acutely, personally inconvenience the reporter, versus diffuse violations with no immediate victim — a documented pattern in civic-reporting (311-style) literature, with a real downstream consequence: resource allocation driven by this reporting mix under-serves issues nobody personally suffers enough to report.",
+        dataInsight: "Access-obstruction parking complaints (car parked on sidewalk, blocking entrance/parking, obstructing traffic) total 84,934 requests (6.9%) — nine times the volume of permit/fee-type violations (disabled parking, ticket appeals: 9,293, 0.8%). The claim isn't 'there's a lot of blocked parking' — it's that the reporting channel itself is skewed toward whoever is personally affected right now.",
+        evidenceGrounded: true,
+        source: "Tel Aviv Municipality 106 call center, 704 level-3 request labels with incident volumes, 2025-2026",
+        category: "Civic Behavior",
+        logic: `concept "Affected-Party Bias"
+  seed: "Parking Complaints"
+  is_a: structural_bias
+  mechanism: "reporting channels over-sample whoever is personally affected right now"
+  evidence: "84,934 vs. 9,293 — a 9:1 ratio"
+  scope: dataset-specific`
+      }
+    ],
+    threads: [
+      {
+        id: "ta106-thread-unaddressed",
+        title: "Unaddressed",
+        conceptWords: [],
+        synthesis: "The dataset's single largest label of all 704 (\"פינוי גזם ואשפה חריגה\" / excess garden-waste & garbage collection, 102,589) isn't claimed by either concept above — the data can't distinguish whether its size reflects real severity or just routine, low-effort, high-frequency demand, which is exactly the confound check a 'garbage is the city's biggest problem' claim would need to pass and can't from this data alone. A third candidate ('Routing Noise' — wrong numbers and disconnects, 45,532, 3.7%, the third-largest single label) was tested and rejected: a real fact, but not a serious, non-obvious claim — a mundane observation in academic dress. 682 of 704 labels (55.7% of total volume) remain deliberately unclaimed — a Deducible Space is the minimal set that survives the check, not an exhaustive classification of the input.",
+        coheres: "no",
+        isResidual: true,
+      },
+    ],
+    metrics: {
+      explanation: "Two grounded mechanisms surface above the noise of Tel Aviv's 106 hotline, 2025-2026: an emergency-driven default in caller behavior, and a structural bias in what parking violations get reported. Most of the dataset is deliberately left unclaimed rather than force-sorted into a category.",
+      synthesis: "Contact with Tel Aviv's municipal hotline is shaped less by 'what needs fixing in the city' than by two structural mechanisms: what number people default to under stress, and who gets hurt personally enough to bother reporting.",
+      emergentPatterns: ["Crisis behavior reshapes a routine-service channel's traffic mix", "Citizen-reporting systems are not a neutral sample of city problems"],
       synthesisSuggestions: []
     }
   }
