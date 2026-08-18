@@ -21,7 +21,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is a: baseline
   context: "Capacity for choice vs raw wealth"
   mechanism: "financial liquidity provides a buffer against external shocks and enables life alignment"
-  evidence: "Linear correlation between GDP per capita and Cantril Ladder scores"
+  evidence: "r=0.745 correlation between GDP-contribution and happiness score, WHR 2025 panel, n=147"
   covers:
     explains: [life_satisfaction_floor]
     aggregates: [gdp_per_capita]
@@ -45,7 +45,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is a: buffer
   context: "Communal safety nets"
   mechanism: "Trusted social networks reduce the psychological burden of crisis and improve recovery speed."
-  evidence: "Support scores in high-trust nations (Iceland, Israel, Finland)"
+  evidence: "r=0.805 correlation between social-support contribution and happiness score, WHR 2025 — strongest of six factors; Iceland 1.720, Finland 1.638, Israel 1.606"
   covers:
     explains: [national_resilience]
     aggregates: [social_support_score]
@@ -69,7 +69,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is a: foundation
   context: "Predictability of social contract"
   mechanism: "Transparent institutions reduce systemic anxiety and improve collective cooperation."
-  evidence: "Corruption perception scores (Finland/Denmark leading clusters)"
+  evidence: "r=0.392 correlation between corruption-free contribution and happiness score, WHR 2025 — weakest of five major factors; Singapore leads at 0.512, Finland 0.491, Denmark 0.474"
   covers:
     explains: [institutional_trust]
     aggregates: [corruption_score]
@@ -93,7 +93,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is a: prerequisite
   context: "Physical capacity for life satisfaction"
   mechanism: "absence of chronic pain and mobility limits enables active participation in society"
-  evidence: "WHO Healthy Life Expectancy (HALE) metrics"
+  evidence: "r=0.678 correlation between health contribution and happiness score, WHR 2025, n=147; Iceland 0.996, Finland 0.939, Denmark 0.930"
   covers:
     explains: [long_term_well_being]
     aggregates: [healthy_life_expectancy]
