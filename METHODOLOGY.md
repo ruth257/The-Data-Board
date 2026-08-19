@@ -75,6 +75,8 @@ Every concept lives at one of three levels. Confusing them is the most common fa
 
 **Calibrated naming cuts both ways.** Climb to a synthesized name only when the literal term would flatten a real mechanism — otherwise keep it. "Healthy Life Expectancy" needs no synthesis. "Resource Elasticity" earns its keep over "Income" because it names the gap between raw wealth and the freedom it buys. Jargon that explains nothing new is worse than the plain term it replaced.
 
+**Where this lives in the YAML logic block:** `seed` is Rung 1 (the literal field the concept was calibrated from), `evidence` is Rung 2 (the checkable fact), and the concept's name itself is Rung 3. For Resource Elasticity: `seed: "Income"` → `evidence: "r=0.745, n=147"` → **Resource Elasticity**. `downstream`/`upstream` are a different axis entirely — which *other concepts on the same board* this one feeds into or comes from — not a rung, and only ever pointing at a concept that actually exists on that board.
+
 ---
 
 ## THE THREE PILLARS OF REASONING
