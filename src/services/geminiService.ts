@@ -154,11 +154,17 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       - Most concepts pass this cleanly with no change. This is a narrow check for the specific case where a pattern is fully explained by something else already on the board — it is not a reason to doubt every concept or drop ones you can't fully rule out.
       - If a visible alternative variable explains the same split just as well: keep the concept, but downgrade centrality one notch (e.g. DOMINANT to PRESENT) and name the confound directly in "dataInsight" (e.g. "this mostly tracks X, not an independent effect").
       - Only set "evidenceGrounded" to false or drop the concept if the association actually disappears or reverses once you account for the confound — not merely because a plausible alternative exists.
+
+      KNOWLEDGE-GROUNDED EVIDENCE (a second legitimate channel, not a downgrade from the above):
+      - You may also ground this concept in real, well-established outside knowledge, as long as it enriches an entity or dimension actually present in THE DATASET above (e.g. a country, a category, a label already in the rows) — never a fact with no connection to anything in the data.
+      - Pitch it at human sensemaking grain — what a broadly-read analyst would already know and say out loud ("Japan has long run a managed, intervention-prone currency policy") — never manufactured precision like an invented exact index score or ranking you don't reliably know.
+      - If you use this, set "evidenceGrounded" to true and say plainly in "dataInsight" that this is outside knowledge about [the enriched entity], not a row in the dataset sample — still real and checkable, just from a different source than the rows above.
     `
     : `
       GROUNDING RULE — READ THIS FIRST:
       - No dataset sample was provided for this scenario — you only have the text context below, not real rows to check.
-      - Set "evidenceGrounded" to false. "dataInsight" must be prefixed with "General domain knowledge (not data-verified): " and should draw on well-established facts about this domain, not an invented statistic.
+      - You may still ground this concept in real, well-established outside knowledge — general, recognizable facts a broadly-read analyst would know, pitched at human sensemaking grain, never a manufactured exact statistic or ranking. If you can state something specific and genuinely well-established, set "evidenceGrounded" to true and say plainly in "dataInsight" that this is outside knowledge, not data from this board.
+      - If you can't point to anything specific and well-established — only a plausible-sounding guess — set "evidenceGrounded" to false and say so plainly in "dataInsight" rather than inventing a claim.
     `;
 
   const response = await callAIProxy("gemini-3-flash-preview",
@@ -250,11 +256,17 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       - Most tiles pass this cleanly with no change. This is a narrow check for the specific case where one tile's pattern is fully explained by another — it is not a reason to thin out the board or leave only 2-3 tiles.
       - If a visible alternative variable explains the same split just as well: keep the tile, but downgrade centrality one notch (e.g. DOMINANT to PRESENT) and name the confound directly in "dataInsight" (e.g. "this mostly tracks X, not an independent effect").
       - Only set "evidenceGrounded" to false or drop a tile if the association actually disappears or reverses once you account for the confound — not merely because a plausible alternative exists.
+
+      KNOWLEDGE-GROUNDED EVIDENCE (a second legitimate channel, not a downgrade from the above):
+      - A tile may also be grounded in real, well-established outside knowledge, as long as it enriches an entity or dimension actually present in THE DATASET above (e.g. a country, a category, a label already in the rows) — never a fact with no connection to anything in the data.
+      - Pitch it at human sensemaking grain — what a broadly-read analyst would already know and say out loud — never manufactured precision like an invented exact index score or ranking you don't reliably know.
+      - If you use this for a tile, set "evidenceGrounded" to true and say plainly in "dataInsight" that this is outside knowledge about the enriched entity, not a row in the dataset sample.
     `
     : `
       GROUNDING RULE — READ THIS FIRST:
       - No dataset sample was provided for this scenario — you only have the text context below, not real rows to check.
-      - Set "evidenceGrounded" to false for every tile. Each "dataInsight" must be prefixed with "General domain knowledge (not data-verified): " and draw on well-established facts about this domain, not an invented statistic.
+      - A tile may still be grounded in real, well-established outside knowledge — general, recognizable facts a broadly-read analyst would know, pitched at human sensemaking grain, never a manufactured exact statistic or ranking. If you can state something specific and genuinely well-established, set "evidenceGrounded" to true and say plainly in "dataInsight" that this is outside knowledge, not data from this board.
+      - If you can't point to anything specific and well-established for a tile — only a plausible-sounding guess — set "evidenceGrounded" to false and say so plainly in "dataInsight" rather than inventing a claim.
     `;
 
   const response = await callAIProxy("gemini-3-flash-preview",
@@ -412,8 +424,9 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       4. CALIBRATED NAMING CUTS BOTH WAYS: reach for a synthesized "Mechanism" name only when the literal column/field name would flatten something real (e.g., "Social Support" → "Communal Safety Net" earns its keep because it names the buffering mechanism). If the literal term is already the clearest handle, keep it — do not manufacture jargon for its own sake.
       5. PSEUDO-ANTONYMS ARE CONDITIONAL: across the WHOLE 8-12 tile board, expect only a small number of genuine tension pairs (typically 1-2) that represent a real structural fault line running through the whole dataset — not a single direction in it. Most tiles should have no pseudo-antonym at all. Only pair concepts when a domain expert would recognize the opposition as real; do not force a tug-of-war onto every concept.
       6. For each tile, provide a word, centrality, and a brief explanation/dataInsight based on evidence.
-      7. GROUNDING RULE: "dataInsight" MUST cite specific values, rows, or a specific comparison you can actually see in the CSV DATA SAMPLE above — quote or closely paraphrase the real numbers/categories, don't describe a plausible-sounding trend you didn't check. Set "evidenceGrounded" to true only when you did this; if a candidate concept isn't really supported by the sample, either drop it or set "evidenceGrounded" to false and say what's missing in "dataInsight".
-      8. CONFOUND CHECK (Pearl-style: before locking in centrality, ask "what else could explain this split?"): only when another column or another tile you're proposing visibly explains the same pattern, keep the tile but downgrade centrality one notch and name the confound in "dataInsight" (e.g. "this mostly tracks X, not an independent effect") instead of dropping it. Only drop a tile if the pattern actually disappears or reverses once you account for the confound. This check should change a small minority of tiles, not most of them — do not let it shrink the 8-12 tile board down to a handful.
+      7. GROUNDING RULE: "dataInsight" MUST cite specific values, rows, or a specific comparison you can actually see in the CSV DATA SAMPLE above — quote or closely paraphrase the real numbers/categories, don't describe a plausible-sounding trend you didn't check. Set "evidenceGrounded" to true only when you did this.
+      8. KNOWLEDGE-GROUNDED EVIDENCE (a second legitimate channel, not a downgrade from #7): a tile may also be grounded in real, well-established outside knowledge, as long as it enriches an entity or dimension actually present in the CSV sample (e.g. a country or category that appears in the rows) — never a fact with no connection to anything in the data. Pitch it at human sensemaking grain — what a broadly-read analyst would already know and say out loud — never a manufactured exact statistic or ranking. If you use this, set "evidenceGrounded" to true and say plainly in "dataInsight" that this is outside knowledge about the enriched entity, not a row in the sample. If a candidate concept has neither a real row nor real outside knowledge behind it, drop it or set "evidenceGrounded" to false and say what's missing.
+      9. CONFOUND CHECK (Pearl-style: before locking in centrality, ask "what else could explain this split?"): only when another column or another tile you're proposing visibly explains the same pattern, keep the tile but downgrade centrality one notch and name the confound in "dataInsight" (e.g. "this mostly tracks X, not an independent effect") instead of dropping it. Only drop a tile if the pattern actually disappears or reverses once you account for the confound. This check should change a small minority of tiles, not most of them — do not let it shrink the 8-12 tile board down to a handful.
 
       Return JSON:
       {

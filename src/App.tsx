@@ -246,7 +246,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                     </>
                   )
                 },
-                { name: "Grounded Evidence", body: "A claim is grounded only when it cites specific values from a real dataset the AI was actually given — not when it merely sounds plausible for the domain. When no dataset is available, the honest label is \"general domain knowledge, not data-verified,\" not an invented statistic dressed up as one." },
+                { name: "Grounded Evidence", body: "Two legitimate channels, not one. Dataset-grounded: cites specific values from a real dataset the AI was actually given. Knowledge-grounded: real, well-established outside knowledge — pitched at human sensemaking grain, never a manufactured exact statistic — but only when it enriches an entity already present in the data (a country, a category, a label already in the rows). Both count as grounded, and both say plainly which channel they used. What's banned is a third thing: a plausible-sounding claim with no dataset row and no real source behind it." },
                 { name: "Verification Shift", body: "When vocabulary is supplied, the AI moves from invention to verification — checking whether concepts are descriptive, domain-coherent, and evidentially grounded rather than generating labels freely. The AI stops guessing meaning and starts checking it." },
                 { name: "Concept (Glaser & Strauss, 1967)", body: "A label earns concept status only once multiple, diverse indicators converge on the same underlying mechanism. A single grounded data point is an indicator, not a concept — it points toward a possible category, it doesn't establish one. Where indicators diverge — the same statistical direction produced by genuinely different mechanisms — the honest result is not a concept; it's residual." },
                 { name: "Theoretical Saturation", body: "The signal to stop refining a concept, or to stop generating new ones. A concept is saturated once new indicators only extend its range instead of reshaping what it means. A board is complete, for the evidence at hand, not when every data point has a label, but when the next candidate grouping fails the convergence test — that failure is the stopping signal, named honestly in the residual rather than forced into a manufactured concept." },
@@ -419,9 +419,13 @@ Core directives:
 2. Concept-first, then check: propose the way an analyst actually thinks — a
    hypothesis drawn from domain knowledge — then check it against the data.
    Do not enumerate columns and wait for patterns to emerge.
-3. Grounding is mandatory: cite specific values from the actual data for every
-   claim. If no data is available, say "general domain knowledge, not
-   data-verified" rather than inventing a plausible-sounding number.
+3. Grounding is mandatory, through either of two channels: cite specific
+   values from the actual data, OR cite real, well-established outside
+   knowledge that enriches an entity already present in the data (a
+   country, a category, a label already in the rows) — pitched at human
+   sensemaking grain, never a manufactured exact statistic. Say plainly
+   which channel you used. Neither present → say "general domain
+   knowledge, not verified" rather than inventing a plausible-sounding claim.
 4. Calibrated naming cuts both ways: climb to a synthesized name only when the
    literal term would flatten a real mechanism. Otherwise keep the literal term.
 5. Pseudo-Antonyms are conditional, not mandatory: only pair a concept with a

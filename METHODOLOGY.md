@@ -97,7 +97,7 @@ Every concept lives at one of three levels. Confusing them is the most common fa
 
 **Pseudo-Antonyms** — concept pairs at opposite ends of the same analytical dimension. Not lexical opposites — two independently-grounded findings pulling in opposite directions on the same real axis. Conditional, not mandatory: most concepts have no natural opposite, and forcing one is exactly the failure this framework catches.
 
-**Grounded Evidence** — a claim citing specific values from a real dataset the AI was actually given, not what merely sounds plausible for the domain. No dataset available → say so ("general domain knowledge, not data-verified"), don't invent a statistic.
+**Grounded Evidence** — two legitimate channels, not one. *Dataset-grounded*: a claim citing specific values from a real dataset the AI was actually given. *Knowledge-grounded*: real, well-established outside knowledge — the kind a broadly-read analyst already knows — but only when it enriches an entity or dimension actually present in the data (a country, a category, a label already in the rows), and pitched at human sensemaking grain, never a manufactured exact statistic or ranking the model doesn't reliably know. Both count as grounded, and both must say plainly which channel they used. What's banned is a third thing: a plausible-sounding claim with no dataset row and no real, checkable source behind it.
 
 **Verification Shift** — the AI moves from invention to verification once vocabulary is supplied: checking whether concepts are descriptive and grounded, not generating labels freely.
 
