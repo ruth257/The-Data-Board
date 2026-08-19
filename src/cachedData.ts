@@ -3,7 +3,7 @@ import { Tile, Centrality, BoardMetrics, NarrativeThread } from "./types";
 // Bump this whenever CACHED_BOARDS content changes meaningfully. The app
 // clears any locally-saved board that predates this version, so returning
 // visitors see fresh cached data instead of a permanently stale local copy.
-export const CACHED_DATA_VERSION = "10";
+export const CACHED_DATA_VERSION = "11";
 
 export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetrics, cachedExpansion?: Tile[], threads?: NarrativeThread[] }> = {
   "world-happiness-2025": {
@@ -22,7 +22,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is_a: baseline
   mechanism: "wealth buys agency, not just survival"
   evidence: "r=0.745, n=147"
-  downstream: "Life Satisfaction"
+  downstream: "Agency Capacity, Agency-Resource Gap"
   scope: global`
       },
       {
@@ -39,7 +39,7 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is_a: buffer
   mechanism: "trusted networks buffer the psychological cost of crisis"
   evidence: "r=0.805, n=147 — strongest of six factors"
-  downstream: "Emotional Security"
+  downstream: "Digital Fragmentation"
   scope: global`
       },
       {
@@ -56,7 +56,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is_a: foundation
   mechanism: "transparent institutions reduce systemic anxiety"
   evidence: "r=0.392, n=147 — weakest of five major factors"
-  downstream: "Systemic Agency"
   scope: global`
       },
       {
@@ -73,7 +72,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is_a: prerequisite
   mechanism: "physical health enables active participation"
   evidence: "r=0.678, n=147"
-  downstream: "Life Satisfaction"
   scope: global`
       },
       {
@@ -142,7 +140,6 @@ export const CACHED_BOARDS: Record<string, { tiles: Tile[], metrics: BoardMetric
   is_a: stabilizer
   mechanism: "shared ritual buffers against societal change"
   evidence: "Israel #8, Mexico #12"
-  downstream: "Social Cohesion"
   contrasts_with: "Digital Fragmentation"
   scope: global`
       }
