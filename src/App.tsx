@@ -1223,7 +1223,7 @@ export default function App() {
       const found = scenarios.find(s => s.id === saved);
       if (found) return found;
     }
-    return scenarios[0];
+    return scenarios.find(s => s.id === "world-happiness-2025") || scenarios[0];
   });
   const [tiles, setTiles] = useState<Tile[]>(() => {
     // Invalidate locally-saved boards from before this version of CACHED_BOARDS,
