@@ -925,17 +925,33 @@ const LogicBoard = ({
   );
 };
 
-const TileCard = React.memo(({ 
-  tile, 
-  isSelected, 
+// Pulls the compact key: value fields out of a tile.logic block (seed/mechanism/evidence/downstream...)
+// without requiring it to be strict YAML — the block leads with `concept "Name"`, not `concept:`.
+const parseLogicFields = (logic?: string) => {
+  if (!logic) return null;
+  const fields: Record<string, string> = {};
+  const lineRe = /^\s*(seed|mechanism|evidence|downstream|upstream|contrasts_with|scope|is_a)\s*:\s*"?([^"\n]+?)"?\s*$/gm;
+  let m;
+  while ((m = lineRe.exec(logic)) !== null) {
+    fields[m[1]] = m[2].trim();
+  }
+  return Object.keys(fields).length > 0 ? fields : null;
+};
+
+const TileCard = React.memo(({
+  tile,
+  isSelected,
   onSelect,
   onEditLogic
-}: { 
-  tile: Tile, 
-  isSelected: boolean, 
+}: {
+  tile: Tile,
+  isSelected: boolean,
   onSelect: (tile: Tile | null) => void,
   onEditLogic: (tile: Tile) => void
 }) => {
+  const [showFullCitation, setShowFullCitation] = useState(false);
+  const logicFields = React.useMemo(() => parseLogicFields(tile.logic), [tile.logic]);
+
   const getCentralityColor = (centrality: Centrality) => {
     switch (centrality) {
       case Centrality.DOMINANT: return "bg-databoard-green text-white";
@@ -1027,7 +1043,7 @@ const TileCard = React.memo(({
               {tile.explanation}
             </p>
 
-            {tile.dataInsight && (
+            {(logicFields || tile.dataInsight) && (
               <div className={`mb-3 p-3 bg-white/10 border-l-2 ${tile.evidenceGrounded ? "border-databoard-green" : "border-white/30"}`}>
                 <p className={`text-[10px] uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1.5 ${tile.evidenceGrounded ? "text-databoard-green opacity-100" : "opacity-60"}`}>
                   {tile.evidenceGrounded ? (
@@ -1040,7 +1056,37 @@ const TileCard = React.memo(({
                     </>
                   )}
                 </p>
-                <p className="text-[13px] mono leading-relaxed">{tile.dataInsight}</p>
+
+                {logicFields ? (
+                  <dl className="text-[12px] mono leading-relaxed space-y-1">
+                    {logicFields.mechanism && (
+                      <div className="flex gap-1.5"><dt className="opacity-50 shrink-0">mechanism:</dt><dd>{logicFields.mechanism}</dd></div>
+                    )}
+                    {logicFields.evidence && (
+                      <div className="flex gap-1.5"><dt className="opacity-50 shrink-0">evidence:</dt><dd>{logicFields.evidence}</dd></div>
+                    )}
+                    {(logicFields.downstream || logicFields.upstream) && (
+                      <div className="flex gap-1.5">
+                        <dt className="opacity-50 shrink-0">{logicFields.downstream ? "downstream:" : "upstream:"}</dt>
+                        <dd>{logicFields.downstream || logicFields.upstream}</dd>
+                      </div>
+                    )}
+                  </dl>
+                ) : (
+                  <p className="text-[13px] mono leading-relaxed">{tile.dataInsight}</p>
+                )}
+
+                {logicFields && tile.dataInsight && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowFullCitation(v => !v); }}
+                    className="mt-2 text-[10px] mono uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity"
+                  >
+                    {showFullCitation ? "▾ Hide full citation" : "▸ Full citation"}
+                  </button>
+                )}
+                {logicFields && tile.dataInsight && showFullCitation && (
+                  <p className="text-[12px] mono leading-relaxed mt-1.5 pt-1.5 border-t border-white/10 opacity-80">{tile.dataInsight}</p>
+                )}
               </div>
             )}
           </div>
