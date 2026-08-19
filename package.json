@@ -7,10 +7,11 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build",
+    "build": "npm run validate:boards && vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "validate:boards": "tsx scripts/validate-boards.ts"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
