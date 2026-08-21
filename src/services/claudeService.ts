@@ -1,5 +1,7 @@
-import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
+import Anthropic from "@anthropic-ai/sdk";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "../types";
+
+const CLAUDE_MODEL = "claude-sonnet-5";
 
 const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay = 1000): Promise<T> => {
   let lastError: any;
@@ -8,33 +10,31 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay =
       return await fn();
     } catch (error: any) {
       lastError = error;
+      const status = error?.status;
       const message = error.message?.toLowerCase() || "";
-      const is503 = message.includes("503") || message.includes("unavailable") || message.includes("high demand") || message.includes("overloaded");
-      const is429 = message.includes("429") || message.includes("quota") || message.includes("rate limit") || message.includes("resource_exhausted");
+      const isOverloaded = status === 529 || message.includes("529") || message.includes("overloaded") || message.includes("high demand");
+      const isRateLimited = status === 429 || message.includes("429") || message.includes("rate_limit") || message.includes("rate limit");
       const isWarmup = message.includes("SERVER_WARMUP");
-      
-      // Retry on 503 (busy) or Warmup
-      if ((is503 || isWarmup) && i < maxRetries - 1) {
+
+      // Retry on overloaded (529) or warmup
+      if ((isOverloaded || isWarmup) && i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
         console.warn(`AI Service busy or warming up. Retrying in ${delay}ms... (Attempt ${i + 1}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
 
-      // Handle 429 (Quota)
-      if (is429) {
-        // Try to extract retry delay from the error message (e.g., "Please retry in 34s")
-        const retryMatch = message.match(/retry in ([\d.]+)s/);
+      // Handle rate limiting (429)
+      if (isRateLimited) {
+        const retryMatch = message.match(/retry.*?([\d.]+)\s*s/);
         if (retryMatch && i < maxRetries - 1) {
-          const waitTime = (parseFloat(retryMatch[1]) * 1000) + 1000; // Add 1s buffer
-          if (waitTime < 65000) { // Only auto-retry if wait is reasonable (< 65s)
-            console.warn(`Quota reached (429). Waiting ${waitTime}ms before retry... (Attempt ${i + 1}/${maxRetries})`);
+          const waitTime = (parseFloat(retryMatch[1]) * 1000) + 1000;
+          if (waitTime < 65000) {
+            console.warn(`Rate limited (429). Waiting ${waitTime}ms before retry... (Attempt ${i + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, waitTime));
             continue;
           }
         }
-        
-        // If we can't retry or it's a long wait, throw a clean error
         throw new Error("QUOTA_EXHAUSTED: You have reached the AI service limit. Please wait a moment, or provide your own API key in Settings to bypass shared limits.");
       }
 
@@ -44,61 +44,61 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay =
   throw lastError;
 };
 
-const callAIProxy = async (model: string, contents: any, config: any) => {
+interface ToolConfig {
+  name: string;
+  schema: any;
+}
+
+// Runs a single structured-output call: local key -> direct browser call to Claude,
+// or no key -> the shared server-side proxy. Forces a tool call instead of asking
+// for JSON in prose, so the result is already a real object, not text to reparse.
+const callClaudeProxy = async (model: string, prompt: string, tool: ToolConfig): Promise<any> => {
   return await withRetry(async () => {
-    const localKey = localStorage.getItem("GEMINI_API_KEY");
+    const localKey = localStorage.getItem("CLAUDE_API_KEY");
     // The platform injects the selected API key into process.env.API_KEY
     const platformKey = typeof process !== 'undefined' ? process.env?.API_KEY : null;
     const activeKey = localKey || platformKey;
-    
-    // If user has a private key or platform key, use it directly (client-side)
+
     if (activeKey) {
-      console.log(`[Data Board] Using ${localKey ? 'local' : 'platform'} API key.`);
-      const ai = new GoogleGenAI({ apiKey: activeKey });
-      const result = await ai.models.generateContent({ model, contents, config });
-      return { text: result.text || "" };
+      console.log(`[Data Board] Using ${localKey ? 'local' : 'platform'} Claude API key.`);
+      const anthropic = new Anthropic({ apiKey: activeKey, dangerouslyAllowBrowser: true });
+      const response = await anthropic.messages.create({
+        model,
+        max_tokens: 8192,
+        messages: [{ role: "user", content: prompt }],
+        tools: [{ name: tool.name, description: "Return the structured result for this task.", input_schema: tool.schema }],
+        tool_choice: { type: "tool", name: tool.name },
+      });
+      const block = response.content.find((b): b is Anthropic.ToolUseBlock => b.type === "tool_use" && b.name === tool.name);
+      if (!block) throw new Error("Claude did not return a structured response.");
+      return block.input;
     }
 
-    // Otherwise, use the shared server-side proxy
     console.log("[Data Board] Using server-side AI proxy.");
     const response = await fetch("/api/ai/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model, contents, config }),
+      body: JSON.stringify({ model, prompt, tool }),
     });
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error("API_KEY_REQUIRED: This action requires an AI connection. Please add your Gemini API key in Settings (The Vault) to continue.");
+        throw new Error("API_KEY_REQUIRED: This action requires an AI connection. Please add your Claude API key in Settings (The Vault) to continue.");
       }
-      
+
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         const error = await response.json();
         let errorMessage = "AI request failed";
-        
-        // Extract the most relevant error message
+
         if (error.error) {
-          if (typeof error.error === 'object') {
-            errorMessage = error.error.message || JSON.stringify(error.error);
-          } else {
-            errorMessage = String(error.error);
-          }
+          errorMessage = typeof error.error === 'object' ? (error.error.message || JSON.stringify(error.error)) : String(error.error);
         } else if (error.message) {
           errorMessage = error.message;
         }
 
-        // Add retry info if available
         if (error.retryAfter) {
           errorMessage = `${errorMessage} (RETRY_AFTER:${error.retryAfter})`;
-        }
-        
-        // If the error message is still a JSON string (sometimes happens with ApiError), try to parse it
-        if (errorMessage.includes('{"error":')) {
-          try {
-            const nested = JSON.parse(errorMessage);
-            if (nested.error?.message) errorMessage = nested.error.message;
-          } catch (e) { /* ignore */ }
         }
 
         throw new Error(errorMessage);
@@ -108,9 +108,10 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
           throw new Error("SERVER_WARMUP: The server is still starting up. Please wait a few seconds and try again.");
         }
         console.error(`[Data Board] Server error (${response.status}):`, text);
-        throw new Error(`Server error (${response.status}). ${text.includes("503") ? "The AI service is currently overloaded. Please try again in a few seconds." : "Please check server logs."}`);
+        throw new Error(`Server error (${response.status}). ${text.includes("529") ? "The AI service is currently overloaded. Please try again in a few seconds." : "Please check server logs."}`);
       }
     }
+
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       const text = await response.text();
@@ -119,17 +120,8 @@ const callAIProxy = async (model: string, contents: any, config: any) => {
     }
 
     const data = await response.json();
-    return { text: data.text || "" };
+    return data.result;
   });
-};
-
-const cleanJsonResponse = (text: string) => {
-  // Remove markdown code blocks if present
-  let cleaned = text.trim();
-  if (cleaned.startsWith("```")) {
-    cleaned = cleaned.replace(/^```json\n?/, "").replace(/\n?```$/, "");
-  }
-  return cleaned;
 };
 
 const generateId = () => {
@@ -167,7 +159,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       - If you can't point to anything specific and well-established — only a plausible-sounding guess — set "evidenceGrounded" to false and say so plainly in "dataInsight" rather than inventing a claim.
     `;
 
-  const response = await callAIProxy("gemini-3-flash-preview",
+  const result = await callClaudeProxy(CLAUDE_MODEL,
     `
       Evaluate the handle "${word}" for the subject: "${scenario.title}".
 
@@ -189,8 +181,6 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing Board: ${existingWords.join(", ")}
 
-      Return JSON: correctedWord, centrality, explanation, dataInsight, evidenceGrounded, source, category, logic.
-
       LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
       CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
       clause or a bare stat, never a sentence. The full explanation belongs in
@@ -208,25 +198,23 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       Do NOT invent a numeric confidence/fidelity/specificity score for this concept — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
     `,
     {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+      name: "evaluate_handle",
+      schema: {
+        type: "object",
         properties: {
-          correctedWord: { type: Type.STRING },
-          centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
-          explanation: { type: Type.STRING },
-          dataInsight: { type: Type.STRING },
-          evidenceGrounded: { type: Type.BOOLEAN },
-          source: { type: Type.STRING },
-          category: { type: Type.STRING },
-          logic: { type: Type.STRING },
+          correctedWord: { type: "string" },
+          centrality: { type: "string", enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
+          explanation: { type: "string" },
+          dataInsight: { type: "string" },
+          evidenceGrounded: { type: "boolean" },
+          source: { type: "string" },
+          category: { type: "string" },
+          logic: { type: "string" },
         },
         required: ["correctedWord", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "logic"],
       },
     }
   );
-
-  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
 
   return {
     id: generateId(),
@@ -269,7 +257,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       - If you can't point to anything specific and well-established for a tile — only a plausible-sounding guess — set "evidenceGrounded" to false and say so plainly in "dataInsight" rather than inventing a claim.
     `;
 
-  const response = await callAIProxy("gemini-3-flash-preview",
+  const result = await callClaudeProxy(CLAUDE_MODEL,
     `
       Suggest "Human Domain Vocabulary" for the subject: "${scenario.title}".
 
@@ -293,8 +281,6 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       Outcomes: ${(scenario.outcomes || []).join(", ")}
       Existing: ${existingWords.join(", ")}
 
-      Return JSON array: word, centrality, explanation, dataInsight, evidenceGrounded, source, category, isAIConfirmed, logic.
-
       LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
       CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
       clause or a bare stat, never a sentence. The full explanation belongs in
@@ -314,40 +300,37 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       CRITICAL: You MUST return at least 5 unique human-readable handles.
     `,
     {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            word: { type: Type.STRING },
-            centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
-            explanation: { type: Type.STRING },
-            dataInsight: { type: Type.STRING },
-            evidenceGrounded: { type: Type.BOOLEAN },
-            source: { type: Type.STRING },
-            category: { type: Type.STRING },
-            isAIConfirmed: { type: Type.BOOLEAN },
-            logic: { type: Type.STRING },
+      name: "suggest_vocabulary",
+      schema: {
+        type: "object",
+        properties: {
+          tiles: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                word: { type: "string" },
+                centrality: { type: "string", enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
+                explanation: { type: "string" },
+                dataInsight: { type: "string" },
+                evidenceGrounded: { type: "boolean" },
+                source: { type: "string" },
+                category: { type: "string" },
+                isAIConfirmed: { type: "boolean" },
+                logic: { type: "string" },
+              },
+              required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "isAIConfirmed", "logic"],
+            },
           },
-          required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "source", "category", "isAIConfirmed", "logic"],
         },
+        required: ["tiles"],
       },
     }
   );
 
-  const resultsRaw = response.text || "[]";
-  console.log("Raw AI Response for Vocabulary:", resultsRaw);
-  
-  let results;
-  try {
-    results = JSON.parse(cleanJsonResponse(resultsRaw));
-  } catch (e) {
-    console.error("Failed to parse AI response:", e);
-    results = [];
-  }
-  
-  return (Array.isArray(results) ? results : []).map((result: any) => ({
+  const results = Array.isArray(result.tiles) ? result.tiles : [];
+
+  return results.map((result: any) => ({
     id: generateId(),
     word: result.word || "Unknown",
     centrality: (result.centrality as Centrality) || Centrality.PRESENT,
@@ -366,7 +349,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     return { explanation: "No data on board to evaluate." };
   }
 
-  const response = await callAIProxy("gemini-3-flash-preview",
+  const result = await callClaudeProxy(CLAUDE_MODEL,
     `
       Synthesize the "Eureka Moment" of this board for scenario: "${scenario.title}".
 
@@ -381,24 +364,21 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
       - EMERGENT PATTERNS: These should be high-level narrative "Handles" that emerge from the interaction of the board's concepts. They MUST be consistent with the logic defined in the YAML.
       - SYNTHESIS: Provide a 1-sentence "Headline Insight" that summarizes the inevitable conclusion using the board's vocabulary.
       - Do NOT invent a numeric confidence/quality score for the board — the app computes its own grounding statistic directly from real data, and a second, AI-guessed number would just contradict it.
-
-      Return JSON: explanation, synthesis, emergentPatterns.
     `,
     {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+      name: "synthesize_board",
+      schema: {
+        type: "object",
         properties: {
-          explanation: { type: Type.STRING },
-          synthesis: { type: Type.STRING },
-          emergentPatterns: { type: Type.ARRAY, items: { type: Type.STRING } },
+          explanation: { type: "string" },
+          synthesis: { type: "string" },
+          emergentPatterns: { type: "array", items: { type: "string" } },
         },
         required: ["explanation", "synthesis", "emergentPatterns"],
       },
     }
   );
 
-  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
   return {
     explanation: result.explanation || "Evaluation complete.",
     synthesis: result.synthesis,
@@ -410,13 +390,13 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
  * Analyzes CSV data to generate a new scenario and initial vocabulary.
  */
 export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Scenario, tiles: Tile[] }> => {
-  const response = await callAIProxy("gemini-3-flash-preview",
+  const result = await callClaudeProxy(CLAUDE_MODEL,
     `
       Analyze this CSV data sample and generate a "Databoard Scenario" and an initial "Vocabulary Board".
-      
+
       CSV DATA SAMPLE:
       ${csvSample}
-      
+
       INSTRUCTIONS:
       1. AUDIT THE TENSION: Do not simply re-state column names. Identify the underlying "Audit Narrative" the data suggests.
       2. Create a Scenario: title, description, context, and two primary opposing outcomes (e.g., ["Structural Stability", "Systemic Collapse"]).
@@ -427,12 +407,6 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       7. GROUNDING RULE: "dataInsight" MUST cite specific values, rows, or a specific comparison you can actually see in the CSV DATA SAMPLE above — quote or closely paraphrase the real numbers/categories, don't describe a plausible-sounding trend you didn't check. Set "evidenceGrounded" to true only when you did this.
       8. KNOWLEDGE-GROUNDED EVIDENCE (a second legitimate channel, not a downgrade from #7): a tile may also be grounded in real, well-established outside knowledge, as long as it enriches an entity or dimension actually present in the CSV sample (e.g. a country or category that appears in the rows) — never a fact with no connection to anything in the data. Pitch it at human sensemaking grain — what a broadly-read analyst would already know and say out loud — never a manufactured exact statistic or ranking. If you use this, set "evidenceGrounded" to true and say plainly in "dataInsight" that this is outside knowledge about the enriched entity, not a row in the sample. If a candidate concept has neither a real row nor real outside knowledge behind it, drop it or set "evidenceGrounded" to false and say what's missing.
       9. CONFOUND CHECK (Pearl-style: before locking in centrality, ask "what else could explain this split?"): only when another column or another tile you're proposing visibly explains the same pattern, keep the tile but downgrade centrality one notch and name the confound in "dataInsight" (e.g. "this mostly tracks X, not an independent effect") instead of dropping it. Only drop a tile if the pattern actually disappears or reverses once you account for the confound. This check should change a small minority of tiles, not most of them — do not let it shrink the 8-12 tile board down to a handful.
-
-      Return JSON:
-      {
-        "scenario": { "title": "...", "description": "...", "context": "...", "outcomes": ["...", "..."] },
-        "tiles": [ { "word": "...", "centrality": "DOMINANT|PRESENT|EDGE_CASE", "explanation": "...", "dataInsight": "...", "evidenceGrounded": true, "category": "...", "logic": "..." } ]
-      }
 
       LOGIC MARKUP (compact — for a human scanning the board, not a data dump):
       CRITICAL: Every field (tag) MUST start on a new line. Keep every value short — a
@@ -451,55 +425,53 @@ export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Sce
       Do NOT invent a numeric confidence/fidelity score for any tile — there is no measurement behind such a number, only a guess dressed as precision. Centrality (Dominant/Present/Edge Case) and evidenceGrounded are the only strength signals this board uses.
     `,
     {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+      name: "analyze_csv",
+      schema: {
+        type: "object",
         properties: {
           scenario: {
-            type: Type.OBJECT,
+            type: "object",
             properties: {
-              title: { type: Type.STRING },
-              description: { type: Type.STRING },
-              context: { type: Type.STRING },
-              outcomes: { type: Type.ARRAY, items: { type: Type.STRING } }
+              title: { type: "string" },
+              description: { type: "string" },
+              context: { type: "string" },
+              outcomes: { type: "array", items: { type: "string" } },
             },
-            required: ["title", "description", "context", "outcomes"]
+            required: ["title", "description", "context", "outcomes"],
           },
           tiles: {
-            type: Type.ARRAY,
+            type: "array",
             items: {
-              type: Type.OBJECT,
+              type: "object",
               properties: {
-                word: { type: Type.STRING },
-                centrality: { type: Type.STRING, enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
-                explanation: { type: Type.STRING },
-                dataInsight: { type: Type.STRING },
-                evidenceGrounded: { type: Type.BOOLEAN },
-                category: { type: Type.STRING },
-                logic: { type: Type.STRING }
+                word: { type: "string" },
+                centrality: { type: "string", enum: ["DOMINANT", "PRESENT", "EDGE_CASE"] },
+                explanation: { type: "string" },
+                dataInsight: { type: "string" },
+                evidenceGrounded: { type: "boolean" },
+                category: { type: "string" },
+                logic: { type: "string" },
               },
-              required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "category", "logic"]
-            }
-          }
+              required: ["word", "centrality", "explanation", "dataInsight", "evidenceGrounded", "category", "logic"],
+            },
+          },
         },
-        required: ["scenario", "tiles"]
-      }
+        required: ["scenario", "tiles"],
+      },
     }
   );
 
-  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
-  
   const scenario: Scenario = {
     id: `custom-${Date.now()}`,
     title: result.scenario.title,
     description: result.scenario.description,
     context: result.scenario.context,
-    outcomes: result.scenario.outcomes || ["Outcome A", "Outcome B"]
+    outcomes: result.scenario.outcomes || ["Outcome A", "Outcome B"],
   };
 
   const tiles: Tile[] = (result.tiles || []).map((t: any, i: number) => ({
     id: `tile-${Date.now()}-${i}`,
-    ...t
+    ...t,
   }));
 
   return { scenario, tiles };
@@ -518,7 +490,7 @@ const generateThreadId = () => `thread-${generateId()}`;
 export async function clusterIntoThreads(scenario: Scenario, tiles: Tile[]): Promise<NarrativeThread[]> {
   if (!Array.isArray(tiles) || tiles.length < 2) return [];
 
-  const response = await callAIProxy("gemini-3-flash-preview",
+  const result = await callClaudeProxy(CLAUDE_MODEL,
     `
       Group the concepts on this board into narrative threads for scenario: "${scenario.title}".
 
@@ -545,40 +517,30 @@ export async function clusterIntoThreads(scenario: Scenario, tiles: Tile[]): Pro
         exhaustive, it just needs to be honest that the board is not the whole picture.
 
       Context: ${scenario.context}
-
-      Return JSON: { "threads": [{ "title": ..., "conceptWords": [...], "synthesis": ... }], "unaddressed": "..." }
     `,
     {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+      name: "cluster_threads",
+      schema: {
+        type: "object",
         properties: {
           threads: {
-            type: Type.ARRAY,
+            type: "array",
             items: {
-              type: Type.OBJECT,
+              type: "object",
               properties: {
-                title: { type: Type.STRING },
-                conceptWords: { type: Type.ARRAY, items: { type: Type.STRING } },
-                synthesis: { type: Type.STRING },
+                title: { type: "string" },
+                conceptWords: { type: "array", items: { type: "string" } },
+                synthesis: { type: "string" },
               },
               required: ["title", "conceptWords", "synthesis"],
             },
           },
-          unaddressed: { type: Type.STRING },
+          unaddressed: { type: "string" },
         },
         required: ["threads", "unaddressed"],
       },
     }
   );
-
-  let result: any;
-  try {
-    result = JSON.parse(cleanJsonResponse(response.text || "{}"));
-  } catch (e) {
-    console.error("Failed to parse thread clustering response:", e);
-    result = {};
-  }
 
   const threadResults = Array.isArray(result.threads) ? result.threads : [];
   const threads: NarrativeThread[] = threadResults.map((r: any) => ({
@@ -619,7 +581,7 @@ export async function synthesizeThread(
     return { coheres: "no", synthesis: "", missingLink: "A thread needs at least 2 concepts to test for a shared story." };
   }
 
-  const response = await callAIProxy("gemini-3-flash-preview",
+  const result = await callClaudeProxy(CLAUDE_MODEL,
     `
       Audit whether this specific set of concepts coheres into ONE story for scenario: "${scenario.title}".
 
@@ -636,24 +598,21 @@ export async function synthesizeThread(
         what's missing in missingLink instead.
 
       Context: ${scenario.context}
-
-      Return JSON: coheres ("yes"|"partial"|"no"), synthesis, missingLink.
     `,
     {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
+      name: "synthesize_thread",
+      schema: {
+        type: "object",
         properties: {
-          coheres: { type: Type.STRING, enum: ["yes", "partial", "no"] },
-          synthesis: { type: Type.STRING },
-          missingLink: { type: Type.STRING },
+          coheres: { type: "string", enum: ["yes", "partial", "no"] },
+          synthesis: { type: "string" },
+          missingLink: { type: "string" },
         },
         required: ["coheres", "synthesis"],
       },
     }
   );
 
-  const result = JSON.parse(cleanJsonResponse(response.text || "{}"));
   return {
     coheres: (result.coheres as "yes" | "partial" | "no") || "partial",
     synthesis: result.synthesis || "",
