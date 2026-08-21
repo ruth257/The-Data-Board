@@ -3,7 +3,7 @@ import path from "path";
 import cors from "cors";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import Anthropic from "@anthropic-ai/sdk";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -33,52 +33,59 @@ async function startServer() {
     // AI Status Endpoint
     app.get("/api/ai/status", (req, res) => {
       console.log(`[Data Board] [${new Date().toISOString()}] GET /api/ai/status`);
-      const apiKey = process.env.WEBSITE_API_KEY || process.env.DATA_BOARD_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY;
+      const apiKey = process.env.WEBSITE_API_KEY || process.env.DATA_BOARD_KEY || process.env.ANTHROPIC_API_KEY || process.env.API_KEY;
       const maskedKey = apiKey ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : null;
-      
-      res.json({ 
+
+      res.json({
         isReady: !!apiKey,
-        source: process.env.WEBSITE_API_KEY ? "WEBSITE_API_KEY (Secret)" : process.env.DATA_BOARD_KEY ? "DATA_BOARD_KEY (Secret)" : process.env.GEMINI_API_KEY ? "GEMINI_API_KEY (System)" : process.env.API_KEY ? "API_KEY (Platform)" : "None",
+        source: process.env.WEBSITE_API_KEY ? "WEBSITE_API_KEY (Secret)" : process.env.DATA_BOARD_KEY ? "DATA_BOARD_KEY (Secret)" : process.env.ANTHROPIC_API_KEY ? "ANTHROPIC_API_KEY (System)" : process.env.API_KEY ? "API_KEY (Platform)" : "None",
         maskedKey: maskedKey
       });
     });
 
     // Unified AI Proxy Endpoint
     app.post(["/api/ai/generate", "/api/ai/generate/"], async (req, res) => {
-      const apiKey = process.env.WEBSITE_API_KEY || process.env.DATA_BOARD_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY;
-      
+      const apiKey = process.env.WEBSITE_API_KEY || process.env.DATA_BOARD_KEY || process.env.ANTHROPIC_API_KEY || process.env.API_KEY;
+
       if (!apiKey) {
         console.error("[Data Board] No API key found in environment.");
-        return res.status(401).json({ 
-          error: "API Key Required", 
-          message: "This action requires an AI connection. Please add your Gemini API key in the Vault (Settings) to continue." 
+        return res.status(401).json({
+          error: "API Key Required",
+          message: "This action requires an AI connection. Please add your Claude API key in the Vault (Settings) to continue."
         });
       }
 
-      const { model, contents, config } = req.body;
-      const ai = new GoogleGenAI({ apiKey });
+      const { model, prompt, tool } = req.body;
+      const anthropic = new Anthropic({ apiKey });
       const maskedKey = `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`;
 
-      // Server-side retry for 503/504
+      // Server-side retry for overloaded/rate-limited responses
       let lastError: any;
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
-          console.log(`[Data Board] Proxying request to Gemini (Attempt ${attempt + 1}/3) using key: ${maskedKey}`);
-          const response = await ai.models.generateContent({
-            model: model || "gemini-3-flash-preview",
-            contents,
-            config
+          console.log(`[Data Board] Proxying request to Claude (Attempt ${attempt + 1}/3) using key: ${maskedKey}`);
+          const response = await anthropic.messages.create({
+            model: model || "claude-sonnet-5",
+            max_tokens: 8192,
+            messages: [{ role: "user", content: prompt }],
+            tools: [{ name: tool.name, description: "Return the structured result for this task.", input_schema: tool.schema }],
+            tool_choice: { type: "tool", name: tool.name },
           });
 
-          return res.json({ text: response.text || "" });
+          const block = response.content.find((b: any) => b.type === "tool_use" && b.name === tool.name) as any;
+          if (!block) {
+            return res.status(502).json({ error: "Claude did not return a structured response." });
+          }
+          return res.json({ result: block.input });
         } catch (error: any) {
           lastError = error;
+          const status = error.status;
           const message = error.message || "";
-          const isRetryable = message.includes("503") || message.includes("504") || message.includes("UNAVAILABLE") || message.includes("high demand");
-          
+          const isRetryable = status === 529 || message.includes("529") || message.includes("overloaded") || message.includes("high demand");
+
           if (isRetryable && attempt < 2) {
             const delay = 1000 * Math.pow(2, attempt);
-            console.warn(`[Data Board] Gemini busy (503). Retrying in ${delay}ms...`);
+            console.warn(`[Data Board] Claude overloaded (529). Retrying in ${delay}ms...`);
             await new Promise(resolve => setTimeout(resolve, delay));
             continue;
           }
@@ -90,25 +97,22 @@ async function startServer() {
       let message = lastError.message || "Internal Server Error";
       let retryAfter = 0;
 
-      // Extract retry delay from Gemini error details if available
-      if (lastError.status === 429 || lastError.message?.includes("429")) {
-        const retryMatch = lastError.message?.match(/retry in ([\d.]+)s/);
+      if (lastError.status === 429 || message.includes("429") || message.includes("rate_limit")) {
+        const retryMatch = message.match(/retry.*?([\d.]+)\s*s/);
         if (retryMatch) {
           retryAfter = Math.ceil(parseFloat(retryMatch[1]));
         }
       }
 
-      if (message.includes("SERVICE_DISABLED")) {
-        message = "The 'Generative Language API' is disabled in your Google Cloud project.";
-      } else if (message.includes("API_KEY_INVALID")) {
+      if (message.includes("authentication_error") || message.includes("invalid x-api-key")) {
         message = "The API key provided is invalid. Please check your Secrets.";
-      } else if (message.includes("503") || message.includes("UNAVAILABLE")) {
+      } else if (lastError.status === 529 || message.includes("overloaded")) {
         message = "The AI service is currently overloaded. Please try again in a few seconds.";
-      } else if (message.includes("429") || message.includes("RESOURCE_EXHAUSTED")) {
-        message = "QUOTA_EXHAUSTED: You have reached the AI service limit. This usually means your API key is on the 'Free Tier' (20 requests/day).";
+      } else if (lastError.status === 429 || message.includes("rate_limit")) {
+        message = "QUOTA_EXHAUSTED: You have reached the AI service limit.";
       }
-      
-      res.status(lastError.status || 500).json({ 
+
+      res.status(lastError.status || 500).json({
         error: message,
         retryAfter: retryAfter
       });

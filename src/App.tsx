@@ -6,20 +6,11 @@ import { SCENARIOS } from "./constants";
 import { CACHED_BOARDS, CACHED_DATA_VERSION } from "./cachedData";
 import { CANDY_SCENARIO_ID, CANDY_DATASET_SAMPLE } from "./studyData";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "./types";
-import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread } from "./services/geminiService";
+import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread } from "./services/claudeService";
 import { NarrativeThreads } from "./components/NarrativeThreads";
 import { ReasoningGauge } from "./components/ReasoningGauge";
 
 import yaml from "js-yaml";
-
-declare global {
-  interface Window {
-    aistudio?: {
-      hasSelectedApiKey: () => Promise<boolean>;
-      openSelectKey: () => Promise<void>;
-    };
-  }
-}
 
 const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void; key?: React.Key }) => {
   const [activeStep, setActiveStep] = useState(0);
@@ -139,7 +130,7 @@ const MethodologyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                 </div>
                 <p className="text-sm opacity-80 leading-relaxed">
                   Have your own dataset? Click the <strong>Upload</strong> icon (bottom-right of the dashboard) to import any CSV or JSON file. 
-                  To enable real-time AI analysis of your private data, you must provide your own <strong>Gemini API key</strong> in the 
+                  To enable real-time AI analysis of your private data, you must provide your own <strong>Claude API key</strong> in the
                   Settings menu (Shield icon in the header).
                 </p>
               </div>
@@ -581,25 +572,23 @@ Workflow:
   );
 };
 
-const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySelected, isSystemKeyActive, systemStatus }: { 
-  isOpen: boolean; 
-  onClose: () => void; 
-  onSelectPlatformKey: () => void;
-  isPlatformKeySelected: boolean;
+const SettingsModal = ({ isOpen, onClose, isSystemKeyActive, systemStatus }: {
+  isOpen: boolean;
+  onClose: () => void;
   isSystemKeyActive: boolean;
   systemStatus: { source: string, maskedKey: string | null } | null;
-  key?: React.Key 
+  key?: React.Key
 }) => {
-  const [apiKey, setApiKey] = useState(localStorage.getItem("GEMINI_API_KEY") || "");
+  const [apiKey, setApiKey] = useState(localStorage.getItem("CLAUDE_API_KEY") || "");
   const [isSaved, setIsSaved] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSave = () => {
     if (!apiKey.trim()) {
-      localStorage.removeItem("GEMINI_API_KEY");
+      localStorage.removeItem("CLAUDE_API_KEY");
     } else {
-      localStorage.setItem("GEMINI_API_KEY", apiKey.trim());
+      localStorage.setItem("CLAUDE_API_KEY", apiKey.trim());
     }
     setIsSaved(true);
     setTimeout(() => {
@@ -612,7 +601,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
 
   const handleClear = () => {
     if (confirm("Clear manual API key?")) {
-      localStorage.removeItem("GEMINI_API_KEY");
+      localStorage.removeItem("CLAUDE_API_KEY");
       setApiKey("");
       window.location.reload();
     }
@@ -665,48 +654,22 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
                 <span className="text-[10px] mono uppercase font-bold text-databoard-red">Shared AI Inactive</span>
               </div>
               <p className="text-[10px] mono leading-tight opacity-70">
-                No shared key is configured. To enable AI for all users, add your key to the <strong>AI Studio Platform Settings</strong> as <code className="bg-ink/5 px-1 font-bold">WEBSITE_API_KEY</code>.
+                No shared key is configured. To enable AI for all users, add your key to the server environment as <code className="bg-ink/5 px-1 font-bold">WEBSITE_API_KEY</code>.
               </p>
             </div>
           )}
-
-          {/* Platform Key Selection (Preferred) */}
-          <div className="p-3 bg-databoard-green/10 border-2 border-databoard-green/30">
-            <h3 className="text-xs mono uppercase font-bold mb-1 flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isPlatformKeySelected ? 'bg-databoard-green' : 'bg-gray-300'}`} />
-              Platform Key Selection
-            </h3>
-            <p className="text-[10px] mono opacity-70 mb-3 leading-tight">
-              Use the built-in AI Studio key selector. This is the most secure way to connect.
-            </p>
-            <button 
-              onClick={onSelectPlatformKey}
-              className="w-full py-2 bg-databoard-green text-white mono uppercase font-bold text-[10px] hover:opacity-90 transition-opacity"
-            >
-              {isPlatformKeySelected ? "Key Selected" : "Select Platform Key"}
-            </button>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-ink/10"></div>
-            </div>
-            <div className="relative flex justify-center text-[10px] mono uppercase">
-              <span className="bg-bg px-2 text-ink/40">Or manual entry</span>
-            </div>
-          </div>
 
           {/* Manual Key Entry */}
           <div>
             <div className="mb-3 p-2 bg-databoard-yellow/5 border border-[#D4B84A]/30 text-[9px] mono leading-tight">
               <strong className="text-[#D4B84A] uppercase">Note:</strong> To analyze your own custom CSV data, you <strong>must</strong> provide your own API key here. Example scenarios work without a key.
             </div>
-            <label className="block text-[10px] mono uppercase font-bold mb-1">Gemini API Key</label>
-            <input 
+            <label className="block text-[10px] mono uppercase font-bold mb-1">Claude API Key</label>
+            <input
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="AIzaSy..."
+              placeholder="sk-ant-..."
               className="w-full bg-white border-2 border-ink p-2 mono text-sm focus:outline-none focus:ring-2 focus:ring-databoard-yellow"
             />
           </div>
@@ -728,7 +691,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
               )}
             </button>
             
-            {localStorage.getItem("GEMINI_API_KEY") && (
+            {localStorage.getItem("CLAUDE_API_KEY") && (
               <button 
                 onClick={handleClear}
                 className="w-full py-2 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all mono uppercase font-bold text-[9px]"
@@ -744,8 +707,8 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
               <HelpCircle className="w-3 h-3" /> How to get an API Key:
             </h4>
             <ol className="text-[9px] mono space-y-1 opacity-70 list-decimal pl-4">
-              <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline font-bold hover:text-databoard-yellow">Google AI Studio</a>.</li>
-              <li>Click <strong>"Create API key"</strong> and copy it.</li>
+              <li>Go to the <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" className="underline font-bold hover:text-databoard-yellow">Anthropic Console</a>.</li>
+              <li>Click <strong>"Create Key"</strong> and copy it.</li>
             </ol>
           </div>
         </div>
@@ -1328,7 +1291,7 @@ export default function App() {
   // Check for API key status on mount
   useEffect(() => {
     const checkKeyStatus = async () => {
-      const localKey = localStorage.getItem("GEMINI_API_KEY");
+      const localKey = localStorage.getItem("CLAUDE_API_KEY");
       const platformKey = typeof process !== 'undefined' ? process.env?.API_KEY : null;
       
       try {
@@ -1370,7 +1333,7 @@ export default function App() {
   useEffect(() => {
     if (isSettingsOpen) {
       const checkKeyStatus = async () => {
-        const localKey = localStorage.getItem("GEMINI_API_KEY");
+        const localKey = localStorage.getItem("CLAUDE_API_KEY");
         const platformKey = typeof process !== 'undefined' ? process.env?.API_KEY : null;
         try {
           const statusUrl = `${window.location.origin}/api/ai/status`;
@@ -1390,27 +1353,7 @@ export default function App() {
       checkKeyStatus();
     }
   }, [isSettingsOpen]);
-  const [isPlatformKeySelected, setIsPlatformKeySelected] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const checkPlatformKey = async () => {
-      if (window.aistudio?.hasSelectedApiKey) {
-        const selected = await window.aistudio.hasSelectedApiKey();
-        setIsPlatformKeySelected(selected);
-        if (selected) setHasApiKey(true);
-      }
-    };
-    checkPlatformKey();
-  }, []);
-
-  const handleOpenSelectKey = async () => {
-    if (window.aistudio?.openSelectKey) {
-      await window.aistudio.openSelectKey();
-      setIsPlatformKeySelected(true);
-      setHasApiKey(true);
-    }
-  };
 
   useEffect(() => {
     // Handle /methodology route for SEO/LLMO
@@ -1618,7 +1561,7 @@ export default function App() {
     }
   };
 
-  const handleGeminiSuggest = async () => {
+  const handleClaudeSuggest = async () => {
     if (isLoading) return;
 
     const existingWords = tiles.map(t => t.word);
@@ -1830,9 +1773,7 @@ export default function App() {
           <SettingsModal 
             key="settings-modal" 
             isOpen={isSettingsOpen} 
-            onClose={() => setIsSettingsOpen(false)} 
-            onSelectPlatformKey={handleOpenSelectKey}
-            isPlatformKeySelected={isPlatformKeySelected}
+            onClose={() => setIsSettingsOpen(false)}
             isSystemKeyActive={isSystemKeyActive}
             systemStatus={systemStatus}
           />
@@ -1926,7 +1867,7 @@ export default function App() {
               </div>
               <div className="flex gap-3 text-bg">
                 <span className="text-databoard-yellow font-bold mono">02.</span>
-                <p><strong className="text-bg uppercase tracking-wide">Analyze Your Own</strong><br/><span className="opacity-60 text-xs">Upload CSV/JSON. Requires a Gemini API key (Setup in the top header).</span></p>
+                <p><strong className="text-bg uppercase tracking-wide">Analyze Your Own</strong><br/><span className="opacity-60 text-xs">Upload CSV/JSON. Requires a Claude API key (Setup in the top header).</span></p>
               </div>
             </div>
           </section>
@@ -2099,7 +2040,7 @@ export default function App() {
                   <div className="flex gap-2">
                     <button
                       id="ai-suggestions"
-                      onClick={handleGeminiSuggest}
+                      onClick={handleClaudeSuggest}
                       disabled={isLoading}
                       className="w-full py-4 bg-databoard-yellow text-ink font-bold uppercase text-xs tracking-widest border-2 border-ink shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
                     >
@@ -2143,7 +2084,7 @@ export default function App() {
                       if (prevError.includes("metrics") || prevError.includes("Synthesize") || prevError.includes("SERVER_WARMUP") || prevError.includes("QUOTA_EXHAUSTED")) {
                         updateMetrics(undefined, true);
                       } else if (tiles.length === 0 || prevError.includes("vocabulary")) {
-                        handleGeminiSuggest();
+                        handleClaudeSuggest();
                       }
                     }}
                     disabled={retryCountdown !== null && retryCountdown > 0}
