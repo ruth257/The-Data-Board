@@ -1,7 +1,23 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI, Type } from "@google/genai";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "../types";
 
 const CLAUDE_MODEL = "claude-sonnet-5";
+const GEMINI_MODEL = "gemini-3-flash-preview";
+
+export type AIProvider = "claude" | "gemini";
+
+// Which provider to use: an explicit user choice in Settings wins; otherwise
+// default to Gemini inside Google AI Studio's Build environment (it injects
+// its own free Gemini key via window.aistudio) and Claude everywhere else.
+export const getActiveProvider = (): AIProvider => {
+  const saved = localStorage.getItem("AI_PROVIDER");
+  if (saved === "claude" || saved === "gemini") return saved;
+  return typeof window !== "undefined" && window.aistudio ? "gemini" : "claude";
+};
+
+export const getActiveLocalKey = (): string | null =>
+  localStorage.getItem(getActiveProvider() === "gemini" ? "GEMINI_API_KEY" : "CLAUDE_API_KEY");
 
 const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay = 1000): Promise<T> => {
   let lastError: any;
@@ -12,11 +28,11 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay =
       lastError = error;
       const status = error?.status;
       const message = error.message?.toLowerCase() || "";
-      const isOverloaded = status === 529 || message.includes("529") || message.includes("overloaded") || message.includes("high demand");
-      const isRateLimited = status === 429 || message.includes("429") || message.includes("rate_limit") || message.includes("rate limit");
+      const isOverloaded = status === 529 || message.includes("529") || message.includes("503") || message.includes("unavailable") || message.includes("overloaded") || message.includes("high demand");
+      const isRateLimited = status === 429 || message.includes("429") || message.includes("rate_limit") || message.includes("rate limit") || message.includes("resource_exhausted");
       const isWarmup = message.includes("SERVER_WARMUP");
 
-      // Retry on overloaded (529) or warmup
+      // Retry on overloaded/unavailable or warmup
       if ((isOverloaded || isWarmup) && i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
         console.warn(`AI Service busy or warming up. Retrying in ${delay}ms... (Attempt ${i + 1}/${maxRetries})`);
@@ -24,13 +40,13 @@ const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay =
         continue;
       }
 
-      // Handle rate limiting (429)
+      // Handle rate limiting / quota
       if (isRateLimited) {
         const retryMatch = message.match(/retry.*?([\d.]+)\s*s/);
         if (retryMatch && i < maxRetries - 1) {
           const waitTime = (parseFloat(retryMatch[1]) * 1000) + 1000;
           if (waitTime < 65000) {
-            console.warn(`Rate limited (429). Waiting ${waitTime}ms before retry... (Attempt ${i + 1}/${maxRetries})`);
+            console.warn(`Rate limited. Waiting ${waitTime}ms before retry... (Attempt ${i + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, waitTime));
             continue;
           }
@@ -49,21 +65,62 @@ interface ToolConfig {
   schema: any;
 }
 
-// Runs a single structured-output call: local key -> direct browser call to Claude,
-// or no key -> the shared server-side proxy. Forces a tool call instead of asking
-// for JSON in prose, so the result is already a real object, not text to reparse.
-const callClaudeProxy = async (model: string, prompt: string, tool: ToolConfig): Promise<any> => {
+const cleanJsonResponse = (text: string) => {
+  let cleaned = text.trim();
+  if (cleaned.startsWith("```")) {
+    cleaned = cleaned.replace(/^```json\n?/, "").replace(/\n?```$/, "");
+  }
+  return cleaned;
+};
+
+// The same JSON-Schema (plain "object"/"string"/"array"/"boolean") used for
+// Claude's tool input_schema, converted to Gemini's Type enum shape. One
+// schema per call site, not two, so the two providers can't drift apart.
+export const toGeminiSchema = (schema: any): any => {
+  if (schema.type === "object") {
+    const properties: any = {};
+    for (const key in schema.properties) properties[key] = toGeminiSchema(schema.properties[key]);
+    return { type: Type.OBJECT, properties, required: schema.required };
+  }
+  if (schema.type === "array") {
+    return { type: Type.ARRAY, items: toGeminiSchema(schema.items) };
+  }
+  if (schema.type === "boolean") {
+    return { type: Type.BOOLEAN };
+  }
+  // string
+  return schema.enum ? { type: Type.STRING, enum: schema.enum } : { type: Type.STRING };
+};
+
+// Runs a single structured-output call against whichever provider is active:
+// local key -> direct browser call, or no key -> the shared server-side proxy.
+// Claude forces a real tool call (the result is already a parsed object);
+// Gemini uses responseSchema and returns JSON text that needs parsing.
+const callAIModel = async (prompt: string, tool: ToolConfig): Promise<any> => {
+  const provider = getActiveProvider();
+
   return await withRetry(async () => {
-    const localKey = localStorage.getItem("CLAUDE_API_KEY");
+    const localKey = getActiveLocalKey();
     // The platform injects the selected API key into process.env.API_KEY
     const platformKey = typeof process !== 'undefined' ? process.env?.API_KEY : null;
     const activeKey = localKey || platformKey;
 
     if (activeKey) {
-      console.log(`[Data Board] Using ${localKey ? 'local' : 'platform'} Claude API key.`);
+      console.log(`[Data Board] Using ${localKey ? 'local' : 'platform'} ${provider} API key.`);
+
+      if (provider === "gemini") {
+        const ai = new GoogleGenAI({ apiKey: activeKey });
+        const response = await ai.models.generateContent({
+          model: GEMINI_MODEL,
+          contents: prompt,
+          config: { responseMimeType: "application/json", responseSchema: toGeminiSchema(tool.schema) },
+        });
+        return JSON.parse(cleanJsonResponse(response.text || "{}"));
+      }
+
       const anthropic = new Anthropic({ apiKey: activeKey, dangerouslyAllowBrowser: true });
       const response = await anthropic.messages.create({
-        model,
+        model: CLAUDE_MODEL,
         max_tokens: 8192,
         messages: [{ role: "user", content: prompt }],
         tools: [{ name: tool.name, description: "Return the structured result for this task.", input_schema: tool.schema }],
@@ -78,12 +135,12 @@ const callClaudeProxy = async (model: string, prompt: string, tool: ToolConfig):
     const response = await fetch("/api/ai/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model, prompt, tool }),
+      body: JSON.stringify({ provider, prompt, tool }),
     });
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error("API_KEY_REQUIRED: This action requires an AI connection. Please add your Claude API key in Settings (The Vault) to continue.");
+        throw new Error(`API_KEY_REQUIRED: This action requires an AI connection. Please add your ${provider === "gemini" ? "Gemini" : "Claude"} API key in Settings (The Vault) to continue.`);
       }
 
       const contentType = response.headers.get("content-type");
@@ -108,7 +165,7 @@ const callClaudeProxy = async (model: string, prompt: string, tool: ToolConfig):
           throw new Error("SERVER_WARMUP: The server is still starting up. Please wait a few seconds and try again.");
         }
         console.error(`[Data Board] Server error (${response.status}):`, text);
-        throw new Error(`Server error (${response.status}). ${text.includes("529") ? "The AI service is currently overloaded. Please try again in a few seconds." : "Please check server logs."}`);
+        throw new Error(`Server error (${response.status}). Please try again in a few seconds.`);
       }
     }
 
@@ -159,7 +216,7 @@ export async function evaluateWord(scenario: Scenario, word: string, existingWor
       - If you can't point to anything specific and well-established — only a plausible-sounding guess — set "evidenceGrounded" to false and say so plainly in "dataInsight" rather than inventing a claim.
     `;
 
-  const result = await callClaudeProxy(CLAUDE_MODEL,
+  const result = await callAIModel(
     `
       Evaluate the handle "${word}" for the subject: "${scenario.title}".
 
@@ -257,7 +314,7 @@ export async function generateBestVocabulary(scenario: Scenario, existingWords: 
       - If you can't point to anything specific and well-established for a tile — only a plausible-sounding guess — set "evidenceGrounded" to false and say so plainly in "dataInsight" rather than inventing a claim.
     `;
 
-  const result = await callClaudeProxy(CLAUDE_MODEL,
+  const result = await callAIModel(
     `
       Suggest "Human Domain Vocabulary" for the subject: "${scenario.title}".
 
@@ -349,7 +406,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
     return { explanation: "No data on board to evaluate." };
   }
 
-  const result = await callClaudeProxy(CLAUDE_MODEL,
+  const result = await callAIModel(
     `
       Synthesize the "Eureka Moment" of this board for scenario: "${scenario.title}".
 
@@ -390,7 +447,7 @@ export async function calculateBoardMetrics(scenario: Scenario, tiles: Tile[]): 
  * Analyzes CSV data to generate a new scenario and initial vocabulary.
  */
 export const analyzeCSVData = async (csvSample: string): Promise<{ scenario: Scenario, tiles: Tile[] }> => {
-  const result = await callClaudeProxy(CLAUDE_MODEL,
+  const result = await callAIModel(
     `
       Analyze this CSV data sample and generate a "Databoard Scenario" and an initial "Vocabulary Board".
 
@@ -490,7 +547,7 @@ const generateThreadId = () => `thread-${generateId()}`;
 export async function clusterIntoThreads(scenario: Scenario, tiles: Tile[]): Promise<NarrativeThread[]> {
   if (!Array.isArray(tiles) || tiles.length < 2) return [];
 
-  const result = await callClaudeProxy(CLAUDE_MODEL,
+  const result = await callAIModel(
     `
       Group the concepts on this board into narrative threads for scenario: "${scenario.title}".
 
@@ -581,7 +638,7 @@ export async function synthesizeThread(
     return { coheres: "no", synthesis: "", missingLink: "A thread needs at least 2 concepts to test for a shared story." };
   }
 
-  const result = await callClaudeProxy(CLAUDE_MODEL,
+  const result = await callAIModel(
     `
       Audit whether this specific set of concepts coheres into ONE story for scenario: "${scenario.title}".
 
