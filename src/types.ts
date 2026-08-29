@@ -1,3 +1,12 @@
+declare global {
+  interface Window {
+    aistudio?: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
+  }
+}
+
 export enum Centrality {
   DOMINANT = "DOMINANT", // Green: Central/Major driver
   PRESENT = "PRESENT",   // Yellow: Present/Secondary
