@@ -1,0 +1,6 @@
+pandas>=2.0
+PyYAML>=6.0
+
+# Milestone 2 (semantic layer, not yet implemented — see src/embeddings.py):
+# sentence-transformers, umap-learn, etc. will be added here when that
+# work actually starts, not before.

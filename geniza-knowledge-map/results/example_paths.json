@@ -1,0 +1,12 @@
+[
+  {
+    "description": "Captured while smoke-testing milestone 1 (not cherry-picked for effect — this is literally the first search result clicked during testing).",
+    "path": [
+      { "node": "document:10080", "label": "ENA NS 38.29", "note": "Arabic-script letter fragment; sender describes travels ending up 'in al-Buḥayra', setting out 'to the salty sea'." },
+      { "node": "place:mediterranean-sea", "label": "Mediterranean Sea", "edge": "associated_with_place (possibly_mentioned)", "evidence": "PGP document 10080 lists \"Mediterranean Sea\" under its `possibly_mentioned` field." },
+      { "node": "document:7498", "label": "T-S 20.2", "url": "https://geniza.princeton.edu/documents/7498/", "edge": "associated_with_place", "note": "A second, otherwise unrelated document that also mentions the Mediterranean Sea — surfaced only because both were expanded from the same place node, not because they share any vocabulary." }
+    ],
+    "machine_generated_hypothesis": "Two documents with no shared terminology in their descriptions are connected because both PGP catalogers independently tagged them with the same place. A conventional keyword search for one would not surface the other unless the searcher already thought to search 'Mediterranean Sea'.",
+    "human_verdict": null
+  }
+]
