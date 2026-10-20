@@ -1,23 +1,31 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenAI, Type } from "@google/genai";
+import Groq from "groq-sdk";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "../types";
 
 const CLAUDE_MODEL = "claude-sonnet-5";
 const GEMINI_MODEL = "gemini-3-flash-preview";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 
-export type AIProvider = "claude" | "gemini";
+export type AIProvider = "claude" | "gemini" | "groq";
+
+export const LOCAL_KEY_STORAGE: Record<AIProvider, string> = {
+  claude: "CLAUDE_API_KEY",
+  gemini: "GEMINI_API_KEY",
+  groq: "GROQ_API_KEY",
+};
 
 // Which provider to use: an explicit user choice in Settings wins; otherwise
 // default to Gemini inside Google AI Studio's Build environment (it injects
 // its own free Gemini key via window.aistudio) and Claude everywhere else.
 export const getActiveProvider = (): AIProvider => {
   const saved = localStorage.getItem("AI_PROVIDER");
-  if (saved === "claude" || saved === "gemini") return saved;
+  if (saved === "claude" || saved === "gemini" || saved === "groq") return saved;
   return typeof window !== "undefined" && window.aistudio ? "gemini" : "claude";
 };
 
 export const getActiveLocalKey = (): string | null =>
-  localStorage.getItem(getActiveProvider() === "gemini" ? "GEMINI_API_KEY" : "CLAUDE_API_KEY");
+  localStorage.getItem(LOCAL_KEY_STORAGE[getActiveProvider()]);
 
 const withRetry = async <T>(fn: () => Promise<T>, maxRetries = 5, initialDelay = 1000): Promise<T> => {
   let lastError: any;
@@ -118,6 +126,19 @@ const callAIModel = async (prompt: string, tool: ToolConfig): Promise<any> => {
         return JSON.parse(cleanJsonResponse(response.text || "{}"));
       }
 
+      if (provider === "groq") {
+        const groq = new Groq({ apiKey: activeKey, dangerouslyAllowBrowser: true });
+        const response = await groq.chat.completions.create({
+          model: GROQ_MODEL,
+          messages: [{ role: "user", content: prompt }],
+          tools: [{ type: "function", function: { name: tool.name, description: "Return the structured result for this task.", parameters: tool.schema } }],
+          tool_choice: { type: "function", function: { name: tool.name } },
+        });
+        const call = response.choices[0]?.message?.tool_calls?.[0];
+        if (!call) throw new Error("Groq did not return a structured response.");
+        return JSON.parse(call.function.arguments);
+      }
+
       const anthropic = new Anthropic({ apiKey: activeKey, dangerouslyAllowBrowser: true });
       const response = await anthropic.messages.create({
         model: CLAUDE_MODEL,
@@ -140,7 +161,8 @@ const callAIModel = async (prompt: string, tool: ToolConfig): Promise<any> => {
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error(`API_KEY_REQUIRED: This action requires an AI connection. Please add your ${provider === "gemini" ? "Gemini" : "Claude"} API key in Settings (The Vault) to continue.`);
+        const providerLabel = provider === "gemini" ? "Gemini" : provider === "groq" ? "Groq" : "Claude";
+        throw new Error(`API_KEY_REQUIRED: This action requires an AI connection. Please add your ${providerLabel} API key in Settings (The Vault) to continue.`);
       }
 
       const contentType = response.headers.get("content-type");

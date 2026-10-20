@@ -6,7 +6,7 @@ import { SCENARIOS } from "./constants";
 import { CACHED_BOARDS, CACHED_DATA_VERSION } from "./cachedData";
 import { CANDY_SCENARIO_ID, CANDY_DATASET_SAMPLE } from "./studyData";
 import { BoardMetrics, Centrality, NarrativeThread, Scenario, Tile } from "./types";
-import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread, getActiveProvider, getActiveLocalKey, AIProvider } from "./services/aiService";
+import { evaluateWord, generateBestVocabulary, calculateBoardMetrics, analyzeCSVData, clusterIntoThreads, synthesizeThread, getActiveProvider, getActiveLocalKey, LOCAL_KEY_STORAGE, AIProvider } from "./services/aiService";
 import { NarrativeThreads } from "./components/NarrativeThreads";
 import { ReasoningGauge } from "./components/ReasoningGauge";
 
@@ -582,7 +582,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
   key?: React.Key
 }) => {
   const [provider, setProvider] = useState<AIProvider>(getActiveProvider());
-  const storageKey = provider === "gemini" ? "GEMINI_API_KEY" : "CLAUDE_API_KEY";
+  const storageKey = LOCAL_KEY_STORAGE[provider];
   const [apiKey, setApiKey] = useState(localStorage.getItem(storageKey) || "");
   const [isSaved, setIsSaved] = useState(false);
 
@@ -591,7 +591,7 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
   const handleProviderChange = (next: AIProvider) => {
     setProvider(next);
     localStorage.setItem("AI_PROVIDER", next);
-    setApiKey(localStorage.getItem(next === "gemini" ? "GEMINI_API_KEY" : "CLAUDE_API_KEY") || "");
+    setApiKey(localStorage.getItem(LOCAL_KEY_STORAGE[next]) || "");
   };
 
   const handleSave = () => {
@@ -685,6 +685,12 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
               >
                 Gemini
               </button>
+              <button
+                onClick={() => handleProviderChange("groq")}
+                className={`flex-1 py-2 mono uppercase font-bold text-[10px] transition-colors border-l-2 border-ink ${provider === "groq" ? "bg-ink text-bg" : "bg-white text-ink hover:bg-ink/5"}`}
+              >
+                Groq
+              </button>
             </div>
           </div>
 
@@ -711,12 +717,12 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
             <div className="mb-3 p-2 bg-databoard-yellow/5 border border-[#D4B84A]/30 text-[9px] mono leading-tight">
               <strong className="text-[#D4B84A] uppercase">Note:</strong> To analyze your own custom CSV data, you <strong>must</strong> provide your own API key here. Example scenarios work without a key.
             </div>
-            <label className="block text-[10px] mono uppercase font-bold mb-1">{provider === "gemini" ? "Gemini API Key" : "Claude API Key"}</label>
+            <label className="block text-[10px] mono uppercase font-bold mb-1">{provider === "gemini" ? "Gemini API Key" : provider === "groq" ? "Groq API Key" : "Claude API Key"}</label>
             <input
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder={provider === "gemini" ? "AIzaSy..." : "sk-ant-..."}
+              placeholder={provider === "gemini" ? "AIzaSy..." : provider === "groq" ? "gsk_..." : "sk-ant-..."}
               className="w-full bg-white border-2 border-ink p-2 mono text-sm focus:outline-none focus:ring-2 focus:ring-databoard-yellow"
             />
           </div>
@@ -757,6 +763,11 @@ const SettingsModal = ({ isOpen, onClose, onSelectPlatformKey, isPlatformKeySele
               <ol className="text-[9px] mono space-y-1 opacity-70 list-decimal pl-4">
                 <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline font-bold hover:text-databoard-yellow">Google AI Studio</a>.</li>
                 <li>Click <strong>"Create API key"</strong> and copy it.</li>
+              </ol>
+            ) : provider === "groq" ? (
+              <ol className="text-[9px] mono space-y-1 opacity-70 list-decimal pl-4">
+                <li>Go to the <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer" className="underline font-bold hover:text-databoard-yellow">Groq Console</a>.</li>
+                <li>Click <strong>"Create API Key"</strong> and copy it. Free, no card required.</li>
               </ol>
             ) : (
               <ol className="text-[9px] mono space-y-1 opacity-70 list-decimal pl-4">
