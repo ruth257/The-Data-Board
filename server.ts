@@ -95,7 +95,7 @@ async function startServer() {
           if (provider === "groq") {
             const groq = new Groq({ apiKey });
             const response = await groq.chat.completions.create({
-              model: "llama-3.3-70b-versatile",
+              model: "openai/gpt-oss-120b",
               messages: [{ role: "user", content: prompt }],
               tools: [{ type: "function", function: { name: tool.name, description: "Return the structured result for this task.", parameters: tool.schema } }],
               tool_choice: { type: "function", function: { name: tool.name } },
