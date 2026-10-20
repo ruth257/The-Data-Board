@@ -5,6 +5,7 @@ import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 import dotenv from "dotenv";
 import { toGeminiSchema } from "./src/services/aiService";
 
@@ -12,10 +13,11 @@ dotenv.config();
 
 // API_KEY mirrors how Google AI Studio's Build environment injects its own
 // key (Gemini-only) - kept separate from the Claude-oriented shared secrets.
-const resolveServerKey = (provider: string) =>
-  provider === "gemini"
-    ? process.env.GEMINI_API_KEY || process.env.API_KEY
-    : process.env.WEBSITE_API_KEY || process.env.DATA_BOARD_KEY || process.env.ANTHROPIC_API_KEY;
+const resolveServerKey = (provider: string) => {
+  if (provider === "gemini") return process.env.GEMINI_API_KEY || process.env.API_KEY;
+  if (provider === "groq") return process.env.GROQ_API_KEY;
+  return process.env.WEBSITE_API_KEY || process.env.DATA_BOARD_KEY || process.env.ANTHROPIC_API_KEY;
+};
 
 async function startServer() {
   try {
@@ -41,13 +43,15 @@ async function startServer() {
 
     // AI Status Endpoint
     app.get("/api/ai/status", (req, res) => {
-      const provider = req.query.provider === "gemini" ? "gemini" : "claude";
+      const provider = req.query.provider === "gemini" ? "gemini" : req.query.provider === "groq" ? "groq" : "claude";
       console.log(`[Data Board] [${new Date().toISOString()}] GET /api/ai/status?provider=${provider}`);
       const apiKey = resolveServerKey(provider);
       const maskedKey = apiKey ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : null;
 
       const source = provider === "gemini"
         ? (process.env.GEMINI_API_KEY ? "GEMINI_API_KEY (System)" : process.env.API_KEY ? "API_KEY (Platform)" : "None")
+        : provider === "groq"
+        ? (process.env.GROQ_API_KEY ? "GROQ_API_KEY (System)" : "None")
         : (process.env.WEBSITE_API_KEY ? "WEBSITE_API_KEY (Secret)" : process.env.DATA_BOARD_KEY ? "DATA_BOARD_KEY (Secret)" : process.env.ANTHROPIC_API_KEY ? "ANTHROPIC_API_KEY (System)" : "None");
 
       res.json({ isReady: !!apiKey, source, maskedKey });
@@ -55,14 +59,15 @@ async function startServer() {
 
     // Unified AI Proxy Endpoint
     app.post(["/api/ai/generate", "/api/ai/generate/"], async (req, res) => {
-      const provider = req.body.provider === "gemini" ? "gemini" : "claude";
+      const provider = req.body.provider === "gemini" ? "gemini" : req.body.provider === "groq" ? "groq" : "claude";
       const apiKey = resolveServerKey(provider);
 
       if (!apiKey) {
         console.error(`[Data Board] No ${provider} API key found in environment.`);
+        const providerLabel = provider === "gemini" ? "Gemini" : provider === "groq" ? "Groq" : "Claude";
         return res.status(401).json({
           error: "API Key Required",
-          message: `This action requires an AI connection. Please add your ${provider === "gemini" ? "Gemini" : "Claude"} API key in the Vault (Settings) to continue.`
+          message: `This action requires an AI connection. Please add your ${providerLabel} API key in the Vault (Settings) to continue.`
         });
       }
 
@@ -85,6 +90,21 @@ async function startServer() {
             let cleaned = (response.text || "{}").trim();
             if (cleaned.startsWith("```")) cleaned = cleaned.replace(/^```json\n?/, "").replace(/\n?```$/, "");
             return res.json({ result: JSON.parse(cleaned) });
+          }
+
+          if (provider === "groq") {
+            const groq = new Groq({ apiKey });
+            const response = await groq.chat.completions.create({
+              model: "llama-3.3-70b-versatile",
+              messages: [{ role: "user", content: prompt }],
+              tools: [{ type: "function", function: { name: tool.name, description: "Return the structured result for this task.", parameters: tool.schema } }],
+              tool_choice: { type: "function", function: { name: tool.name } },
+            });
+            const call = response.choices[0]?.message?.tool_calls?.[0];
+            if (!call) {
+              return res.status(502).json({ error: "Groq did not return a structured response." });
+            }
+            return res.json({ result: JSON.parse(call.function.arguments) });
           }
 
           const anthropic = new Anthropic({ apiKey });
